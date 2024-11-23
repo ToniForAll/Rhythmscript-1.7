@@ -82,6 +82,8 @@ boton.addEventListener('click', function () {
     modal.classList.add('open');
 });
 
+//hola mundo
+
 ////////////////////////////// input range musica y el control de volumen
 
 const volumeSlider = document.getElementById('volumeSlider');
