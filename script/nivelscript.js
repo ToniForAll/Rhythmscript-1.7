@@ -8,14 +8,14 @@ let userData = localStorage.getItem('userData');
 
 function main() {
     
-    const audiohit = new Audio('/RhythmScript v1.7/sfx/soft-hitsoft.mp3');
-    const fail = new Audio('/RhythmScript v1.7/sfx/failsound.ogg');
-    const level1 = new Audio('/RhythmScript v1.7/sfx/fabio.mp3');
-    const level2 = new Audio('/RhythmScript v1.7/sfx/Terraria Calamity Mod Music - The Tale of a Cruel World - Title Theme.mp3');
-    const level3 = new Audio('/RhythmScript v1.7/sfx/Fire Emblem Fates  - Road Taken.mp3');
-    const level4 = new Audio('/RhythmScript v1.7/sfx/HyuN - Grin.mp3');
-    const finishsong = new Audio('/RhythmScript v1.7/sfx/applause.ogg');
-    const comboBreak = new Audio('/RhythmScript v1.7/sfx/combobreak.wav');
+    const audiohit = new Audio('/sfx/soft-hitsoft.mp3');
+    const fail = new Audio('/sfx/failsound.ogg');
+    const level1 = new Audio('/sfx/fabio.mp3');
+    const level2 = new Audio('/sfx/Terraria Calamity Mod Music - The Tale of a Cruel World - Title Theme.mp3');
+    const level3 = new Audio('/sfx/Fire Emblem Fates  - Road Taken.mp3');
+    const level4 = new Audio('/sfx/HyuN - Grin.mp3');
+    const finishsong = new Audio('/sfx/applause.ogg');
+    const comboBreak = new Audio('/sfx/combobreak.wav');
     const volumen = localStorage.getItem('volumen');
 
     const tecla1 = (localStorage.getItem('teclaP1') || 'd').toLowerCase();
