@@ -439,21 +439,21 @@ button.login-btn {
 }
 
 #instagram {
-  background-image: url("../img/facebook.png");
+  background-image: url("../img/facebook.webp");
   background-size: cover;
   background-repeat: no-repeat;
   margin: 0;
 }
 
 #x {
-  background-image: url("../img/x.png");
+  background-image: url("../img/x.webp");
   background-size: cover;
   background-repeat: no-repeat;
   margin: 0;
 }
 
 #facebook {
-  background-image: url("../img/instagram.png");
+  background-image: url("../img/instagram.webp");
   background-size: cover;
   background-repeat: no-repeat;
   margin: 0;

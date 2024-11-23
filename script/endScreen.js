@@ -63,11 +63,11 @@ export function endScreen(score, perfectNotes, greatNotes, missNotes, correctNot
   }
 
   let resultsHTML = `
-    <img src="img/Frame_3.png" class="bgImage" />
+    <img src="img/Frame_3.webp" class="bgImage" />
     <div class="siteContainer">
       <header class="header">
         <nav>
-          <img onclick="window.location.href='index.html'" src="img/grisazul.png" />
+          <img onclick="window.location.href='index.html'" src="img/grisazul.webp" />
         </nav>
       </header>
 

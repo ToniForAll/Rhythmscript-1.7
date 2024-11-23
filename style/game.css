@@ -434,20 +434,20 @@ button.login-btn {
 }
 
 .supremevictory {
-  background-image: url("../img/supremevictory.png");
+  background-image: url("../img/supremevictory.webp");
   background-size: cover;
   width: 100%;
   height: 100%;
 }
 .supremelose {
-  background-image: url("../img/losescreen.png");
+  background-image: url("../img/losescreen.webp");
   background-size: cover;
   width: 100%;
   height: 100%;
 }
 
 .supremesecret {
-  background-image: url("../img/image.png");
+  background-image: url("../img/image.webp");
   background-size: cover;
   width: 100%;
   height: 100%;
@@ -522,21 +522,21 @@ button.login-btn {
 }
 
 #instagram {
-  background-image: url("../img/facebook.png");
+  background-image: url("../img/facebook.webp");
   background-size: cover;
   background-repeat: no-repeat;
   margin: 0;
 }
 
 #x {
-  background-image: url("../img/x.png");
+  background-image: url("../img/x.webp");
   background-size: cover;
   background-repeat: no-repeat;
   margin: 0;
 }
 
 #facebook {
-  background-image: url("../img/instagram.png");
+  background-image: url("../img/instagram.webp");
   background-size: cover;
   background-repeat: no-repeat;
   margin: 0;
@@ -652,7 +652,7 @@ button.login-btn {
   font-size: 1.5rem;
   width: 90%;
   height: 75%;
-  background-image: url("../img/puntuacion3.jpg");
+  background-image: url("../img/puntuacion3.webp");
   background-size: cover;
   border-radius: 0 0 3rem 0;
   box-shadow: 1rem 0 2rem rgba(0, 0, 0, 0.5);
