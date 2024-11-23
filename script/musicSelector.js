@@ -56,23 +56,6 @@ let userData = localStorage.getItem('userData');
 
 // if (!userData) { window.location.href = 'index.html' };
 
-function fadeOutAudio(audio, duration) {
-    let volume = volumen;
-    const interval = 50; 
-    const fadeOutInterval = duration / (1000 / interval);
-
-    const fadeOut = setInterval(() => {
-        if (volume > 0) {
-            volume -= 1 / fadeOutInterval;
-            audio.volume = Math.max(volume, 0);
-        } else {
-            clearInterval(fadeOut);
-            audio.pause();
-            audio.currentTime = 0;
-        }
-    }, interval);
-}
-
 miDiv.addEventListener('mouseenter', () => {
     miSonido.volume = volumen;
     miSonido.currentTime = 0;
@@ -80,7 +63,7 @@ miDiv.addEventListener('mouseenter', () => {
 });
 
 miDiv.addEventListener('mouseleave', () => {
-    fadeOutAudio(miSonido, 1000);
+    miSonido.pause();
 });
 
 
@@ -99,14 +82,13 @@ miSonido2.volume = volumen;
 
 miDiv2.addEventListener('mouseenter', () => {
     miSonido2.volume = volumen;
-    miSonido2.currentTime = 40;
+    miSonido2.currentTime = 0;
     miSonido2.play();
 });
 
 miDiv2.addEventListener('mouseleave', () => {
-    fadeOutAudio(miSonido2, 1000);
+    miSonido2.pause();
 });
-
 
 
 /////////////////////////////////////////////////////////
@@ -122,7 +104,7 @@ miDiv3.addEventListener('mouseenter', () => {
 });
 
 miDiv3.addEventListener('mouseleave', () => {
-    fadeOutAudio(miSonido3, 1000);
+    miSonido3.pause();
 });
 
 /////////////////////////////////////////////////////////
@@ -138,7 +120,7 @@ miDiv4.addEventListener('mouseenter', () => {
 });
 
 miDiv4.addEventListener('mouseleave', () => {
-    fadeOutAudio(miSonido4, 1000);
+    miSonido4.pause();
 });
 
 /////////////////////// Musica Selector ///////////////////////
@@ -205,7 +187,6 @@ if (resume) {
         });
     });
 }
-
 
 ///////////////////////////////////// Mapeo de Teclas
 

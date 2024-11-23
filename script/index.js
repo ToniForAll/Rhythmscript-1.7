@@ -6,7 +6,7 @@ let userData = localStorage.getItem('userData');
 //*Codigo epico que hace q las notas salten*
 const formToggle = document.querySelector('.formToggle');
 const miDiv = document.getElementsByClassName('bigBtn');
-const notas = document.querySelectorAll('.nota');
+const notas = document.querySelectorAll('.salto');
 const miSonido = document.getElementById('efecto');
 const menuMusic = document.getElementById('menuMusic');
 const pause = document.getElementById('pause');
@@ -82,6 +82,31 @@ boton.addEventListener('click', function () {
     modal.classList.add('open');
 });
 
+////////////////////////////// input range musica y el control de volumen
+
+const volumeSlider = document.getElementById('volumeSlider');
+const volumeValue = document.getElementById('volumeValue');
+let volumen = localStorage.getItem('volumen');
+
+if (volumen === null) {
+    localStorage.setItem('volumen', 0.5);
+    volumen = 0.5;
+}
+
+volumeSlider.value = volumen * 100;
+volumeValue.textContent = volumeSlider.value;
+
+menuMusic.volume = volumen;
+
+volumeSlider.addEventListener('input', function () {
+    menuMusic.volume = volumeSlider.value / 100;
+    miSonido.volume = volumeSlider.value / 100;
+    volumeValue.textContent = volumeSlider.value;
+    localStorage.setItem('volumen', volumeSlider.value / 100);
+});
+
+// boton de reproduccion de musica
+
 if (pause) {
     pause.addEventListener('click', () => {
         resume.classList.remove('hidden');
@@ -93,7 +118,6 @@ if (pause) {
         });
     });
 }
-
 
 if (resume) {
     resume.addEventListener('click', () => {
@@ -200,32 +224,6 @@ function closeCustomAlert() {
 }
 
 closeCustomAlertBtn.addEventListener('click', () => { closeCustomAlert() });
-
-
-////////////////////////////// input range music 
-
-const volumeSlider = document.getElementById('volumeSlider');
-const volumeValue = document.getElementById('volumeValue');
-let volumen = localStorage.getItem('volumen');
-
-if (volumen === null) {
-    localStorage.setItem('volumen', 0.5);
-    volumen = 0.5;
-}
-
-volumeSlider.value = volumen * 100;
-volumeValue.textContent = volumeSlider.value;
-
-menuMusic.volume = volumen;
-menuMusic.play();
-
-volumeSlider.addEventListener('input', function () {
-    menuMusic.volume = volumeSlider.value / 100;
-    miSonido.volume = volumeSlider.value / 100;
-    volumeValue.textContent = volumeSlider.value;
-    localStorage.setItem('volumen', volumeSlider.value / 100);
-});
-
 
 //////////////////////////// menu sound
 
