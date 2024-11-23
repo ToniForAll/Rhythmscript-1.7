@@ -865,33 +865,34 @@ function main() {
             fail.play();
             level.pause();
 
-            const userId = JSON.parse(userData).userId;
-            const smax = totalNotes * 300;
-            const preresultado = (score / smax) * 1000000;
+            // Guarda los resultados en la base de datos, desactivado por ahora.
 
-            let numeroRedondeado = Math.round(preresultado);
-            let resultado = numeroRedondeado;
-            // resultado = resultado.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,'); para imprimirle comas era esta monda
+            // const userId = JSON.parse(userData).userId;
+            // const smax = totalNotes * 300;
+            // const preresultado = (score / smax) * 1000000;
 
-            fetch('/RhythmScript v1.7/script/back.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ "requestNumber": "3", musica, resultado, userId })
-            }).then(response => response.json())
-                .then(data => {
-                    if (!data.success) {
-                        alert(data.message);
-                    }
-                }).catch(error => {
-                    if (error.name === 'SyntaxError') {
-                        alert('Error en la respuesta del servidor: ' + error.message);
-                    } else {
-                        alert('Error en la solicitud: ' + error.message);
-                        console.log(error.message);
-                    }
-                });
+            // let numeroRedondeado = Math.round(preresultado);
+            // let resultado = numeroRedondeado;
+
+            // fetch('/RhythmScript v1.7/script/back.php', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json'
+            //     },
+            //     body: JSON.stringify({ "requestNumber": "3", musica, resultado, userId })
+            // }).then(response => response.json())
+            //     .then(data => {
+            //         if (!data.success) {
+            //             alert(data.message);
+            //         }
+            //     }).catch(error => {
+            //         if (error.name === 'SyntaxError') {
+            //             alert('Error en la respuesta del servidor: ' + error.message);
+            //         } else {
+            //             alert('Error en la solicitud: ' + error.message);
+            //             console.log(error.message);
+            //         }
+            //     });
 
             endScreen(score, perfectNotes, greatNotes, missNotes, correctNotes, totalNotes, maxcombo, life);
             clearInterval(intervalId);
