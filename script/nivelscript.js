@@ -6,14 +6,33 @@ let userData = localStorage.getItem('userData');
 
 // if (!userData) { window.location.href = 'index.html' };
 
+const level1 = new Audio('/sfx/fabio.mp3');
+const level2 = new Audio('/sfx/Terraria Calamity Mod Music - The Tale of a Cruel World - Title Theme.mp3');
+const level3 = new Audio('/sfx/Fire Emblem Fates  - Road Taken.mp3');
+const level4 = new Audio('/sfx/HyuN - Grin.mp3');
+
+const params = new URLSearchParams(window.location.search);
+const musica = params.get('var');
+
+switch(musica) {
+    case '1':
+        level1.load();
+        break;
+    case '2':
+        level2.load();
+        break;
+    case '3':
+        level3.load();
+        break;
+    case '4':
+        level4.load();
+        break;
+}
+
 function main() {
     
     const audiohit = new Audio('/sfx/soft-hitsoft.mp3');
     const fail = new Audio('/sfx/failsound.ogg');
-    const level1 = new Audio('/sfx/fabio.mp3');
-    const level2 = new Audio('/sfx/Terraria Calamity Mod Music - The Tale of a Cruel World - Title Theme.mp3');
-    const level3 = new Audio('/sfx/Fire Emblem Fates  - Road Taken.mp3');
-    const level4 = new Audio('/sfx/HyuN - Grin.mp3');
     const finishsong = new Audio('/sfx/applause.ogg');
     const comboBreak = new Audio('/sfx/combobreak.wav');
     const volumen = localStorage.getItem('volumen');
@@ -30,9 +49,6 @@ function main() {
     finishsong.volume = volumen;
     audiohit.volume = volumen;
     comboBreak.volume = volumen;
-
-    const params = new URLSearchParams(window.location.search);
-    const musica = params.get('var');
 
     const keys = {
         [tecla1]: { pressed: false, button: "myButton1" },
