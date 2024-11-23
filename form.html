@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RhythmscripT</title>
+    <link rel="stylesheet" href="style/styleformulario.css" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Monoton" rel="stylesheet" />
+    <link rel="icon" href="img/icono.png" type="image/x-icon">
+  </head>
+
+  <body>
+    <audio id="efecto" src="sfx/menu-back-click.wav"></audio>
+
+    <img src="img/Frame7.png" class="bgImage" />
+    <div class="siteContainer">
+      <header class="header">
+        <nav>
+          <img onclick="window.location.href='index.html'" src="img/grisazul.png"/>
+          <div class="navItems">
+            <a href="ranking.html"><button>Leaderboard</button></a>
+            <a href="onii.html"><button>OniiChan</button></a>
+          </div>
+        </nav>
+      </header>
+
+      <div class="formulario">
+
+        <!--   Registro      -->
+
+        <form id="registro" class="form">
+          <h3>Bienvenido, <span>Forma parte de la comunidad Rhythmcriptera chat</span></h3>
+
+          <div class="nameDiv">
+            <div class="inputForm">
+              <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff" width="20" height="20"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M8 7C9.65685 7 11 5.65685 11 4C11 2.34315 9.65685 1 8 1C6.34315 1 5 2.34315 5 4C5 5.65685 6.34315 7 8 7Z" fill="#ffffff"></path> <path d="M14 12C14 10.3431 12.6569 9 11 9H5C3.34315 9 2 10.3431 2 12V15H14V12Z" fill="#ffffff"></path> </g></svg>
+              <input placeholder="Introduzca su Nombre" class="input" type="text">
+            </div>
+            <div class="inputForm">
+              <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff" width="20" height="20"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M8 7C9.65685 7 11 5.65685 11 4C11 2.34315 9.65685 1 8 1C6.34315 1 5 2.34315 5 4C5 5.65685 6.34315 7 8 7Z" fill="#ffffff"></path> <path d="M14 12C14 10.3431 12.6569 9 11 9H5C3.34315 9 2 10.3431 2 12V15H14V12Z" fill="#ffffff"></path> </g></svg>
+              <input placeholder="Introduzca su Apellido" class="input" type="text">
+            </div>
+          </div>
+
+          <div class="inputForm">
+            <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff" width="20" height="20"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M8 7C9.65685 7 11 5.65685 11 4C11 2.34315 9.65685 1 8 1C6.34315 1 5 2.34315 5 4C5 5.65685 6.34315 7 8 7Z" fill="#ffffff"></path> <path d="M14 12C14 10.3431 12.6569 9 11 9H5C3.34315 9 2 10.3431 2 12V15H14V12Z" fill="#ffffff"></path> </g></svg>
+            <input placeholder="Introduzca su Usuario" class="input" type="text">
+          </div>
+        
+          <div class="inputForm">
+            <svg fill="#ffffff" viewBox="0 0 32 32" id="icon" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff" width="20" height="20"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <defs> <style> .cls-1 { fill: none; } </style> </defs> <path d="M21,2a8.9977,8.9977,0,0,0-8.6119,11.6118L2,24v6H8L18.3881,19.6118A9,9,0,1,0,21,2Zm0,16a7.0125,7.0125,0,0,1-2.0322-.3022L17.821,17.35l-.8472.8472-3.1811,3.1812L12.4141,20,11,21.4141l1.3787,1.3786-1.5859,1.586L9.4141,23,8,24.4141l1.3787,1.3786L7.1716,28H4V24.8284l9.8023-9.8023.8472-.8474-.3473-1.1467A7,7,0,1,1,21,18Z"></path> <circle cx="22" cy="10" r="2"></circle> <rect id="_Transparent_Rectangle_" data-name="<Transparent Rectangle>" class="cls-1" width="0" height="0"></rect> </g></svg>
+            <input placeholder="Introduzca su Contraseña" class="input" type="password">
+          </div>
+
+          <div class="inputForm">
+            <svg fill="#ffffff" viewBox="0 0 32 32" id="icon" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff" width="20" height="20"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <defs> <style> .cls-1 { fill: none; } </style> </defs> <path d="M21,2a8.9977,8.9977,0,0,0-8.6119,11.6118L2,24v6H8L18.3881,19.6118A9,9,0,1,0,21,2Zm0,16a7.0125,7.0125,0,0,1-2.0322-.3022L17.821,17.35l-.8472.8472-3.1811,3.1812L12.4141,20,11,21.4141l1.3787,1.3786-1.5859,1.586L9.4141,23,8,24.4141l1.3787,1.3786L7.1716,28H4V24.8284l9.8023-9.8023.8472-.8474-.3473-1.1467A7,7,0,1,1,21,18Z"></path> <circle cx="22" cy="10" r="2"></circle> <rect id="_Transparent_Rectangle_" data-name="<Transparent Rectangle>" class="cls-1" width="0" height="0"></rect> </g></svg>
+            <input placeholder="Confirmar Contraseña" class="input" type="password">
+          </div>
+        
+
+          <button class="button-submit">Registrarse</button>
+          <p class="p">Ya tienes una cuenta?  <span id="cambiar-a-login" class="span">Inicia Sesión</span>     
+          </button>
+        </form>
+
+
+
+        <!--   Iniciar sesion      -->
+
+
+        <form id="inicio-sesion" class="form oculto">
+            <div class="flex-column">
+              <label>Usuario</label></div>
+              <div class="inputForm">
+                <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff" width="20" height="20"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M8 7C9.65685 7 11 5.65685 11 4C11 2.34315 9.65685 1 8 1C6.34315 1 5 2.34315 5 4C5 5.65685 6.34315 7 8 7Z" fill="#ffffff"></path> <path d="M14 12C14 10.3431 12.6569 9 11 9H5C3.34315 9 2 10.3431 2 12V15H14V12Z" fill="#ffffff"></path> </g></svg>
+                <input placeholder="Introduzca su Usuario" class="input" type="text">
+              </div>
+            
+            <div class="flex-column">
+              <label>Contraseña</label></div>
+              <div class="inputForm">
+                <svg fill="#ffffff" viewBox="0 0 32 32" id="icon" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff" width="20" height="20"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <defs> <style> .cls-1 { fill: none; } </style> </defs> <path d="M21,2a8.9977,8.9977,0,0,0-8.6119,11.6118L2,24v6H8L18.3881,19.6118A9,9,0,1,0,21,2Zm0,16a7.0125,7.0125,0,0,1-2.0322-.3022L17.821,17.35l-.8472.8472-3.1811,3.1812L12.4141,20,11,21.4141l1.3787,1.3786-1.5859,1.586L9.4141,23,8,24.4141l1.3787,1.3786L7.1716,28H4V24.8284l9.8023-9.8023.8472-.8474-.3473-1.1467A7,7,0,1,1,21,18Z"></path> <circle cx="22" cy="10" r="2"></circle> <rect id="_Transparent_Rectangle_" data-name="<Transparent Rectangle>" class="cls-1" width="0" height="0"></rect> </g></svg>      
+                <input placeholder="Introduzca su Contraseña" class="input" type="password">
+              </div>
+            
+            <div class="flex-row">
+              <span class="span">¿Olvidaste la contraseña?</span>
+            </div>
+                <button class="button-submit">Iniciar Sesión</button>
+                <p class="p">No tienes una cuenta?  <span id="cambiar-a-registro" class="span">Crear Cuenta</span>     
+                </button>
+            </div>
+        </form>
+      </div>
+
+      <div class="iconos">
+        <a href="#" class="icon" id="instagram"></a>
+        <a href="#" class="icon" id="x"></a>
+        <a href="#" class="icon" id="facebook"></a>
+      </div>
+    </div>
+
+    <script src="script/formularioscript.js"></script>
+
+  </body>
+</html>

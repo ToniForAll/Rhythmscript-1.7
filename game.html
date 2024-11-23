@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RhythmscripT</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Monoton" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@700&italic=true&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style/game.css" />
+    <link rel="icon" href="img/icono.png" type="image/x-icon" />
+  </head>
+
+  <body id="bodyRemove">
+    <img src="img/NotaMarco1.png" class="marcoLeft" />
+    <img src="img/NotaMarco2.png" class="marcoRight" />
+
+    <main class="mainContainer">
+      <div class="column" style="color: transparent;">
+        <h1 type="text" id="scorePoints">0</h1>
+      </div>
+
+      <div class="pointsContainer">
+        <div id="pointIcon" class="pointIcon"></div>
+        <p class="combo"></p>
+      </div>
+
+      <div class="columnCenter">
+        <div class="lifebar">
+          <div class="size">
+            <div class="lifeBack"></div>
+            <img src="img/lifebar.png" />
+            <div class="life"></div>
+            <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" height="40" width="40">
+              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+              <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+              <g id="SVGRepo_iconCarrier">
+                <path
+                  d="M1.24264 8.24264L8 15L14.7574 8.24264C15.553 7.44699 16 6.36786 16 5.24264V5.05234C16 2.8143 14.1857 1 11.9477 1C10.7166 1 9.55233 1.55959 8.78331 2.52086L8 3.5L7.21669 2.52086C6.44767 1.55959 5.28338 1 4.05234 1C1.8143 1 0 2.8143 0 5.05234V5.24264C0 6.36786 0.44699 7.44699 1.24264 8.24264Z"
+                  fill="#d10000"
+                ></path>
+              </g>
+            </svg>
+          </div>
+        </div>
+        <div class="teclas">
+          <div class="teclasContainer">
+            <div class="path path1">
+              <button id="myButton1"></button>
+            </div>
+            <div class="path path2">
+              <button id="myButton2"></button>
+            </div>
+            <div class="path path3">
+              <button id="myButton3"></button>
+            </div>
+            <div class="path path4">
+              <button id="myButton4"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="column"></div>
+    </main>
+    <script src="script/nivelscript.js" type="module"></script>
+  </body>
+</html>

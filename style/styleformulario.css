@@ -1,0 +1,458 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.bgImage {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+    z-index: 1;
+}
+
+.siteContainer {
+    display: flex;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    flex-direction: column;
+}
+
+header {
+    padding: 0.5rem 3rem 0.5rem 1rem;
+    display: flex;
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.8), #000000);
+    width: 100%;
+    box-sizing: border-box;
+    height: 7.5rem;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    box-sizing: border-box;
+}
+
+nav img {
+    max-width: 25%;
+    filter: drop-shadow(0px 0px 10px #6E00EE);
+    -webkit-transition: all 0.4s;
+    transition: all 0.4s;
+}
+
+.navItems {
+    width: max-content;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+    width: max-content;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+nav img:hover {
+    scale: 1.03;
+    cursor: pointer;
+}
+
+.navItems button {
+    color: white;
+    font-size: clamp(1rem, 2vw, 2.5rem);
+    text-shadow: 0px 0px 15px #6E00EE;
+    width: 14vw;
+    height: 6vh;
+    margin: 2%;
+    box-sizing: border-box;
+    border: 0rem solid rgba(0, 0, 0, 0);
+    background: none;
+    text-decoration: none;
+    -webkit-transition: all 0.3s;
+    transition: all 0.3s;
+}
+
+.navItems button:hover {
+    border: 0.1rem solid #6E00EE;
+    cursor: pointer;
+}
+
+button.login-btn {
+    background-color: #6E00EE;
+    border-radius: 40px;
+}
+
+.login-btn:hover {
+    scale: 1.05;
+}
+
+.mainContainer {
+    height: calc(100vh - 12%);
+    display: flex;
+    align-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.bigBtn {
+    left: -5rem;
+    font-family: 'Monoton';
+    font-size: 5rem;
+    color: #eaeaea;
+    text-shadow: 0px 0px 3rem #6E00EE;
+    padding: 0 0 0 5rem;
+    margin: 1rem 0;
+    height: 0px;
+    border-top: solid 0px transparent;
+    border-right: solid 70px transparent;
+    border-bottom: solid 120px #090404c9;
+    border-left: solid 0px transparent;
+    transition: transform 0.3s;
+    position: relative;
+}
+
+.size1 {
+    width: 50rem;
+}
+
+.size2 {
+    width: 45rem;
+}
+
+.size3 {
+    width: 40rem;
+}
+
+.bigBtn:hover {
+    transform: translateX(5rem);
+}
+
+.iconos {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin-bottom: 3%;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 30px 0 0 30px;
+    padding: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 20;
+}
+
+.icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    text-decoration: none;
+    color: white;
+    transition: transform 0.3s;
+    transform: scale(1);
+}
+
+.icon:hover {
+    transform: scale(1.1);
+}
+
+#instagram {
+    background-image: url('../img/facebook.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    margin: 0;
+}
+
+#x {
+    background-image: url('../img/x.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    margin: 0;
+}
+
+#facebook {
+    background-image: url('../img/instagram.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    margin: 0;
+}
+
+/* Hagan paso al codigo trucho pa poner las notas en sus posiciones, desgraciadas nojoas yo las hice si me desobedecen tan muertas noticas*/
+
+.nota-1{
+    position: absolute;
+    top: -30%;
+    left: 0%;
+    width: 28%;
+    height: 120%;
+    object-fit: fill;
+    transform: rotate(30deg);
+    opacity: 0.3;
+    z-index: 1;
+    animation: nota1 5s ease-in-out infinite;
+}
+
+.nota-2{
+    position: absolute;
+    top: 20%;
+    left: 22%;
+    width: 20%;
+    height: 80%;
+    object-fit: fill;
+    transform: rotate(16deg);
+    opacity: 0.3;
+    z-index: 1;
+    animation: nota2 5s ease-in-out infinite;
+}
+.nota-3{
+    position: absolute;
+    top: -19%;
+    left: 40%;
+    width: 28%;
+    height: 100%;
+    object-fit: fill;
+    transform: rotate(-39deg);
+    opacity: 0.3;
+    z-index: 1;
+    animation: nota3 5s ease-in-out infinite;
+}
+.nota-4{
+    position: absolute;
+    top: 10%;
+    left: 65%;
+    width: 28%;
+    height: 100%;
+    object-fit: fill;
+    transform: rotate(30deg);
+    opacity: 0.3;
+    z-index: 1;
+    animation: nota4 5s ease-in-out infinite;
+}
+
+/*Animaciones de notas flotando*/
+
+@keyframes nota1 {
+    0% {
+      transform: rotate(30deg) translateX(0);
+    }
+    50% {
+      transform: rotate(30deg) translateX(10px);
+    }
+    100% {
+      transform: rotate(30deg) translateX(0);
+    }
+}
+
+@keyframes nota2 {
+    0% {
+      transform: rotate(16deg) translateY(0) translateX(0);
+    }
+    50% {
+      transform: rotate(16deg) translateY(-20px) translateX(5px);
+    }
+    100% {
+      transform: rotate(16deg) translateY(0) translateX(0);
+    }
+}
+
+@keyframes nota3 {
+    0% {
+        transform: rotate(-39deg) translateY(0) translateX(0);
+    }
+    50% {
+        transform: rotate(-39deg) translateY(-10px) translateX(-5px);
+    }
+    100% {
+        transform: rotate(-39deg) translateY(0) translateX(0);
+    }
+}
+
+@keyframes nota4 {
+    0% {
+        transform: rotate(30deg) translateY(0) translateX(0);
+    }
+    50% {
+        transform: rotate(30deg) translateY(-20px) translateX(10px);
+    }
+    100% {
+        transform: rotate(30deg) translateY(0) translateX(0);
+    }
+}
+
+/* estilos del formulario */
+
+.formulario {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    backdrop-filter: blur(10px);
+    border: 2px solid black;
+    padding: 30px;
+    width: 450px;
+    height: 500px;
+    border-radius: 20px;
+    justify-content: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    position: absolute;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+#registro {
+    z-index: 2;
+}
+
+.oculto {
+    display: none;
+}
+
+.form button {
+    align-self: flex-end;
+}
+
+.form > h3 {
+    display: flex;
+    flex-direction: column;
+    font-weight: 600;
+    font-size: 20px;
+    color: white;
+}
+
+.form > h3 > span {
+    font-weight: 500;
+    font-size: 17px;
+    color: #ACBAC3;
+    margin-left: 10px;
+}
+
+.flex-column > label {
+    color: white;
+    font-weight: 600;
+    font-size: 25px;
+}
+
+.inputForm {
+    border: 2px solid #ecedec;
+    border-radius: 10px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    transition: 0.2s ease-in-out;
+}
+
+.input {
+    margin-left: 10px;
+    border-radius: 10px;
+    border: none;
+    color: white;
+    background: none;
+    width: 90%;
+    height: 70%;
+}
+
+.input::placeholder {
+    color: #ACBAC3; 
+    font-size: 14px;
+}
+
+.input:focus {
+    outline: none;
+}
+
+.inputForm:focus-within {
+    border: 2px solid #2d79f3;
+}
+
+.span {
+    font-size: 14px;
+    margin-left: 5px;
+    color: #2d79f3;
+    font-weight: 500;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.button-submit {
+    margin: 20px 0 10px 0;
+    background-color: #151717;
+    border: none;
+    color: white;
+    font-size: 15px;
+    font-weight: 500;
+    border-radius: 10px;
+    height: 50px;
+    width: 100%;
+    cursor: pointer;
+}
+
+.p {
+    text-align: center;
+    color: white;
+    font-size: 15px;
+    margin: 5px 0;
+}
+  
+.nameDiv {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.nameDiv .inputForm{
+    width: 200px;
+}
+
+@keyframes slideInLeft {
+    0% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInRight {
+    0% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1; 
+    }
+}
+
+.slide-in-left {
+    animation: slideInLeft 0.5s forwards;
+}
+
+.slide-in-right {
+    animation: slideInRight 0.5s forwards;
+}
+

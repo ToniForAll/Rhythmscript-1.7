@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RhythmscripT</title>
+    <link rel="stylesheet" href="style/style.css" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Monoton" rel="stylesheet" />
+    <link rel="icon" href="img/icono.png" type="image/x-icon" />
+  </head>
+
+  <body id="bodyRemove">
+    <audio id="efecto" src="sfx/menu-back-click.wav"></audio>
+    <audio id="menuMusic" src="sfx/XI - Blue Zenith (Aykronix Release).mp3"></audio>
+
+    <div id="modalOptions" class="mainModal close">
+      <div class="modal">
+        <form id="keysUpdate">
+          <div class="modalHeader">
+            <img src="img/tuercaconf.png" style="width: 8%;" />
+
+            <h2>Opciones</h2>
+          </div>
+          <div class="content">
+            <div class="modalContent">
+              <h2>Volumen General</h2>
+
+              <div class="volume-control">
+                <input type="range" min="0" max="100" value="50" id="volumeSlider" />
+              </div>
+              <p style="display: flex; flex-direction: row;">Volumen: <span id="volumeValue" style="margin-left: 15px;"> 50</span>%</p>
+              <h2>Mapeo de Teclas</h2>
+              <div class="keyContainer">
+                <button type="button" id="oneButton">D</button>
+                <button type="button" id="twoButton">F</button>
+                <button type="button" id="threeButton">J</button>
+                <button type="button" id="fourButton">K</button>
+              </div>
+
+              <div id="customAlert">
+                <p>
+                  <svg
+                    height="25"
+                    width="25"
+                    viewBox="0 0 22 22"
+                    xmlns:dc="http://purl.org/dc/elements/1.1/"
+                    xmlns:cc="http://creativecommons.org/ns#"
+                    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink"
+                    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+                    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+                    id="svg2"
+                    version="1.1"
+                    inkscape:version="0.92.1 r15371"
+                    sodipodi:docname="dark_warning.svg"
+                    fill="#000000"
+                  >
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                    <g id="SVGRepo_iconCarrier">
+                      <defs id="defs4">
+                        <linearGradient
+                          gradientUnits="userSpaceOnUse"
+                          y2="2"
+                          x2="16"
+                          y1="29.999973"
+                          x1="16"
+                          id="linearGradient4144"
+                          xlink:href="#linearGradient4155"
+                          inkscape:collect="always"
+                          gradientTransform="matrix(1.66667 0 0 -1.66667 -15.667 1064.696)"
+                        ></linearGradient>
+                        <linearGradient inkscape:collect="always" id="linearGradient4155">
+                          <stop style="stop-color:#fcd994;stop-opacity:1" offset="0" id="stop4157"></stop>
+                          <stop style="stop-color:#fff6e1;stop-opacity:1" offset="1" id="stop4159"></stop>
+                        </linearGradient>
+                      </defs>
+                      <sodipodi:namedview
+                        id="base"
+                        pagecolor="#ffffff"
+                        bordercolor="#666666"
+                        borderopacity="1.0"
+                        inkscape:pageopacity="0.0"
+                        inkscape:pageshadow="2"
+                        inkscape:zoom="22.4"
+                        inkscape:cx="-8.3436117"
+                        inkscape:cy="10.155389"
+                        inkscape:document-units="px"
+                        inkscape:current-layer="layer1"
+                        showgrid="true"
+                        inkscape:showpageshadow="false"
+                        borderlayer="true"
+                        inkscape:window-width="1884"
+                        inkscape:window-height="1051"
+                        inkscape:window-x="0"
+                        inkscape:window-y="0"
+                        inkscape:window-maximized="1"
+                        units="px"
+                      >
+                        <sodipodi:guide position="2,20.000017" orientation="18,0" id="guide4085" inkscape:locked="false"></sodipodi:guide>
+                        <sodipodi:guide position="2,2.0000174" orientation="0,18" id="guide4087" inkscape:locked="false"></sodipodi:guide>
+                        <sodipodi:guide position="20,2.0000174" orientation="-18,0" id="guide4089" inkscape:locked="false"></sodipodi:guide>
+                        <sodipodi:guide position="20,20.000017" orientation="0,-18" id="guide4091" inkscape:locked="false"></sodipodi:guide>
+                        <sodipodi:guide position="3,19.000017" orientation="16,0" id="guide4093" inkscape:locked="false"></sodipodi:guide>
+                        <sodipodi:guide position="3,3.0000174" orientation="0,16" id="guide4095" inkscape:locked="false"></sodipodi:guide>
+                        <sodipodi:guide position="19,3.0000174" orientation="-16,0" id="guide4097" inkscape:locked="false"></sodipodi:guide>
+                        <sodipodi:guide position="19,19.000017" orientation="0,-16" id="guide4099" inkscape:locked="false"></sodipodi:guide> <inkscape:grid type="xygrid" id="grid4101"></inkscape:grid>
+                      </sodipodi:namedview>
+                      <metadata id="metadata7">
+                        <rdf:rdf>
+                          <cc:work>
+                            <dc:format>image/svg+xml</dc:format> <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"></dc:type> <dc:title></dc:title>
+                            <dc:creator>
+                              <cc:agent> <dc:title>Timothée Giet</dc:title> </cc:agent>
+                            </dc:creator>
+                            <dc:date>2017</dc:date> <cc:license rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/"></cc:license>
+                          </cc:work>
+                          <cc:license rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
+                            <cc:permits rdf:resource="http://creativecommons.org/ns#Reproduction"></cc:permits> <cc:permits rdf:resource="http://creativecommons.org/ns#Distribution"></cc:permits>
+                            <cc:requires rdf:resource="http://creativecommons.org/ns#Notice"></cc:requires> <cc:requires rdf:resource="http://creativecommons.org/ns#Attribution"></cc:requires>
+                            <cc:permits rdf:resource="http://creativecommons.org/ns#DerivativeWorks"></cc:permits> <cc:requires rdf:resource="http://creativecommons.org/ns#ShareAlike"></cc:requires>
+                          </cc:license>
+                        </rdf:rdf>
+                      </metadata>
+                      <g inkscape:label="Capa 1" inkscape:groupmode="layer" id="layer1" transform="translate(0 -1030.362)">
+                        <path
+                          style="fill:#ffc35a;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+                          d="m11 1032.362-10 18h20zm0 2 8 15H3z"
+                          id="path839"
+                          inkscape:connector-curvature="0"
+                          sodipodi:nodetypes="cccccccc"
+                        ></path>
+                        <path style="fill:#ffffff;fill-opacity:.94117647;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="M10 1046.362h2v2h-2z" id="path844" inkscape:connector-curvature="0"></path>
+                        <path
+                          style="fill:#ffffff;fill-opacity:.94117647;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+                          d="M10 1045.362h2v-6h-2z"
+                          id="path846"
+                          inkscape:connector-curvature="0"
+                          sodipodi:nodetypes="ccccc"
+                        ></path>
+                      </g>
+                    </g></svg
+                  >Advertencia!
+                </p>
+                <p>Tecla ya asignada.</p>
+                <button type="button" class="closeCustomAlert">Cerrar</button>
+              </div>
+            </div>
+            <div class="modalContent2">
+              <div class="gameTest">
+                <div class="circle"></div>
+                <div class="path path1" style="display: flex; align-items: flex-start; justify-content: center;">
+                  <div class="column">
+                    <button type="button"></button>
+                  </div>
+                </div>
+              </div>
+              <div class="velocityInput">
+                <button type="button" id="decrementar" style="border-radius: 20px 0 0 20px;"> < </button>
+                <label id="velocity">10</label>
+                <button type="button" id="incrementar" style="border-radius: 0 20px 20px 0;"> > </button>
+              </div>
+            </div>
+          </div>
+          <div class="modalFooter">
+            <img src="img/flecha.png" id="buttonClose" class="modalClose" type="button" style="width: 10%; filter: drop-shadow(0px 0px 10px #6E00EE); cursor: pointer;" />
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <img src="img/Frame_3.png" class="bgImage" />
+    <div class="siteContainer">
+      <header class="header">
+        <nav>
+          <img onclick="window.location.href='index.html'" src="img/grisazul.png" />
+          <div class="navItems">
+            <a href="onii.html"><button>KneeSurgery</button></a>
+            <a><button class="login-btn formToggle">Sign in</button></a>
+          </div>
+        </nav>
+      </header>
+      <div class="miniHeader">
+        <div class="reproductor">
+          <div class="reproductorAnimacion">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" height="25" width="25">
+              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+              <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+              <g id="SVGRepo_iconCarrier">
+                <path
+                  d="M12.75 12.508L21.25 9.108V14.7609C20.7449 14.4375 20.1443 14.25 19.5 14.25C17.7051 14.25 16.25 15.7051 16.25 17.5C16.25 19.2949 17.7051 20.75 19.5 20.75C21.2949 20.75 22.75 19.2949 22.75 17.5C22.75 17.5 22.75 17.5 22.75 17.5L22.75 7.94625C22.75 6.80342 22.75 5.84496 22.6696 5.08131C22.6582 4.97339 22.6448 4.86609 22.63 4.76597C22.5525 4.24426 22.4156 3.75757 22.1514 3.35115C22.0193 3.14794 21.8553 2.96481 21.6511 2.80739C21.6128 2.77788 21.573 2.74927 21.5319 2.7216L21.5236 2.71608C20.8164 2.2454 20.0213 2.27906 19.2023 2.48777C18.4102 2.68961 17.4282 3.10065 16.224 3.60469L14.13 4.48115C13.5655 4.71737 13.0873 4.91751 12.712 5.1248C12.3126 5.34535 11.9686 5.60548 11.7106 5.99311C11.4527 6.38075 11.3455 6.7985 11.2963 7.25204C11.25 7.67831 11.25 8.19671 11.25 8.80858V16.7609C10.7448 16.4375 10.1443 16.25 9.5 16.25C7.70507 16.25 6.25 17.7051 6.25 19.5C6.25 21.2949 7.70507 22.75 9.5 22.75C11.2949 22.75 12.75 21.2949 12.75 19.5C12.75 19.5 12.75 19.5 12.75 19.5L12.75 12.508Z"
+                  fill="#212bba"
+                ></path>
+                <path
+                  d="M7.75 2C7.75 1.58579 7.41421 1.25 7 1.25C6.58579 1.25 6.25 1.58579 6.25 2V7.76091C5.74485 7.4375 5.14432 7.25 4.5 7.25C2.70507 7.25 1.25 8.70507 1.25 10.5C1.25 12.2949 2.70507 13.75 4.5 13.75C6.29493 13.75 7.75 12.2949 7.75 10.5V5.0045C8.44852 5.50913 9.27955 5.75 10 5.75C10.4142 5.75 10.75 5.41421 10.75 5C10.75 4.58579 10.4142 4.25 10 4.25C9.54565 4.25 8.9663 4.07389 8.51159 3.69837C8.0784 3.34061 7.75 2.79785 7.75 2Z"
+                  fill="#212bba"
+                ></path>
+              </g>
+            </svg>
+            <p style="margin-right: 2rem;">Reproduciendose:</p>
+            <p style="margin-right: 5rem;">XI - Blue Zenith</p>
+          </div>
+        </div>
+
+        <div class="container">
+          <button class="animation" id="pause">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" height="25" width="25">
+              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+              <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+              <g id="SVGRepo_iconCarrier">
+                <path
+                  d="M2 6C2 4.11438 2 3.17157 2.58579 2.58579C3.17157 2 4.11438 2 6 2C7.88562 2 8.82843 2 9.41421 2.58579C10 3.17157 10 4.11438 10 6V18C10 19.8856 10 20.8284 9.41421 21.4142C8.82843 22 7.88562 22 6 22C4.11438 22 3.17157 22 2.58579 21.4142C2 20.8284 2 19.8856 2 18V6Z"
+                  fill="#212bba"
+                ></path>
+                <path
+                  d="M14 6C14 4.11438 14 3.17157 14.5858 2.58579C15.1716 2 16.1144 2 18 2C19.8856 2 20.8284 2 21.4142 2.58579C22 3.17157 22 4.11438 22 6V18C22 19.8856 22 20.8284 21.4142 21.4142C20.8284 22 19.8856 22 18 22C16.1144 22 15.1716 22 14.5858 21.4142C14 20.8284 14 19.8856 14 18V6Z"
+                  fill="#212bba"
+                ></path>
+              </g>
+            </svg>
+          </button>
+          <button class="hidden" id="resume">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" height="25" width="25">
+              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+              <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+              <g id="SVGRepo_iconCarrier">
+                <path d="M21.4086 9.35258C23.5305 10.5065 23.5305 13.4935 21.4086 14.6474L8.59662 21.6145C6.53435 22.736 4 21.2763 4 18.9671L4 5.0329C4 2.72368 6.53435 1.26402 8.59661 2.38548L21.4086 9.35258Z" fill="#212bba"></path>
+              </g>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <main class="mainContainer">
+        <a style="text-decoration: none;" id="singlePlayer"><div class="bigBtn size3 playBtn">Start</div></a>
+
+        <a href="ranking.html" style="text-decoration: none;" id="ranking"><div class="bigBtn size2">Ranking</div></a>
+
+        <div class="bigBtn size1" id="options">Options</div>
+      </main>
+
+      <div class="iconos">
+        <a href="#" class="icon" id="instagram"></a>
+        <a href="#" class="icon" id="x"></a>
+        <a href="#" class="icon" id="facebook"></a>
+      </div>
+    </div>
+
+    <img src="img/Nota1.png" class="nota nota-1" />
+    <img src="img/Nota2.png" class="nota nota-2" />
+    <img src="img/Nota3.png" class="nota nota-3" />
+    <img src="img/Nota4.png" class="nota nota-4" />
+
+    <script src="script/index.js" type="module"></script>
+  </body>
+</html>
