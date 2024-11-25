@@ -372,6 +372,7 @@ button.login-btn {
   align-items: flex-start;
   flex-direction: column;
   justify-content: center;
+  position: relative;
 }
 
 .bigBtn {
@@ -798,4 +799,13 @@ button.login-btn {
 
 .slide-in-right {
   animation: slideInRight 0.5s forwards;
+}
+
+.versionDisplay {
+  font-size: 20px;
+  font-family: "Inter", sans-serif;
+  position: absolute;
+  top: 94%;
+  color: white;
+  padding: 0px 10px;
 }
