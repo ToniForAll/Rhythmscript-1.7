@@ -57,6 +57,12 @@ function main() {
         [' ']: { pressed: false, button: "myButton5", sound: new Audio('/sfx/drum-hitnormal.wav') }
     };
 
+    // Funcion para pre-cargar los sonidos
+    for (const key in keys) {
+        const sound = keys[key].sound;
+        sound.load();
+    }
+
     document.addEventListener("keydown", function (event) {
         const key = event.key.toLowerCase();
         if (keys[key] && !keys[key].pressed) {
