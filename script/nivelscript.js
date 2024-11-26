@@ -10,6 +10,11 @@ const level1 = new Audio('/sfx/fabio.mp3');
 const level2 = new Audio('/sfx/Terraria Calamity Mod Music - The Tale of a Cruel World - Title Theme.mp3');
 const level3 = new Audio('/sfx/Fire Emblem Fates  - Road Taken.mp3');
 const level4 = new Audio('/sfx/HyuN - Grin.mp3');
+const hit = new Audio('/sfx/soft-hitsoft.mp3');
+const hitclam = new Audio('/sfx/drum-hitnormal.wav');
+
+hit.preload = 'auto';
+hitclam.preload = 'auto';
 
 const params = new URLSearchParams(window.location.search);
 const musica = params.get('var');
@@ -50,18 +55,12 @@ function main() {
     comboBreak.volume = volumen;
 
     const keys = {
-        [tecla1]: { pressed: false, button: "myButton1", sound: new Audio('/sfx/soft-hitsoft.mp3') },
-        [tecla2]: { pressed: false, button: "myButton2", sound: new Audio('/sfx/soft-hitsoft.mp3') },
-        [tecla3]: { pressed: false, button: "myButton3", sound: new Audio('/sfx/soft-hitsoft.mp3') },
-        [tecla4]: { pressed: false, button: "myButton4", sound: new Audio('/sfx/soft-hitsoft.mp3') },
-        [' ']: { pressed: false, button: "myButton5", sound: new Audio('/sfx/drum-hitnormal.wav') }
+        [tecla1]: { pressed: false, button: "myButton1", sound: [hit] },
+        [tecla2]: { pressed: false, button: "myButton2", sound: [hit] },
+        [tecla3]: { pressed: false, button: "myButton3", sound: [hit] },
+        [tecla4]: { pressed: false, button: "myButton4", sound: [hit] },
+        [' ']: { pressed: false, button: "myButton5", sound: [hitclam] }
     };
-
-    // Funcion para pre-cargar los sonidos
-    for (const key in keys) {
-        const sound = keys[key].sound;
-        sound.preload = 'auto';
-    }
 
     document.addEventListener("keydown", function (event) {
         const key = event.key.toLowerCase();
