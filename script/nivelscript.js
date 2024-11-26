@@ -54,7 +54,8 @@ function main() {
         [tecla1]: { pressed: false, button: "myButton1" },
         [tecla2]: { pressed: false, button: "myButton2" },
         [tecla3]: { pressed: false, button: "myButton3" },
-        [tecla4]: { pressed: false, button: "myButton4" }
+        [tecla4]: { pressed: false, button: "myButton4" },
+        [' ']: { pressed: false, button: "myButton5" }
     };
 
     document.addEventListener("keydown", function (event) {
@@ -66,7 +67,9 @@ function main() {
             audiohit.play();
             document.getElementById(keys[key].button).click();
             const boton = document.getElementById(keys[key].button);
+            if((!keys[" "].pressed)){
             boton.style.backgroundColor = '#6054bd';
+            }
         }
     });
 
@@ -92,59 +95,61 @@ function main() {
 
     function createCircles(musicArray, index, pathBtn, path, pathClass) {
         for (let i = 0; i < musicArray.length; i++) {
+            
+            
+            // Staggered timeout to create circles
             setTimeout(() => {
-                // indexValue = musicArray[i]; antes
-
-                //despues:
-                indexes[index] = musicArray[i]; //tiene que ser asi para actualizar la variable local 
+                console.log(`Creating circle for musicArray[${i}]:`, musicArray[i]);
+                indexes[index] = musicArray[i]; // Update the local variable
+                
                 if (musicArray[i] === 1) {
                     const circle = document.createElement("div");
                     circle.classList.add("circle", pathClass, "circle" + i);
                     circle.style.animation = `Bajarabajo ${valorActual}s linear`;
                     path.appendChild(circle);
-
+                    
                     let circleRemoved = false;
-
+    
                     const timerId = setTimeout(() => {
                         if (!circleRemoved) {
                             const circle2 = document.querySelector(".circle" + i);
                             if (circle2) {
                                 const circleRect = circle2.getBoundingClientRect();
                                 const buttonRect = pathBtn.getBoundingClientRect();
-
-                                if (circleRect.bottom < buttonRect.top) {
-                                    // function checkForAnimation() {
-                                    //     console.log(pointIcon.classList)
-                                    // }
-
-                                    //no se pa que co;o es eso de ahi arriba, sabra usted (yoni)
+                    
+                                console.log('circleRect:', circleRect);
+                                console.log('buttonRect:', buttonRect);
+                    
+                                // Agregar un margen para la verificación
+                                const margin = 5; // Ajusta este valor según sea necesario
+                                if (circleRect.bottom + margin < buttonRect.top) {
                                     if (combo >= 20) {
                                         comboBreak.play();
                                     }
-
+                    
                                     combo = 0;
                                     life -= 10;
-
                                     scorePoints.innerText = life;
                                     changeHeight();
-
+                    
                                     const container = document.getElementById('pointIcon');
                                     const existingElement = container.querySelector(`.pointIcon`);
                                     if (existingElement) {
                                         container.removeChild(existingElement);
                                     }
                                     container.appendChild(img1);
-
+                    
                                     comboNumber.classList.add('great');
                                     comboNumber.innerText = '';
                                     missNotes++;
                                     path.removeChild(circle2);
+                                    circleRemoved = true; // Mark as removed
                                 }
                             }
                         }
-                    }, 1000);
+                    }, 1050);
                 }
-            }, 150 * i);
+            }, 150 * i); // Adjust this value if needed
         }
     }
 
@@ -224,7 +229,7 @@ function main() {
 
     function countTotalNotes(musicArray) {
         for (let i = 0; i < musicArray.length; i++) {
-            if (musicArray[i] === 1) {
+            if (musicArray[i] === 1 || musicArray[i] === 2) {
                 totalNotes += 1;
             }
         }
@@ -235,18 +240,20 @@ function main() {
     let music2 = [];
     let music3 = [];
     let music4 = [];
+    let musicExtra = [];
 
     let mapafila1;
     let mapafila2;
     let mapafila3;
     let mapafila4;
+    let mapafila5;
 
     switch (musica) {
         case '1':
             level = level1;
 
             mapafila1 = [
-                1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -258,8 +265,8 @@ function main() {
                 'end'
             ];
             mapafila2 = [
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
                 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0,
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -283,7 +290,7 @@ function main() {
             ];
             mapafila4 = [
                 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0,
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -291,6 +298,19 @@ function main() {
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 
                 0, 0, 0, 0, 0, 0, 1,
+                'end'
+            ];
+
+            mapafila5 = [
+                1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                0, 0, 0, 0, 0, 0, 0,
                 'end'
             ];
 
@@ -350,6 +370,10 @@ function main() {
                 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,
                 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 
+                'end'
+            ];
+            mapafila5 = [
+                0, 0 ,0,
                 'end'
             ];
 
@@ -445,6 +469,10 @@ function main() {
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1,
                 0, 0, 1, 0, 0, 1, 
             'end'
+            ];
+            mapafila5 = [
+                0, 0 ,0,
+                'end'
             ];
 
             level.volume = volumen;
@@ -733,6 +761,10 @@ function main() {
                 0, 0, 1, 0, 1, 0, 0, 1, 0, 1,
                 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 'end'
             ];
+            mapafila5 = [
+                0, 0 ,0,
+                'end'
+            ];
 
             level.volume = volumen;
             level.play();
@@ -743,6 +775,7 @@ function main() {
     music2 = mapafila2;
     music3 = mapafila3;
     music4 = mapafila4;
+    musicExtra = mapafila5;
 
     //indices de los path's
     let indexes = {
@@ -750,6 +783,7 @@ function main() {
         index2Value: '',
         index3Value: '',
         index4Value: '',
+        index5Value: ''
     };
 
 
@@ -757,6 +791,7 @@ function main() {
     const path2 = document.querySelector(".path2");
     const path3 = document.querySelector(".path3");
     const path4 = document.querySelector(".path4");
+    const path5 = document.querySelector(".path5");
 
     const scorePoints = document.getElementById('scorePoints');
     const pointIcon = document.querySelector('.pointIcon');
@@ -770,6 +805,7 @@ function main() {
     const pathBtn2 = document.getElementById("myButton2");
     const pathBtn3 = document.getElementById("myButton3");
     const pathBtn4 = document.getElementById("myButton4");
+    const pathBtn5 = document.getElementById("myButton5");
 
     pathBtn1.textContent = tecla1.toUpperCase();
     pathBtn2.textContent = tecla2.toUpperCase();
@@ -790,23 +826,25 @@ function main() {
     countTotalNotes(music2);
     countTotalNotes(music3);
     countTotalNotes(music4);
+    countTotalNotes(musicExtra);
 
     createCircles(music1, 'index1Value', pathBtn1, path1, "circlePath1");
     createCircles(music2, 'index2Value', pathBtn2, path2, "circlePath2");
     createCircles(music3, 'index3Value', pathBtn3, path3, "circlePath3");
     createCircles(music4, 'index4Value', pathBtn4, path4, "circlePath4");
+    createCircles(musicExtra, 'index5Value', pathBtn5, path5, "circlePathExtra");
 
     pathBtn1.addEventListener('click', () => { checkForClick(pathBtn1, path1, 'circlePath1'); });
     pathBtn2.addEventListener('click', () => { checkForClick(pathBtn2, path2, 'circlePath2'); });
     pathBtn3.addEventListener('click', () => { checkForClick(pathBtn3, path3, 'circlePath3'); });
     pathBtn4.addEventListener('click', () => { checkForClick(pathBtn4, path4, 'circlePath4'); });
+    pathBtn5.addEventListener('click', () => { checkForClick(pathBtn5, path5, 'circlePathExtra'); });
 
     scorePoints.innerText = life;
 
     setTimeout(() => {
         ////////////// actualizar barra de vida
-        changeHeight();
-        scorePoints.innerText = life;
+        
     }, 10);
 
     function fadeOutAudio(audio, duration) {
@@ -829,7 +867,7 @@ function main() {
     const intervalId = setInterval(() => {
 
         //comprobar que todos los arrays de notas hayan terminado
-        if (indexes.index1Value == 'end' && indexes.index2Value == 'end' && indexes.index3Value == 'end' && indexes.index4Value == 'end') {
+        if (indexes.index1Value == 'end' && indexes.index2Value == 'end' && indexes.index3Value == 'end' && indexes.index4Value == 'end' && indexes.index5Value == 'end') {
             fadeOutAudio(level, 1000);
             setTimeout(() => {
                 level.pause();
@@ -872,6 +910,8 @@ function main() {
 
         ///////////// Terminar partida al perder la vida
         if (life < 100) {
+            changeHeight();
+            scorePoints.innerText = life;
             life += 10;
         }
         changeHeight();
