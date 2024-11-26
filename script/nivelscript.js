@@ -44,31 +44,33 @@ function main() {
     const valorActual = (localStorage.getItem('velocidad') || '1');
 
     let level;
-    audiohit.volume = volumen;
     fail.volume = volumen;
     finishsong.volume = volumen;
     audiohit.volume = volumen;
     comboBreak.volume = volumen;
 
     const keys = {
-        [tecla1]: { pressed: false, button: "myButton1" },
-        [tecla2]: { pressed: false, button: "myButton2" },
-        [tecla3]: { pressed: false, button: "myButton3" },
-        [tecla4]: { pressed: false, button: "myButton4" },
-        [' ']: { pressed: false, button: "myButton5" }
+        [tecla1]: { pressed: false, button: "myButton1", sound: new Audio('/sfx/soft-hitsoft.mp3') },
+        [tecla2]: { pressed: false, button: "myButton2", sound: new Audio('/sfx/soft-hitsoft.mp3') },
+        [tecla3]: { pressed: false, button: "myButton3", sound: new Audio('/sfx/soft-hitsoft.mp3') },
+        [tecla4]: { pressed: false, button: "myButton4", sound: new Audio('/sfx/soft-hitsoft.mp3') },
+        [' ']: { pressed: false, button: "myButton5", sound: new Audio('/sfx/drum-hitnormal.wav') }
     };
 
     document.addEventListener("keydown", function (event) {
         const key = event.key.toLowerCase();
         if (keys[key] && !keys[key].pressed) {
             keys[key].pressed = true;
-            audiohit.pause();
-            audiohit.currentTime = 0;
-            audiohit.play();
+
+            keys[key].sound.volume = volumen;
+            keys[key].sound.pause();
+            keys[key].sound.currentTime = 0;
+            keys[key].sound.play();
+
             document.getElementById(keys[key].button).click();
             const boton = document.getElementById(keys[key].button);
             if((!keys[" "].pressed)){
-            boton.style.backgroundColor = '#6054bd';
+                boton.style.backgroundColor = '#6054bd';
             }
         }
     });
