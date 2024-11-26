@@ -60,7 +60,7 @@ function main() {
     // Funcion para pre-cargar los sonidos
     for (const key in keys) {
         const sound = keys[key].sound;
-        sound.load();
+        sound.preload = 'auto';
     }
 
     document.addEventListener("keydown", function (event) {
