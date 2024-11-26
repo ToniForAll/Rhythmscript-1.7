@@ -55,11 +55,11 @@ function main() {
     comboBreak.volume = volumen;
 
     const keys = {
-        [tecla1]: { pressed: false, button: "myButton1", sound: [hit] },
-        [tecla2]: { pressed: false, button: "myButton2", sound: [hit] },
-        [tecla3]: { pressed: false, button: "myButton3", sound: [hit] },
-        [tecla4]: { pressed: false, button: "myButton4", sound: [hit] },
-        [' ']: { pressed: false, button: "myButton5", sound: [hitclam] }
+        [tecla1]: { pressed: false, button: "myButton1", sound: hit },
+        [tecla2]: { pressed: false, button: "myButton2", sound: hit },
+        [tecla3]: { pressed: false, button: "myButton3", sound: hit },
+        [tecla4]: { pressed: false, button: "myButton4", sound: hit },
+        [' ']: { pressed: false, button: "myButton5", sound: hitclam }
     };
 
     document.addEventListener("keydown", function (event) {
