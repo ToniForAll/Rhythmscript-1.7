@@ -1,4 +1,4 @@
-export function endScreen(score, perfectNotes, greatNotes, missNotes, correctNotes, totalNotes, maxcombo, life) {
+export function endScreen(score, perfectNotes, greatNotes, missNotes, correctNotes, totalNotes, maxcombo, life, musicName) {
   const body = document.getElementsByTagName('body')[0];
   const mainGame = document.querySelector('.mainContainer');
   const smax = totalNotes * 300;
@@ -74,6 +74,9 @@ export function endScreen(score, perfectNotes, greatNotes, missNotes, correctNot
       <main class="mainContainer">
         <div class="mainIzquierdo" style="height: 100%; width: 50%;">
           <div class="resultsMain">
+          <div class="musicName">
+            <p>${musicName}</p>
+          </div>
             <div class="puntuacion">
             ${comboResult}
               <hr />

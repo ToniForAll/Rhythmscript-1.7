@@ -671,6 +671,28 @@ button.login-btn {
   position: relative;
 }
 
+.musicName {
+  font-size: 1.5rem;
+  position: absolute;
+  top: 1%;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+.musicName p{
+  animation: movertexto 6s linear infinite;
+}
+
+@keyframes movertexto {
+  0% {
+      transform: translateX(-100%);
+  }
+  100% {
+      transform: translateX(100%);
+  }
+}
+
 .resultsMain h2 {
   text-shadow: 0 0 20px rgba(216, 200, 19, 0.49);
 }

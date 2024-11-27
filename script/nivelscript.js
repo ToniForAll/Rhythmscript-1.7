@@ -13,23 +13,29 @@ const level4 = new Audio('/sfx/HyuN - Grin.mp3');
 const hit = new Audio('/sfx/soft-hitsoft.mp3');
 const hitclam = new Audio('/sfx/drum-hitnormal.mp3');
 
-hit.preload = 'auto';
-hitclam.preload = 'auto';
+let musicName = '';
+
+hit.load();
+hitclam.load();
 
 const params = new URLSearchParams(window.location.search);
 const musica = params.get('var');
 
 switch(musica) {
     case '1':
+        musicName = `Favio Song - favio, Easy`;
         level1.load();
         break;
     case '2':
+        musicName = `The Tale of a Cruel World - DM DOKURO, Medium`;
         level2.load();
         break;
     case '3':
+        musicName = `Road Taken - Fire Emblem Fates, Hard`;
         level3.load();
         break;
     case '4':
+        musicName = `Grin - HyuN, Toni`;
         level4.load();
         break;
 }
@@ -929,7 +935,7 @@ function main() {
                 //         }
                 //     });
 
-                endScreen(score, perfectNotes, greatNotes, missNotes, correctNotes, totalNotes, maxcombo, life);
+                endScreen(score, perfectNotes, greatNotes, missNotes, correctNotes, totalNotes, maxcombo, life, musicName);
             }, 3000);
             clearInterval(intervalId);
         }
@@ -976,7 +982,7 @@ function main() {
             //         }
             //     });
 
-            endScreen(score, perfectNotes, greatNotes, missNotes, correctNotes, totalNotes, maxcombo, life);
+            endScreen(score, perfectNotes, greatNotes, missNotes, correctNotes, totalNotes, maxcombo, life, musicName);
             clearInterval(intervalId);
         }
 
