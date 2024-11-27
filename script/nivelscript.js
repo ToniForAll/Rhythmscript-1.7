@@ -11,7 +11,7 @@ const level2 = new Audio('/sfx/Terraria Calamity Mod Music - The Tale of a Cruel
 const level3 = new Audio('/sfx/Fire Emblem Fates  - Road Taken.mp3');
 const level4 = new Audio('/sfx/HyuN - Grin.mp3');
 const hit = new Audio('/sfx/soft-hitsoft.mp3');
-const hitclam = new Audio('/sfx/drum-hitnormal.wav');
+const hitclam = new Audio('/sfx/drum-hitnormal.mp3');
 
 hit.preload = 'auto';
 hitclam.preload = 'auto';
@@ -36,7 +36,6 @@ switch(musica) {
 
 function main() {
     
-    const audiohit = new Audio('/sfx/soft-hitsoft.mp3');
     const fail = new Audio('/sfx/failsound.ogg');
     const finishsong = new Audio('/sfx/applause.ogg');
     const comboBreak = new Audio('/sfx/combobreak.wav');
@@ -51,8 +50,9 @@ function main() {
     let level;
     fail.volume = volumen;
     finishsong.volume = volumen;
-    audiohit.volume = volumen;
+    hit.volume = volumen;
     comboBreak.volume = volumen;
+    hitclam.volume = volumen;
 
     const keys = {
         [tecla1]: { pressed: false, button: "myButton1", sound: hit },
