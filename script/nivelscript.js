@@ -167,6 +167,7 @@ function main() {
             }
         }, 100);
 
+        pathBtn.style.transition = 'box-shadow 0.1s ease';
         const circles = document.querySelectorAll(`.${pathClass}`);
         const buttonRect = pathBtn.getBoundingClientRect();
         const buttonThreshold = buttonRect.top + (buttonRect.height * 0.75); // 75% del botón
@@ -184,6 +185,12 @@ function main() {
         if (circleRect.bottom > buttonRect.top && circleRect.top < buttonRect.bottom && circleRect.right > buttonRect.left && circleRect.left < buttonRect.right) {
             if (circleRect.bottom > buttonThreshold) {
                 score += 300;
+
+                pathBtn.style.boxShadow = '0 0 20px 5px rgb(19, 47, 255)';
+                setTimeout(() => {
+                    pathBtn.style.boxShadow = '';
+                }, 150); 
+
                 combo++;
                 perfectNotes++;
                 correctNotes++;
@@ -195,6 +202,12 @@ function main() {
                 }
             } else if (circleRect.top >= buttonTopAmplified && circleRect.bottom <= buttonBottomAmplified) {
                 score += 100;
+                
+                pathBtn.style.boxShadow = '0 0 20px 5px rgb(91, 255, 31)';
+                setTimeout(() => {
+                    pathBtn.style.boxShadow = '';
+                }, 150); 
+
                 greatNotes++;
                 correctNotes++;
                 combo++;
@@ -213,6 +226,12 @@ function main() {
                     comboBreak.play();
                 }
                 combo = 0;
+
+                pathBtn.style.boxShadow = '0 0 20px 5px rgb(255, 47, 47)';
+                setTimeout(() => {
+                    pathBtn.style.boxShadow = '';
+                }, 150); 
+
                 comboNumber.classList.add('great');
                 comboNumber.innerText = '';
                 scorePoints.innerText = life;
