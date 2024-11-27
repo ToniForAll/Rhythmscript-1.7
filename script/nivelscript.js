@@ -186,7 +186,7 @@ function main() {
             if (circleRect.bottom > buttonThreshold) {
                 score += 300;
 
-                pathBtn.style.boxShadow = '0 0 20px 5px rgb(19, 47, 255)';
+                pathBtn.style.boxShadow = '0 0 20px 5px rgb(19, 47, 255), inset 0 0 20px 5px rgb(19, 47, 255)';
                 setTimeout(() => {
                     pathBtn.style.boxShadow = '';
                 }, 150); 
@@ -203,7 +203,7 @@ function main() {
             } else if (circleRect.top >= buttonTopAmplified && circleRect.bottom <= buttonBottomAmplified) {
                 score += 100;
                 
-                pathBtn.style.boxShadow = '0 0 20px 5px rgb(91, 255, 31)';
+                pathBtn.style.boxShadow = '0 0 20px 5px rgb(91, 255, 31), inset 0 0 20px 5px rgb(91, 255, 31)';
                 setTimeout(() => {
                     pathBtn.style.boxShadow = '';
                 }, 150); 
@@ -227,7 +227,7 @@ function main() {
                 }
                 combo = 0;
 
-                pathBtn.style.boxShadow = '0 0 20px 5px rgb(255, 47, 47)';
+                pathBtn.style.boxShadow = '0 0 20px 5px rgb(255, 47, 47), inset 0 0 20px 5px rgb(255, 47, 47)';
                 setTimeout(() => {
                     pathBtn.style.boxShadow = '';
                 }, 150); 
