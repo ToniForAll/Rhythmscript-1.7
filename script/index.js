@@ -21,14 +21,17 @@ let input1 = document.querySelector("#oneButton");
 let input2 = document.querySelector("#twoButton");
 let input3 = document.querySelector("#threeButton");
 let input4 = document.querySelector("#fourButton");
+let input5 = document.querySelector("#fiveButton");
 let tecla1storage = localStorage.getItem('teclaP1');
 let tecla2storage = localStorage.getItem('teclaP2');
 let tecla3storage = localStorage.getItem('teclaP3');
 let tecla4storage = localStorage.getItem('teclaP4');
+let tecla5storage = localStorage.getItem('teclaP5');
 let teclaP1 = '';
 let teclaP2 = '';
 let teclaP3 = '';
 let teclaP4 = '';
+let teclaP5 = '';
 
 if (tecla1storage === null) {
     localStorage.setItem('teclaP1', 'D');
@@ -44,26 +47,37 @@ if (tecla3storage === null) {
 if (tecla4storage === null) {
     localStorage.setItem('teclaP4', 'K');
 }
+if (tecla5storage === null) {
+    localStorage.setItem('teclaP5', ' ');
+}
 
 tecla1storage = localStorage.getItem('teclaP1');
 tecla2storage = localStorage.getItem('teclaP2');
 tecla3storage = localStorage.getItem('teclaP3');
 tecla4storage = localStorage.getItem('teclaP4');
+tecla5storage = localStorage.getItem('teclaP5');
 
 teclaP1 = tecla1storage;
 teclaP2 = tecla2storage;
 teclaP3 = tecla3storage;
 teclaP4 = tecla4storage;
+teclaP5 = tecla5storage;
 
 input1.textContent = teclaP1;
 input2.textContent = teclaP2;
 input3.textContent = teclaP3;
 input4.textContent = teclaP4;
+if(teclaP5 == ' '){
+    input5.textContent = 'Space';
+} else {
+    input5.textContent = teclaP5;
+}
 
 localStorage.setItem('teclaP1', teclaP1);
 localStorage.setItem('teclaP2', teclaP2);
 localStorage.setItem('teclaP3', teclaP3);
 localStorage.setItem('teclaP4', teclaP4);
+localStorage.setItem('teclaP5', teclaP5);
 
 closeButton.addEventListener('click', agregarClase);
 
@@ -160,6 +174,12 @@ document.getElementById('fourButton').addEventListener('click', function () {
     input4.style.fontSize = "15px";
     document.addEventListener('keydown', onKeyPress4);
 });
+document.getElementById('fiveButton').addEventListener('click', function () {
+    input5.textContent = 'Precione una Tecla';
+    input5.style.backgroundColor = '#6f00eed0';
+    input5.style.fontSize = "15px";
+    document.addEventListener('keydown', onKeyPress5);
+});
 
 function onKeyPress1(event) {
     teclaP1 = event.key.toUpperCase();
@@ -219,6 +239,26 @@ function onKeyPress4(event) {
     input4.style.fontSize = "30px";
 
     document.removeEventListener('keydown', onKeyPress4);
+}
+
+function onKeyPress5(event) {
+    teclaP5 = event.key.toUpperCase();
+    localStorage.setItem('teclaP5', teclaP5);
+
+    if (teclaP5 == teclaP1 || teclaP5 == teclaP2 || teclaP5 == teclaP3 || teclaP5 == teclaP4) {
+        document.getElementById('customAlert').style.display = 'block';
+    }
+
+    if(teclaP5 == ' '){
+        event.preventDefault();
+        input5.textContent = 'Space';
+    } else {
+        input5.textContent = teclaP5;
+    }
+    input5.style.backgroundColor = 'transparent';
+    input5.style.fontSize = "30px";
+
+    document.removeEventListener('keydown', onKeyPress5);
 }
 
 function closeCustomAlert() {

@@ -553,6 +553,15 @@ form {
   font-size: 30px;
 }
 
+.keyContainerLongbar button {
+  background-color: transparent;
+  color: #000000;
+  width: 20rem;
+  height: 5rem;
+  border: solid 3px #000000;
+  font-size: 30px;
+}
+
 .close {
   display: none;
 }

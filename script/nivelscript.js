@@ -51,6 +51,7 @@ function main() {
     const tecla2 = (localStorage.getItem('teclaP2') || 'f').toLowerCase();
     const tecla3 = (localStorage.getItem('teclaP3') || 'j').toLowerCase();
     const tecla4 = (localStorage.getItem('teclaP4') || 'k').toLowerCase();
+    const tecla5 = (localStorage.getItem('teclaP5') || ' ').toLowerCase();
     const valorActual = (localStorage.getItem('velocidad') || '1');
 
     let level;
@@ -65,7 +66,7 @@ function main() {
         [tecla2]: { pressed: false, button: "myButton2", sound: hit },
         [tecla3]: { pressed: false, button: "myButton3", sound: hit },
         [tecla4]: { pressed: false, button: "myButton4", sound: hit },
-        [' ']: { pressed: false, button: "myButton5", sound: hitclam }
+        [tecla5]: { pressed: false, button: "myButton5", sound: hitclam }
     };
 
     document.addEventListener("keydown", function (event) {
