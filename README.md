@@ -1,4 +1,4 @@
-![supremeVictory][https://github.com/ToniForAll/Rhythmscript-1.7/blob/master/img/supremevictory.webp]
+![alt text](https://github.com/ToniForAll/Rhythmscript-1.7/blob/master/img/supremevictory.webp "Logo Title Text 1")
 
 Un juego ritmico creado nomas pa' ganar la expo, Contribuyentes:
 
