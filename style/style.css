@@ -413,6 +413,10 @@ button.login-btn {
   width: 40rem;
 }
 
+.size4 {
+  width: 35rem;
+}
+
 .bigBtn:hover {
   transform: translateX(5rem);
 }
