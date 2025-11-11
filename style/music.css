@@ -100,7 +100,7 @@ button.login-btn {
 }
 
 .mainContainer {
-  z-index: 30;
+  z-index: 1;
   position: relative;
   top: 20%;
   left: 33%;
@@ -121,8 +121,7 @@ button.login-btn {
   initial-value: 0deg;
   inherits: false;
 }
-.mainContainer::after,
-.mainContainer::before {
+.mainContainer::after {
   content: "";
   position: absolute;
   height: 100%;
@@ -132,9 +131,6 @@ button.login-btn {
   z-index: -10;
   border-radius: 50px;
   animation: 3s spin linear infinite;
-}
-.mainContainer::before {
-  opacity: 0.5;
 }
 
 @keyframes spin {
@@ -594,3 +590,9 @@ form {
 #customAlert svg {
   margin-right: 20px;
 }
+
+
+
+
+/* ////////// editor ///// */
+
