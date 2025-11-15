@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RhythmscripT</title>
+    <link rel="stylesheet" href="style/music.css" />
+    <link rel="stylesheet" href="style/editorlevels.css" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Monoton" rel="stylesheet" />
+    <link rel="icon" href="img/icono.webp" type="image/x-icon">
+    <style>
+        #menu-cartel {
+            position: absolute;
+            top: -160px;
+            left: -80px;
+            width: 15rem;
+            height: 15rem; 
+            background-image: url('img/editor.webp');
+            background-size: contain;
+            background-repeat: no-repeat;
+            z-index: -500000;
+        }
+    </style>
+  </head>
+
+  <body id="bodyRemove">
+    <audio id="efecto4" src="sfx/HyuN - Grin.mp3"></audio>
+    <audio id="efecto1" src="sfx/fabio.mp3"></audio>
+    <audio id="efecto2" src="sfx/Terraria Calamity Mod Music - The Tale of a Cruel World - Title Theme.mp3"></audio>
+    <audio id="efecto3" src="sfx/Fire Emblem Fates  - Road Taken.mp3"></audio>
+
+    <img src="img/Frame_3.webp" class="bgImage" />
+    <div class="siteContainer">
+      <header class="header">
+        <nav>
+          <img onclick="window.location.href='index.html'" src="img/grisazul.webp"/>
+          <div class="navItems">
+            <a><button id="options">Options</button></a>
+            <a><button class="login-btn logout-btn">Create</button></a>
+          </div>
+        </nav>
+      </header>
+
+      <div id="modalOptions" class="mainModal close">
+        <div class="modal">
+          <form id="keysUpdate">
+            <div class="modalHeader">
+              <img src="img/tuercaconf.webp" style="width: 8%;" />
+  
+              <h2>Opciones</h2>
+            </div>
+            <div class="content">
+              <div class="modalContent">
+                <h2>Volumen General</h2>
+  
+                <div class="volume-control">
+                  <input type="range" min="0" max="100" value="50" id="volumeSlider" />
+                </div>
+                <p style="display: flex; flex-direction: row;">Volumen: <span id="volumeValue" style="margin-left: 15px;"> 50</span>%</p>
+                <h2>Mapeo de Teclas</h2>
+                <div class="keyContainer">
+                  <button type="button" id="oneButton">D</button>
+                  <button type="button" id="twoButton">F</button>
+                  <button type="button" id="threeButton">J</button>
+                  <button type="button" id="fourButton">K</button>
+                </div>
+                <div class="keyContainerLongbar">
+                  <button type="button" id="fiveButton">Space</button>
+                </div>
+  
+                <div id="customAlert">
+                  <p>
+                    <svg
+                      height="25"
+                      width="25"
+                      viewBox="0 0 22 22"
+                      xmlns:dc="http://purl.org/dc/elements/1.1/"
+                      xmlns:cc="http://creativecommons.org/ns#"
+                      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+                      xmlns="http://www.w3.org/2000/svg"
+                      xmlns:xlink="http://www.w3.org/1999/xlink"
+                      xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+                      xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+                      id="svg2"
+                      version="1.1"
+                      inkscape:version="0.92.1 r15371"
+                      sodipodi:docname="dark_warning.svg"
+                      fill="#000000"
+                    >
+                      <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                      <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                      <g id="SVGRepo_iconCarrier">
+                        <defs id="defs4">
+                          <linearGradient
+                            gradientUnits="userSpaceOnUse"
+                            y2="2"
+                            x2="16"
+                            y1="29.999973"
+                            x1="16"
+                            id="linearGradient4144"
+                            xlink:href="#linearGradient4155"
+                            inkscape:collect="always"
+                            gradientTransform="matrix(1.66667 0 0 -1.66667 -15.667 1064.696)"
+                          ></linearGradient>
+                          <linearGradient inkscape:collect="always" id="linearGradient4155">
+                            <stop style="stop-color:#fcd994;stop-opacity:1" offset="0" id="stop4157"></stop>
+                            <stop style="stop-color:#fff6e1;stop-opacity:1" offset="1" id="stop4159"></stop>
+                          </linearGradient>
+                        </defs>
+                        <sodipodi:namedview
+                          id="base"
+                          pagecolor="#ffffff"
+                          bordercolor="#666666"
+                          borderopacity="1.0"
+                          inkscape:pageopacity="0.0"
+                          inkscape:pageshadow="2"
+                          inkscape:zoom="22.4"
+                          inkscape:cx="-8.3436117"
+                          inkscape:cy="10.155389"
+                          inkscape:document-units="px"
+                          inkscape:current-layer="layer1"
+                          showgrid="true"
+                          inkscape:showpageshadow="false"
+                          borderlayer="true"
+                          inkscape:window-width="1884"
+                          inkscape:window-height="1051"
+                          inkscape:window-x="0"
+                          inkscape:window-y="0"
+                          inkscape:window-maximized="1"
+                          units="px"
+                        >
+                          <sodipodi:guide position="2,20.000017" orientation="18,0" id="guide4085" inkscape:locked="false"></sodipodi:guide>
+                          <sodipodi:guide position="2,2.0000174" orientation="0,18" id="guide4087" inkscape:locked="false"></sodipodi:guide>
+                          <sodipodi:guide position="20,2.0000174" orientation="-18,0" id="guide4089" inkscape:locked="false"></sodipodi:guide>
+                          <sodipodi:guide position="20,20.000017" orientation="0,-18" id="guide4091" inkscape:locked="false"></sodipodi:guide>
+                          <sodipodi:guide position="3,19.000017" orientation="16,0" id="guide4093" inkscape:locked="false"></sodipodi:guide>
+                          <sodipodi:guide position="3,3.0000174" orientation="0,16" id="guide4095" inkscape:locked="false"></sodipodi:guide>
+                          <sodipodi:guide position="19,3.0000174" orientation="-16,0" id="guide4097" inkscape:locked="false"></sodipodi:guide>
+                          <sodipodi:guide position="19,19.000017" orientation="0,-16" id="guide4099" inkscape:locked="false"></sodipodi:guide> <inkscape:grid type="xygrid" id="grid4101"></inkscape:grid>
+                        </sodipodi:namedview>
+                        <metadata id="metadata7">
+                          <rdf:rdf>
+                            <cc:work>
+                              <dc:format>image/svg+xml</dc:format> <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"></dc:type> <dc:title></dc:title>
+                              <dc:creator>
+                                <cc:agent> <dc:title>Timothée Giet</dc:title> </cc:agent>
+                              </dc:creator>
+                              <dc:date>2017</dc:date> <cc:license rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/"></cc:license>
+                            </cc:work>
+                            <cc:license rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
+                              <cc:permits rdf:resource="http://creativecommons.org/ns#Reproduction"></cc:permits> <cc:permits rdf:resource="http://creativecommons.org/ns#Distribution"></cc:permits>
+                              <cc:requires rdf:resource="http://creativecommons.org/ns#Notice"></cc:requires> <cc:requires rdf:resource="http://creativecommons.org/ns#Attribution"></cc:requires>
+                              <cc:permits rdf:resource="http://creativecommons.org/ns#DerivativeWorks"></cc:permits> <cc:requires rdf:resource="http://creativecommons.org/ns#ShareAlike"></cc:requires>
+                            </cc:license>
+                          </rdf:rdf>
+                        </metadata>
+                        <g inkscape:label="Capa 1" inkscape:groupmode="layer" id="layer1" transform="translate(0 -1030.362)">
+                          <path
+                            style="fill:#ffc35a;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+                            d="m11 1032.362-10 18h20zm0 2 8 15H3z"
+                            id="path839"
+                            inkscape:connector-curvature="0"
+                            sodipodi:nodetypes="cccccccc"
+                          ></path>
+                          <path style="fill:#ffffff;fill-opacity:.94117647;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="M10 1046.362h2v2h-2z" id="path844" inkscape:connector-curvature="0"></path>
+                          <path
+                            style="fill:#ffffff;fill-opacity:.94117647;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+                            d="M10 1045.362h2v-6h-2z"
+                            id="path846"
+                            inkscape:connector-curvature="0"
+                            sodipodi:nodetypes="ccccc"
+                          ></path>
+                        </g>
+                      </g></svg
+                    >Advertencia!
+                  </p>
+                  <p>Tecla ya asignada.</p>
+                  <button type="button" class="closeCustomAlert">Cerrar</button>
+                </div>
+              </div>
+              <div class="modalContent2">
+                <div class="gameTest">
+                  <div class="circle"></div>
+                  <div class="path path1">
+                    <div class="column">
+                      <button type="button"></button>
+                    </div>
+                  </div>
+                </div>
+                <div class="velocityInput">
+                  <button type="button" id="decrementar" style="border-radius: 20px 0 0 20px;"> < </button>
+                  <label id="velocity">10</label>
+                  <button type="button" id="incrementar" style="border-radius: 0 20px 20px 0;"> > </button>
+                </div>
+              </div>
+            </div>
+            <div class="modalFooter">
+              <img src="img/flecha.webp" id="buttonClose" class="modalClose" type="button" style="width: 10%; filter: drop-shadow(0px 0px 10px #6E00EE); cursor: pointer;" />
+            </div>
+          </form>
+        </div>
+      </div>
+
+        <button class="music-play-btn sound-wave">
+            <span class="wave"></span>
+            <svg class="play-icon" viewBox="0 0 24 24">
+                <path fill="currentColor" d="M8 5v14l11-7z"/>
+            </svg>
+        </button>       
+
+      <div class="notesEditor">
+        <div class="notesEditor-columns">
+            <div class="column-level">
+                <div class="line" data-line="1">
+                    <button class="line-button">+</button>
+                </div>
+                <div class="line" data-line="2">
+                    <button class="line-button">+</button>
+                </div>
+                <div class="line" data-line="3">
+                    <button class="line-button">+</button>
+                </div>
+                <div class="line" data-line="4">
+                    <button class="line-button">+</button>
+                </div>
+                <div class="line" data-line="5">
+                    <button class="line-button">+</button>
+                </div>
+                <div class="line" data-line="6">
+                    <button class="line-button">+</button>
+                </div>
+            </div>
+            <div class="column-level">
+                <div class="line" data-line="1">
+                    <button class="line-button">+</button>
+                </div>
+                <div class="line" data-line="2">
+                    <button class="line-button">+</button>
+                </div>
+                <div class="line" data-line="3">
+                    <button class="line-button">+</button>
+                </div>
+                <div class="line" data-line="4">
+                    <button class="line-button">+</button>
+                </div>
+                <div class="line" data-line="5">
+                    <button class="line-button">+</button>
+                </div>
+                <div class="line" data-line="6">
+                    <button class="line-button">+</button>
+                </div>
+            </div>
+            <div class="column-level">
+                <div class="line" data-line="1">
+                    <button class="line-button">+</button>
+                </div>
+                <div class="line" data-line="2">
+                    <button class="line-button">+</button>
+                </div>
+                <div class="line" data-line="3">
+                    <button class="line-button">+</button>
+                </div>
+                <div class="line" data-line="4">
+                    <button class="line-button">+</button>
+                </div>
+                <div class="line" data-line="5">
+                    <button class="line-button">+</button>
+                </div>
+                <div class="line" data-line="6">
+                    <button class="line-button">+</button>
+                </div>
+            </div>
+            <div class="column-level">
+                <div class="line" data-line="1">
+                    <button class="line-button">+</button>
+                </div>
+                <div class="line" data-line="2">
+                    <button class="line-button">+</button>
+                </div>
+                <div class="line" data-line="3">
+                    <button class="line-button">+</button>
+                </div>
+                <div class="line" data-line="4">
+                    <button class="line-button">+</button>
+                </div>
+                <div class="line" data-line="5">
+                    <button class="line-button">+</button>
+                </div>
+                <div class="line" data-line="6">
+                    <button class="line-button">+</button>
+                </div>
+            </div>
+        </div>
+    </div>
+      
+
+      <div class="iconos">
+        <a href="#" class="icon" id="instagram"></a>
+        <a href="#" class="icon" id="x"></a>
+        <a href="#" class="icon" id="facebook"></a>
+      </div>
+    </div>
+
+    <img src="img/Nota1.webp" class="nota nota-1">
+    <img src="img/Nota2.webp" class="nota nota-2">
+    <img src="img/Nota3.webp" class="nota nota-3">
+    <img src="img/Nota4.webp" class="nota nota-4">
+
+    <script src="script/musicEditor.js"></script>
+  </body>
+</html>

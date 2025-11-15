@@ -1,0 +1,111 @@
+.siteContainer {
+  align-items: center;
+}
+
+.header {
+    border-bottom: 2px solid #5a00d8;
+    height: 13%;
+}
+
+.music-play-btn.sound-wave {
+    width: 88px;
+    height: 88px;
+    background: linear-gradient(145deg, #6a03d7, #10229c);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    position: absolute;
+    top:  20%;
+    left: 28%;
+}
+
+.wave {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+    opacity: 0;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1.5);
+        opacity: 0;
+    }
+}
+
+.music-play-btn:hover .play-icon{
+    width: 64px;
+    height: 64px;
+}
+
+.play-icon {
+    width: 50px;
+    height: 50px;
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s ease;
+}
+
+.notesEditor {
+    display: flex;
+    flex-direction: row;
+    width: 30%;
+    height: 87%;
+    background-color: rgba(0, 0, 0, 0.548);
+}
+
+.notesEditor-columns {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    width: 100%;
+}
+
+.column-level {
+    border-left: 1px solid #eeeeee;
+    border-right: 1px solid #eeeeee;
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.line {
+    height: 130px;
+    border-bottom: 1px solid #eeeeee34;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+}
+
+.line-button {
+    background: linear-gradient(145deg, #6a03d7, #10229c);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    cursor: pointer;
+    font-size: 16px;
+    display: none; 
+}
+
+.line:hover .line-button {
+    display: block;
+}
+
+.line:first-child {
+    border-bottom: none;
+}
