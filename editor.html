@@ -204,13 +204,74 @@
         </div>
       </div>
 
-        <button class="music-play-btn sound-wave">
+      <div class="modal-overlay" id="modalOverlay" onclick="closeYouTubeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3 class="modal-title">🎵 Search YouTube Music</h3>
+                <button class="modal-close-btn" onclick="closeYouTubeModal()"><svg viewBox="0 0 25 25" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" fill="#000000" stroke="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>cross</title> <desc>Created with Sketch Beta.</desc> <defs> </defs> <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage"> <g id="Icon-Set-Filled" sketch:type="MSLayerGroup" transform="translate(-469.000000, -1041.000000)" fill="#ffffff"> <path d="M487.148,1053.48 L492.813,1047.82 C494.376,1046.26 494.376,1043.72 492.813,1042.16 C491.248,1040.59 488.712,1040.59 487.148,1042.16 L481.484,1047.82 L475.82,1042.16 C474.257,1040.59 471.721,1040.59 470.156,1042.16 C468.593,1043.72 468.593,1046.26 470.156,1047.82 L475.82,1053.48 L470.156,1059.15 C468.593,1060.71 468.593,1063.25 470.156,1064.81 C471.721,1066.38 474.257,1066.38 475.82,1064.81 L481.484,1059.15 L487.148,1064.81 C488.712,1066.38 491.248,1066.38 492.813,1064.81 C494.376,1063.25 494.376,1060.71 492.813,1059.15 L487.148,1053.48" id="cross" sketch:type="MSShapeGroup"> </path> </g> </g> </g></svg></button>
+            </div>
+            
+            <div class="modal-body">
+                <!-- Formulario de búsqueda -->
+                <div class="search-form">
+                    <input 
+                        type="text" 
+                        id="youtubeUrlInput" 
+                        placeholder="Paste the YouTube URL here..."
+                        class="url-search-input"
+                    >
+                    <button onclick="searchYouTubeVideo()" class="search-action-btn">
+                        🔍 Search Video
+                    </button>
+                </div>
+                
+                <!-- Vista previa del video -->
+                <div class="video-preview-container" id="videoPreview" style="display: none;">
+                    <h4 class="preview-title">Video preview</h4>
+                    <div class="video-preview">
+                        <div class="preview-frame">
+                            <iframe 
+                                id="previewIframe"
+                                width="100%" 
+                                height="200" 
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                        <div class="video-info">
+                            <div class="video-id" id="videoId">ID: </div>
+                        </div>
+                        <div class="preview-controls">
+                            <button onclick="saveToStorage()" class="storage-add-btn">
+                                💾 Apply this song
+                            </button>
+                            <button onclick="playPreview()" class="preview-play-btn">
+                                ▶ Preview
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+
+      <div class="buttonsMenuEditor">
+        <button class="music-play-btn">
             <span class="wave"></span>
             <svg class="play-icon" viewBox="0 0 24 24">
                 <path fill="currentColor" d="M8 5v14l11-7z"/>
             </svg>
-        </button>       
+        </button>
+        <button class="music-play-btn" onclick="openYouTubeModal()" style="width: 48px; height: 48px;">
+            <span class="wave"></span>
+            <svg class="gear-icon" viewBox="0 0 24 24" width="24" height="24">
+              <path fill="currentColor" d="M12 15.5A3.5 3.5 0 0 1 8.5 12A3.5 3.5 0 0 1 12 8.5A3.5 3.5 0 0 1 15.5 12A3.5 3.5 0 0 1 12 15.5M19.43 12.97C19.47 12.65 19.5 12.33 19.5 12C19.5 11.67 19.47 11.34 19.43 11L21.54 9.37C21.73 9.22 21.78 8.95 21.66 8.73L19.66 5.27C19.54 5.05 19.27 4.96 19.05 5.05L16.56 6.05C16.04 5.66 15.5 5.32 14.87 5.07L14.5 2.42C14.46 2.18 14.25 2 14 2H10C9.75 2 9.54 2.18 9.5 2.42L9.13 5.07C8.5 5.32 7.96 5.66 7.44 6.05L4.95 5.05C4.73 4.96 4.46 5.05 4.34 5.27L2.34 8.73C2.22 8.95 2.27 9.22 2.46 9.37L4.57 11C4.53 11.34 4.5 11.67 4.5 12C4.5 12.33 4.53 12.65 4.57 12.97L2.46 14.63C2.27 14.78 2.22 15.05 2.34 15.27L4.34 18.73C4.46 18.95 4.73 19.03 4.95 18.95L7.44 17.94C7.96 18.34 8.5 18.68 9.13 18.93L9.5 21.58C9.54 21.82 9.75 22 10 22H14C14.25 22 14.46 21.82 14.5 21.58L14.87 18.93C15.5 18.68 16.04 18.34 16.56 17.94L19.05 18.95C19.27 19.03 19.54 18.95 19.66 18.73L21.66 15.27C21.78 15.05 21.73 14.78 21.54 14.63L19.43 12.97Z"/>
+            </svg>
+        </button>         
+      </div>
 
+        
       <div class="notesEditor">
         <div class="notesEditor-columns">
             <div class="column-level">

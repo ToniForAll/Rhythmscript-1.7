@@ -364,3 +364,166 @@ document.addEventListener('DOMContentLoaded', function() {
         bodyRemove.appendChild(nuevoDiv);
     }
 });
+
+
+let currentVideoData = null;
+let audioPlayer = null;
+let isPlaying = false;
+
+// Funcion para extraer ID de YouTube
+function getYouTubeId(url) {
+    const patterns = [
+        /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/,
+        /youtube\.com\/embed\/([^?]+)/,
+        /youtube\.com\/v\/([^?]+)/
+    ];
+    
+    for (const pattern of patterns) {
+        const match = url.match(pattern);
+        if (match) return match[1];
+    }
+    return null;
+}
+
+function searchYouTubeVideo() {
+    const urlInput = document.getElementById('youtubeUrlInput');
+    const url = urlInput.value.trim();
+
+     if (!url) {
+        return;
+    }
+    
+    const videoId = getYouTubeId(url);
+
+    if (!videoId) {
+        return;
+    }
+    
+    currentVideoData = {
+        id: videoId,
+        url: url,
+        title: `Video de YouTube (${videoId})`,
+        added: new Date().toISOString()
+    };
+    
+    showVideoPreview(videoId);
+}
+
+function showVideoPreview(videoId) {
+    const previewContainer = document.getElementById('videoPreview');
+    const iframe = document.getElementById('previewIframe');
+    const videoTitle = document.getElementById('videoTitle');
+    const videoIdElement = document.getElementById('videoId');
+    
+    iframe.src = `https://www.youtube.com/embed/${videoId}?rel=0`;
+    
+    videoIdElement.textContent = `ID: ${videoId}`;
+    
+    previewContainer.style.display = 'block';
+    
+    const playButton = document.querySelector('.preview-play-btn');
+    playButton.classList.remove('playing');
+    playButton.textContent = '▶ Preview';
+    isPlaying = false;
+    
+    if (audioPlayer) {
+        audioPlayer.remove();
+        audioPlayer = null;
+    }
+}
+
+function saveToStorage() { 
+    const savedVideos = JSON.parse(localStorage.getItem('youtubeVideos') || '[]');
+    const exists = savedVideos.some(video => video.id === currentVideoData.id);
+
+    savedVideos.push(currentVideoData);
+    localStorage.setItem('youtubeVideos', JSON.stringify(savedVideos));
+
+    setTimeout(() => {
+        closeYouTubeModal();
+    }, 1500);
+}
+
+// Funcion para reproducir audio
+function playPreview() {
+    const playButton = document.querySelector('.preview-play-btn');
+    
+    if (isPlaying) {
+        if (audioPlayer) {
+            audioPlayer.remove();
+            audioPlayer = null;
+        }
+        playButton.classList.remove('playing');
+        playButton.textContent = '▶ Preview';
+        isPlaying = false;
+    } else {
+        playButton.classList.add('playing');
+        playButton.textContent = '⏸ Stop Preview';
+        isPlaying = true;
+        
+        audioPlayer = document.createElement('div');
+        audioPlayer.innerHTML = `
+            <iframe 
+                width="0" 
+                height="0" 
+                src="https://www.youtube.com/embed/${currentVideoData.id}?autoplay=1&controls=0&modestbranding=1"
+                frameborder="0" 
+                allow="autoplay">
+            </iframe>
+        `;
+        document.body.appendChild(audioPlayer);
+        
+        setTimeout(() => {
+            if (isPlaying) {
+                playButton.classList.remove('playing');
+                playButton.textContent = '▶ Reproducir Audio';
+                isPlaying = false;
+                if (audioPlayer) {
+                    audioPlayer.remove();
+                    audioPlayer = null;
+                }
+            }
+        }, 30000);
+    }
+}
+
+document.getElementById('youtubeUrlInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        searchYouTubeVideo();
+    }
+});
+
+function openYouTubeModal() {
+    const modal = document.getElementById('modalOverlay');
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden'; 
+
+    clearModalContent();
+}
+
+function closeYouTubeModal() {
+    const modal = document.getElementById('modalOverlay');
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+    
+    clearModalContent();
+    
+    if (audioPlayer) {
+        audioPlayer.remove();
+        audioPlayer = null;
+    }
+    isPlaying = false;
+}
+
+function clearModalContent() {
+    document.getElementById('videoPreview').style.display = 'none';
+    document.getElementById('youtubeUrlInput').value = '';
+    currentVideoData = null;
+}
+
+// Cerrar modal con tecla escape
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeYouTubeModal();
+    }
+});
