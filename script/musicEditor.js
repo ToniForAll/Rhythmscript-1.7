@@ -369,6 +369,7 @@ document.addEventListener('DOMContentLoaded', function() {
 let currentVideoData = null;
 let audioPlayer = null;
 let isPlaying = false;
+let currentVideoId = null;
 
 // Funcion para extraer ID de YouTube
 function getYouTubeId(url) {
@@ -432,16 +433,124 @@ function showVideoPreview(videoId) {
     }
 }
 
-function saveToStorage() { 
+function saveToStorage() {
+    if (!currentVideoData) {
+        return;
+    }
+    
     const savedVideos = JSON.parse(localStorage.getItem('youtubeVideos') || '[]');
-    const exists = savedVideos.some(video => video.id === currentVideoData.id);
-
-    savedVideos.push(currentVideoData);
+    const existsIndex = savedVideos.findIndex(video => video.id === currentVideoData.id);
+    
+    if (existsIndex !== -1) {
+        savedVideos[existsIndex] = currentVideoData;
+    } else {
+        savedVideos.push(currentVideoData);
+    }
+    
     localStorage.setItem('youtubeVideos', JSON.stringify(savedVideos));
-
+    
+    loadAndPlayMusic(currentVideoData.id);
+    
     setTimeout(() => {
         closeYouTubeModal();
-    }, 1500);
+    }, 1500);  
+}
+
+function loadAndPlayMusic(videoId) {
+    if (audioPlayer) {
+        audioPlayer.remove();
+        audioPlayer = null;
+    }
+    
+    currentVideoId = videoId;
+    
+    updatePlayButtonState(false);
+    
+    console.log('Música cargada:', videoId);
+}
+
+// Función para el botón de play/pause principal
+function toggleMusicPlayback() {
+    if (!currentVideoId) {
+        return;
+    }
+    
+    if (isPlaying) {
+        pauseMusic();
+    } else {
+        playMusic();
+    }
+}
+
+function playMusic() {
+    if (!currentVideoId) return;
+    
+    if (audioPlayer) {
+        audioPlayer.remove();
+    }
+    
+    audioPlayer = document.createElement('div');
+    audioPlayer.innerHTML = `
+        <iframe 
+            width="0" 
+            height="0" 
+            src="https://www.youtube.com/embed/${currentVideoId}?autoplay=1&controls=0&modestbranding=1&playsinline=1"
+            frameborder="0" 
+            allow="autoplay; encrypted-media"
+            allowfullscreen>
+        </iframe>
+    `;
+    document.body.appendChild(audioPlayer);
+    
+    isPlaying = true;
+    updatePlayButtonState(true);
+    
+    console.log('Reproduciendo:', currentVideoId);
+}
+
+function pauseMusic() {
+    if (audioPlayer) {
+        audioPlayer.remove();
+        audioPlayer = null;
+    }
+    
+    isPlaying = false;
+    updatePlayButtonState(false);
+    
+    console.log('Música pausada');
+}
+
+function updatePlayButtonState(playing) {
+    const playButton = document.querySelector('.music-play-btn');
+    const playIcon = playButton.querySelector('.play-icon');
+    const wave = playButton.querySelector('.wave');
+    
+    if (playing) {
+        playButton.classList.add('playing');
+        playIcon.innerHTML = '<path fill="currentColor" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>'; // Ícono de pausa
+        wave.style.animation = 'pulse 1s infinite';
+    } else {
+        playButton.classList.remove('playing');
+        playIcon.innerHTML = '<path fill="currentColor" d="M8 5v14l11-7z"/>'; // Ícono de play
+        wave.style.animation = 'none';
+    }
+}
+
+window.addEventListener('load', function() {
+    loadLastPlayedSong();
+});
+
+function loadLastPlayedSong() {
+    try {
+        const savedVideos = JSON.parse(localStorage.getItem('youtubeVideos') || '[]');
+        if (savedVideos.length > 0) {
+            const lastVideo = savedVideos[savedVideos.length - 1];
+            loadAndPlayMusic(lastVideo.id);
+            console.log('Última canción cargada:', lastVideo.id);
+        }
+    } catch (error) {
+        console.error('Error cargando última canción:', error);
+    }
 }
 
 // Funcion para reproducir audio
@@ -507,12 +616,6 @@ function closeYouTubeModal() {
     document.body.style.overflow = '';
     
     clearModalContent();
-    
-    if (audioPlayer) {
-        audioPlayer.remove();
-        audioPlayer = null;
-    }
-    isPlaying = false;
 }
 
 function clearModalContent() {

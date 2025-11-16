@@ -30,19 +30,69 @@
     color: white;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
-.music-play-btn:hover{
+/* Estado de reproducción */
+.music-play-btn.playing {
+    background: linear-gradient(145deg, #ff6b6b, #ee5a52);
+    box-shadow: 0 4px 8px rgba(255, 107, 107, 0.4);
+}
+
+.music-play-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(102, 126, 234, 0.6);
 }
 
+.music-play-btn.playing:hover {
+    box-shadow: 0 6px 16px rgba(255, 107, 107, 0.6);
+}
+
+.music-play-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Ícono */
 .play-icon {
     width: 50px;
     height: 50px;
     position: relative;
     z-index: 1;
     transition: all 0.3s ease;
+    margin-left: 4px; /* Para centrar visualmente el triángulo de play */
+}
+
+/* Efecto de brillo al hacer hover */
+.music-play-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.2), transparent);
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.music-play-btn:hover::before {
+    opacity: 1;
+}
+
+/* Estado deshabilitado */
+.music-play-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+}
+
+.music-play-btn:disabled:hover {
+    transform: none !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
 }
 
 .notesEditor {
