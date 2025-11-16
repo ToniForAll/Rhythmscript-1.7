@@ -34,19 +34,9 @@
     overflow: hidden;
 }
 
-/* Estado de reproducción */
-.music-play-btn.playing {
-    background: linear-gradient(145deg, #ff6b6b, #ee5a52);
-    box-shadow: 0 4px 8px rgba(255, 107, 107, 0.4);
-}
-
 .music-play-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(102, 126, 234, 0.6);
-}
-
-.music-play-btn.playing:hover {
-    box-shadow: 0 6px 16px rgba(255, 107, 107, 0.6);
 }
 
 .music-play-btn:active {
@@ -54,17 +44,15 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-/* Ícono */
 .play-icon {
     width: 50px;
     height: 50px;
     position: relative;
     z-index: 1;
     transition: all 0.3s ease;
-    margin-left: 4px; /* Para centrar visualmente el triángulo de play */
+    margin-left: 4px; 
 }
 
-/* Efecto de brillo al hacer hover */
 .music-play-btn::before {
     content: '';
     position: absolute;
@@ -82,7 +70,6 @@
     opacity: 1;
 }
 
-/* Estado deshabilitado */
 .music-play-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
