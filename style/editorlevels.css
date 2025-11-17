@@ -88,13 +88,33 @@
     width: 30%;
     height: 87%;
     background-color: rgba(0, 0, 0, 0.548);
+    position: relative;
 }
 
 .notesEditor-columns {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     width: 100%;
+    position: relative;
+    min-height: min-content;
 }
+
+.notesEditor-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    position: relative;
+}
+
+.notesEditor-container::-webkit-scrollbar {
+    display: none; 
+}
+
 
 .column-level {
     border-left: 1px solid #eeeeee;
@@ -133,6 +153,51 @@
     border-bottom: none;
 }
 
+/* linea de progreso */
+
+.progress-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #ff6b6b, #6a03d7, #10229c);
+    z-index: 10;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+    top: 100%;
+    bottom: auto;
+}
+
+
+.progress-line::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: 0;
+    right: 0;
+    height: 7px;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 107, 107, 0.3), 
+        rgba(106, 3, 215, 0.3), 
+        rgba(16, 34, 156, 0.3), 
+        transparent
+    );
+    filter: blur(3px);
+}
+
+.line.active {
+    background-color: rgba(255, 107, 107, 0.1);
+    transition: background-color 0.2s ease;
+}
+
+.line-button.highlight {
+    background: linear-gradient(145deg, #ff6b6b, #ee5a52);
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(255, 107, 107, 0.6);
+}
 
 /* ////////// youtube form video */
 

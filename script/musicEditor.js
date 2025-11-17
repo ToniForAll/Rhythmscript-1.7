@@ -366,12 +366,17 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
+// aqui va tooooooooooooooooooooooooooooooodo pal editor
+
 let currentVideoData = null;
 let audioPlayer = null;
 let isPlaying = false;
 let currentVideoId = null;
+let progressLine = null;
+let animationId = null;
+let startTime = null;
+const animationDuration = 5000;
 
-// Funcion para extraer ID de YouTube
 function getYouTubeId(url) {
     const patterns = [
         /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/,
@@ -437,7 +442,6 @@ function saveToStorage() {
     if (!currentVideoData) {
         return;
     }
-    
     const savedVideos = JSON.parse(localStorage.getItem('youtubeVideos') || '[]');
     const existsIndex = savedVideos.findIndex(video => video.id === currentVideoData.id);
     
@@ -449,11 +453,17 @@ function saveToStorage() {
     
     localStorage.setItem('youtubeVideos', JSON.stringify(savedVideos));
     
+    resetProgressLine();
+    if (isPlaying) {
+        stopProgressLine();
+        startProgressLine();
+    }
+    
     loadAndPlayMusic(currentVideoData.id);
     
     setTimeout(() => {
         closeYouTubeModal();
-    }, 1500);  
+    }, 1500);
 }
 
 function loadAndPlayMusic(videoId) {
@@ -469,7 +479,6 @@ function loadAndPlayMusic(videoId) {
     console.log('Música cargada:', videoId);
 }
 
-// Función para el botón de play/pause principal
 function toggleMusicPlayback() {
     if (!currentVideoId) {
         return;
@@ -477,8 +486,10 @@ function toggleMusicPlayback() {
     
     if (isPlaying) {
         pauseMusic();
+        stopProgressLine();
     } else {
         playMusic();
+        startProgressLine();
     }
 }
 
@@ -527,12 +538,13 @@ function updatePlayButtonState(playing) {
     
     if (playing) {
         playButton.classList.add('playing');
-        playIcon.innerHTML = '<path fill="currentColor" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>'; // Ícono de pausa
+        playIcon.innerHTML = '<path fill="currentColor" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
         wave.style.animation = 'pulse 1s infinite';
     } else {
         playButton.classList.remove('playing');
-        playIcon.innerHTML = '<path fill="currentColor" d="M8 5v14l11-7z"/>'; // Ícono de play
+        playIcon.innerHTML = '<path fill="currentColor" d="M8 5v14l11-7z"/>';
         wave.style.animation = 'none';
+        resetProgressLine();
     }
 }
 
@@ -624,9 +636,72 @@ function clearModalContent() {
     currentVideoData = null;
 }
 
-// Cerrar modal con tecla escape
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         closeYouTubeModal();
     }
+});
+
+function startProgressLine() {
+    stopProgressLine();
+
+    const columnsContainer = document.querySelector('.notesEditor-columns');
+    
+    if (!progressLine) {
+        progressLine = document.createElement('div');
+        progressLine.className = 'progress-line';
+        columnsContainer.appendChild(progressLine);
+    }
+    
+    progressLine.style.top = '100%';
+    progressLine.style.bottom = 'auto';
+    progressLine.style.opacity = '1';
+    progressLine.style.position = 'absolute';
+    
+    startTime = Date.now();
+    
+    function animate() {
+        if (!isPlaying) return;
+        
+        const elapsed = Date.now() - startTime;
+        const progress = (elapsed % animationDuration) / animationDuration;
+        
+        const topPosition = 100 - (progress * 100);
+        progressLine.style.top = `${topPosition}%`;
+        
+        animationId = requestAnimationFrame(animate);
+    }
+    
+    animate();
+}
+
+function stopProgressLine() {
+    if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+    }
+    
+    if (progressLine) {
+        progressLine.style.opacity = '0';
+    }
+}
+
+function resetProgressLine() {
+    if (progressLine) {
+        progressLine.style.top = '100%';
+        progressLine.style.bottom = 'auto';
+    }
+}
+
+function scrollToBottom() {
+    const container = document.querySelector('.notesEditor-container');
+    if (container) {
+        container.scrollTop = container.scrollHeight;
+    }
+}
+
+window.addEventListener('load', function() {
+    scrollToBottom();
+    
+    loadLastPlayedSong();
 });
