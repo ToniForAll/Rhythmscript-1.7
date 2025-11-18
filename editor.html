@@ -27,11 +27,6 @@
   </head>
 
   <body id="bodyRemove">
-    <audio id="efecto4" src="sfx/HyuN - Grin.mp3"></audio>
-    <audio id="efecto1" src="sfx/fabio.mp3"></audio>
-    <audio id="efecto2" src="sfx/Terraria Calamity Mod Music - The Tale of a Cruel World - Title Theme.mp3"></audio>
-    <audio id="efecto3" src="sfx/Fire Emblem Fates  - Road Taken.mp3"></audio>
-
     <img src="img/Frame_3.webp" class="bgImage" />
     <div class="siteContainer">
       <header class="header">
@@ -39,7 +34,7 @@
           <img onclick="window.location.href='index.html'" src="img/grisazul.webp"/>
           <div class="navItems">
             <a><button id="options">Options</button></a>
-            <a><button class="login-btn logout-btn">Create</button></a>
+            <a><button class="login-btn logout-btn" onclick="openCreateForm()">Create</button></a>
           </div>
         </nav>
       </header>
@@ -204,6 +199,7 @@
         </div>
       </div>
 
+      <!-- formulario para buscar la musicaaaaaaaaaaaaaa -->
       <div class="modal-overlay" id="modalOverlay" onclick="closeYouTubeModal()">
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-header">
@@ -212,7 +208,6 @@
             </div>
             
             <div class="modal-body">
-                <!-- Formulario de búsqueda -->
                 <div class="search-form">
                     <input 
                         type="text" 
@@ -225,7 +220,6 @@
                     </button>
                 </div>
                 
-                <!-- Vista previa del video -->
                 <div class="video-preview-container" id="videoPreview" style="display: none;">
                     <h4 class="preview-title">Video preview</h4>
                     <div class="video-preview">
@@ -256,7 +250,70 @@
         </div>
       </div>
 
-      <div class="buttonsMenuEditor">
+      <!-- formulario para crear musicaaa -->
+      <div class="create-modal-overlay" id="createModal" style="display: none;">
+          <div class="create-modal-content">
+              <div class="create-modal-header">
+                  <h3>🎵 Crear Nuevo Nivel</h3>
+                  <button class="modal-close-btn" onclick="closeCreateForm()">×</button>
+              </div>
+              
+              <div class="create-modal-body">
+                  <form id="levelForm">
+                      <div class="form-group">
+                          <label for="levelName">Nombre del Nivel:</label>
+                          <input type="text" id="levelName" placeholder="Ej: Rhythm Master" required>
+                      </div>
+
+                      <div class="form-group">
+                          <label for="creatorName">Nombre del Creador:</label>
+                          <input type="text" id="creatorName" placeholder="Tu nombre (máx. 10 letras)" maxlength="10" required>
+                      </div>
+                      
+                      <div class="form-group">
+                          <label>Dificultad:</label>
+                          <select id="levelDifficulty" required>
+                              <option value="">Seleccionar dificultad</option>
+                              <option value="Easy">Fácil</option>
+                              <option value="Normal">Normal</option>
+                              <option value="Hard">Difícil</option>
+                              <option value="Expert">Experto</option>
+                              <option value="Master">Maestro</option>
+                          </select>
+                      </div>
+                      
+                      <div class="form-group">
+                          <label>Estrellas:</label>
+                          <div class="stars-rating" id="starsContainer">
+                              <span class="star" data-value="1">★</span>
+                              <span class="star" data-value="2">★</span>
+                              <span class="star" data-value="3">★</span>
+                              <span class="star" data-value="4">★</span>
+                              <span class="star" data-value="5">★</span>
+                          </div>
+                          <input type="hidden" id="selectedStars" value="0" required>
+                      </div>
+                      
+                      <div class="form-group">
+                          <label>Canción Actual:</label>
+                          <div class="song-url-display" id="songUrlDisplay">
+                              Cargando...
+                          </div>
+                          <small style="color: #888; font-size: 12px;">
+                              Usando la canción actualmente cargada en el reproductor
+                          </small>
+                      </div>
+
+                      <div class="form-buttons">
+                          <button type="button" class="cancel-btn" onclick="closeCreateForm()">Cancelar</button>
+                          <button type="submit" class="confirm-btn">Crear Nivel</button>
+                      </div>
+                  </form>
+              </div>
+          </div>
+      </div>
+
+      <div class="buttonsMenuEditorLeft">
         <button class="music-play-btn" onclick="toggleMusicPlayback()">
             <span class="wave"></span>
             <svg class="play-icon" viewBox="0 0 24 24">
@@ -271,141 +328,120 @@
         </button>         
       </div>
 
+      <div class="buttonsMenuEditorRight">
+        <button class="music-play-btn" onclick="addNewLineToAllColumns()" style="width: 68px; height: 68px;">
+            <span class="wave"></span>
+            <svg viewBox="0 0 32 32" version="1.1" width="32" height="32" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" fill="#000000">
+              <g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>plus</title> <desc>Created with Sketch Beta.</desc> <defs> </defs> <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage"> <g id="Icon-Set-Filled" sketch:type="MSLayerGroup" transform="translate(-362.000000, -1037.000000)" fill="#ffffff"> <path d="M390,1049 L382,1049 L382,1041 C382,1038.79 380.209,1037 378,1037 C375.791,1037 374,1038.79 374,1041 L374,1049 L366,1049 C363.791,1049 362,1050.79 362,1053 C362,1055.21 363.791,1057 366,1057 L374,1057 L374,1065 C374,1067.21 375.791,1069 378,1069 C380.209,1069 382,1067.21 382,1065 L382,1057 L390,1057 C392.209,1057 394,1055.21 394,1053 C394,1050.79 392.209,1049 390,1049" id="plus" sketch:type="MSShapeGroup"> </path> </g> </g> </g>
+            </svg>
+        </button> 
+      </div>
         
       <div class="notesEditor">
         <div class="notesEditor-container">
-          <div class="notesEditor-columns">
-            <div class="column-level">
-                <div class="line" data-line="1">
-                    <button class="line-button">+</button>
+            <div class="notesEditor-columns">
+                <!-- Columna 1 -->
+                <div class="column-level">
+                    <div class="line" data-line="1">
+                        <button class="line-button" onclick="toggleCircle(this.parentElement, 0, 1)">+</button>
+                    </div>
+                    <div class="line" data-line="2">
+                        <button class="line-button" onclick="toggleCircle(this.parentElement, 0, 2)">+</button>
+                    </div>
+                    <div class="line" data-line="3">
+                        <button class="line-button" onclick="toggleCircle(this.parentElement, 0, 3)">+</button>
+                    </div>
+                    <div class="line" data-line="4">
+                        <button class="line-button" onclick="toggleCircle(this.parentElement, 0, 4)">+</button>
+                    </div>
+                    <div class="line" data-line="5">
+                        <button class="line-button" onclick="toggleCircle(this.parentElement, 0, 5)">+</button>
+                    </div>
+                    <div class="line" data-line="6">
+                        <button class="line-button" onclick="toggleCircle(this.parentElement, 0, 6)">+</button>
+                    </div>
+                    <div class="line" data-line="7">
+                        <button class="line-button" onclick="toggleCircle(this.parentElement, 0, 7)">+</button>
+                    </div>
                 </div>
-                <div class="line" data-line="2">
-                    <button class="line-button">+</button>
+                
+                <!-- Columna 2 -->
+                <div class="column-level">
+                    <div class="line" data-line="1">
+                        <button class="line-button" onclick="toggleCircle(this.parentElement, 1, 1)">+</button>
+                    </div>
+                    <div class="line" data-line="2">
+                        <button class="line-button" onclick="toggleCircle(this.parentElement, 1, 2)">+</button>
+                    </div>
+                    <div class="line" data-line="3">
+                        <button class="line-button" onclick="toggleCircle(this.parentElement, 1, 3)">+</button>
+                    </div>
+                    <div class="line" data-line="4">
+                        <button class="line-button" onclick="toggleCircle(this.parentElement, 1, 4)">+</button>
+                    </div>
+                    <div class="line" data-line="5">
+                        <button class="line-button" onclick="toggleCircle(this.parentElement, 1, 5)">+</button>
+                    </div>
+                    <div class="line" data-line="6">
+                        <button class="line-button" onclick="toggleCircle(this.parentElement, 1, 6)">+</button>
+                    </div>
+                    <div class="line" data-line="7">
+                        <button class="line-button" onclick="toggleCircle(this.parentElement, 1, 7)">+</button>
+                    </div>
                 </div>
-                <div class="line" data-line="3">
-                    <button class="line-button">+</button>
+                
+                <!-- Columna 3 -->
+                <div class="column-level">
+                    <div class="line" data-line="1">
+                        <button class="line-button" onclick="toggleCircle(this.parentElement, 2, 1)">+</button>
+                    </div>
+                    <div class="line" data-line="2">
+                        <button class="line-button" onclick="toggleCircle(this.parentElement, 2, 2)">+</button>
+                    </div>
+                    <div class="line" data-line="3">
+                        <button class="line-button" onclick="toggleCircle(this.parentElement, 2, 3)">+</button>
+                    </div>
+                    <div class="line" data-line="4">
+                        <button class="line-button" onclick="toggleCircle(this.parentElement, 2, 4)">+</button>
+                    </div>
+                    <div class="line" data-line="5">
+                        <button class="line-button" onclick="toggleCircle(this.parentElement, 2, 5)">+</button>
+                    </div>
+                    <div class="line" data-line="6">
+                        <button class="line-button" onclick="toggleCircle(this.parentElement, 2, 6)">+</button>
+                    </div>
+                    <div class="line" data-line="7">
+                        <button class="line-button" onclick="toggleCircle(this.parentElement, 2, 7)">+</button>
+                    </div>
                 </div>
-                <div class="line" data-line="4">
-                    <button class="line-button">+</button>
-                </div>
-                <div class="line" data-line="5">
-                    <button class="line-button">+</button>
-                </div>
-                <div class="line" data-line="6">
-                    <button class="line-button">+</button>
-                </div>
-                <div class="line" data-line="7">
-                    <button class="line-button">+</button>
-                </div>
-                <div class="line" data-line="8">
-                    <button class="line-button">+</button>
-                </div>
-                <div class="line" data-line="9">
-                    <button class="line-button">+</button>
-                </div>
-                <div class="line" data-line="10">
-                    <button class="line-button">+</button>
-                </div>
-            </div>
-            <div class="column-level">
-                <div class="line" data-line="1">
-                    <button class="line-button">+</button>
-                </div>
-                <div class="line" data-line="2">
-                    <button class="line-button">+</button>
-                </div>
-                <div class="line" data-line="3">
-                    <button class="line-button">+</button>
-                </div>
-                <div class="line" data-line="4">
-                    <button class="line-button">+</button>
-                </div>
-                <div class="line" data-line="5">
-                    <button class="line-button">+</button>
-                </div>
-                <div class="line" data-line="6">
-                    <button class="line-button">+</button>
-                </div>
-                <div class="line" data-line="7">
-                    <button class="line-button">+</button>
-                </div>
-                <div class="line" data-line="8">
-                    <button class="line-button">+</button>
-                </div>
-                <div class="line" data-line="9">
-                    <button class="line-button">+</button>
-                </div>
-                <div class="line" data-line="10">
-                    <button class="line-button">+</button>
-                </div>
-            </div>
-            <div class="column-level">
-                <div class="line" data-line="1">
-                    <button class="line-button">+</button>
-                </div>
-                <div class="line" data-line="2">
-                    <button class="line-button">+</button>
-                </div>
-                <div class="line" data-line="3">
-                    <button class="line-button">+</button>
-                </div>
-                <div class="line" data-line="4">
-                    <button class="line-button">+</button>
-                </div>
-                <div class="line" data-line="5">
-                    <button class="line-button">+</button>
-                </div>
-                <div class="line" data-line="6">
-                    <button class="line-button">+</button>
-                </div>
-                <div class="line" data-line="7">
-                    <button class="line-button">+</button>
-                </div>
-                <div class="line" data-line="8">
-                    <button class="line-button">+</button>
-                </div>
-                <div class="line" data-line="9">
-                    <button class="line-button">+</button>
-                </div>
-                <div class="line" data-line="10">
-                    <button class="line-button">+</button>
-                </div>
-            </div>
-            <div class="column-level">
-                <div class="line" data-line="1">
-                    <button class="line-button">+</button>
-                </div>
-                <div class="line" data-line="2">
-                    <button class="line-button">+</button>
-                </div>
-                <div class="line" data-line="3">
-                    <button class="line-button">+</button>
-                </div>
-                <div class="line" data-line="4">
-                    <button class="line-button">+</button>
-                </div>
-                <div class="line" data-line="5">
-                    <button class="line-button">+</button>
-                </div>
-                <div class="line" data-line="6">
-                    <button class="line-button">+</button>
-                </div>
-                <div class="line" data-line="7">
-                    <button class="line-button">+</button>
-                </div>
-                <div class="line" data-line="8">
-                    <button class="line-button">+</button>
-                </div>
-                <div class="line" data-line="9">
-                    <button class="line-button">+</button>
-                </div>
-                <div class="line" data-line="10">
-                    <button class="line-button">+</button>
-                </div>
-            </div>
+                
+                <!-- Columna 4 -->
+                <div class="column-level">
+                    <div class="line" data-line="1">
+                        <button class="line-button" onclick="toggleCircle(this.parentElement, 3, 1)">+</button>
+                    </div>
+                    <div class="line" data-line="2">
+                        <button class="line-button" onclick="toggleCircle(this.parentElement, 3, 2)">+</button>
+                    </div>
+                    <div class="line" data-line="3">
+                        <button class="line-button" onclick="toggleCircle(this.parentElement, 3, 3)">+</button>
+                    </div>
+                    <div class="line" data-line="4">
+                        <button class="line-button" onclick="toggleCircle(this.parentElement, 3, 4)">+</button>
+                    </div>
+                    <div class="line" data-line="5">
+                        <button class="line-button" onclick="toggleCircle(this.parentElement, 3, 5)">+</button>
+                    </div>
+                    <div class="line" data-line="6">
+                        <button class="line-button" onclick="toggleCircle(this.parentElement, 3, 6)">+</button>
+                    </div>
+                    <div class="line" data-line="7">
+                        <button class="line-button" onclick="toggleCircle(this.parentElement, 3, 7)">+</button>
+                    </div>
+                  </div>
+              </div>
           </div>
-        </div>
-    </div>
+      </div>
       
 
       <div class="iconos">
@@ -421,5 +457,7 @@
     <img src="img/Nota4.webp" class="nota nota-4">
 
     <script src="script/musicEditor.js"></script>
+    <script src="script/musicEditorNotes.js"></script>
+    <script src="script/saveMusicLevel.js"></script>
   </body>
 </html>

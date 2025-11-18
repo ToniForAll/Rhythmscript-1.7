@@ -375,7 +375,13 @@ let currentVideoId = null;
 let progressLine = null;
 let animationId = null;
 let startTime = null;
-const animationDuration = 5000;
+const pixelsPerSecond = 1050; // velocidad de la barra
+
+const CURRENT_VIDEO_STORAGE = {
+    url: '',
+    id: '',
+    title: ''
+};
 
 function getYouTubeId(url) {
     const patterns = [
@@ -442,16 +448,10 @@ function saveToStorage() {
     if (!currentVideoData) {
         return;
     }
-    const savedVideos = JSON.parse(localStorage.getItem('youtubeVideos') || '[]');
-    const existsIndex = savedVideos.findIndex(video => video.id === currentVideoData.id);
     
-    if (existsIndex !== -1) {
-        savedVideos[existsIndex] = currentVideoData;
-    } else {
-        savedVideos.push(currentVideoData);
-    }
-    
-    localStorage.setItem('youtubeVideos', JSON.stringify(savedVideos));
+    CURRENT_VIDEO_STORAGE.url = currentVideoData.url;
+    CURRENT_VIDEO_STORAGE.id = currentVideoData.id;
+    CURRENT_VIDEO_STORAGE.title = currentVideoData.title || `Video de YouTube (${currentVideoData.id})`;
     
     resetProgressLine();
     if (isPlaying) {
@@ -489,7 +489,6 @@ function toggleMusicPlayback() {
         stopProgressLine();
     } else {
         playMusic();
-        startProgressLine();
     }
 }
 
@@ -498,37 +497,97 @@ function playMusic() {
     
     if (audioPlayer) {
         audioPlayer.remove();
+        audioPlayer = null;
     }
-    
-    audioPlayer = document.createElement('div');
-    audioPlayer.innerHTML = `
-        <iframe 
-            width="0" 
-            height="0" 
-            src="https://www.youtube.com/embed/${currentVideoId}?autoplay=1&controls=0&modestbranding=1&playsinline=1"
-            frameborder="0" 
-            allow="autoplay; encrypted-media"
-            allowfullscreen>
-        </iframe>
-    `;
-    document.body.appendChild(audioPlayer);
     
     isPlaying = true;
     updatePlayButtonState(true);
     
-    console.log('Reproduciendo:', currentVideoId);
+    createYouTubePlayer(currentVideoId);
+}
+
+function createYouTubePlayer(videoId) {
+    if (!window.YT) {
+        const tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        
+        window.onYouTubeIframeAPIReady = () => {
+            initYouTubePlayer(videoId);
+        };
+    } else {
+        initYouTubePlayer(videoId);
+    }
+}
+
+function initYouTubePlayer(videoId) {
+    const playerContainer = document.createElement('div');
+    playerContainer.id = 'youtube-player-container';
+    playerContainer.style.display = 'none';
+    document.body.appendChild(playerContainer);
+    
+    audioPlayer = new YT.Player('youtube-player-container', {
+        height: '0',
+        width: '0',
+        videoId: videoId,
+        playerVars: {
+            'autoplay': 1,
+            'controls': 0,
+            'disablekb': 1,
+            'enablejsapi': 1,
+            'fs': 0,
+            'iv_load_policy': 3,
+            'modestbranding': 1,
+            'playsinline': 1,
+            'rel': 0
+        },
+        events: {
+            'onStateChange': onPlayerStateChange,
+            'onError': onPlayerError
+        }
+    });
+}
+
+function onPlayerStateChange(event) {
+    if (event.data === YT.PlayerState.PLAYING) {
+        startProgressLine();
+    } else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
+        stopProgressLine();
+    } else if (event.data === YT.PlayerState.BUFFERING) {
+        console.log('Música en buffering...');
+    }
+}
+
+function onPlayerError(event) {
+    console.error('Error en reproductor YouTube:', event.data);
+    isPlaying = false;
+    updatePlayButtonState(false);
 }
 
 function pauseMusic() {
     if (audioPlayer) {
-        audioPlayer.remove();
+        if (typeof audioPlayer.remove === 'function') {
+            audioPlayer.remove();
+        } else if (audioPlayer.stopVideo && typeof audioPlayer.stopVideo === 'function') {
+            audioPlayer.stopVideo();
+            const playerContainer = document.getElementById('youtube-player-container');
+            if (playerContainer) {
+                playerContainer.remove();
+            }
+        } else if (audioPlayer.parentNode) {
+            audioPlayer.parentNode.removeChild(audioPlayer);
+        }
         audioPlayer = null;
     }
     
     isPlaying = false;
     updatePlayButtonState(false);
+    stopProgressLine();
     
-    console.log('Música pausada');
+    if (window.musicLoadTimeout) {
+        clearTimeout(window.musicLoadTimeout);
+    }
 }
 
 function updatePlayButtonState(playing) {
@@ -554,14 +613,12 @@ window.addEventListener('load', function() {
 
 function loadLastPlayedSong() {
     try {
-        const savedVideos = JSON.parse(localStorage.getItem('youtubeVideos') || '[]');
-        if (savedVideos.length > 0) {
-            const lastVideo = savedVideos[savedVideos.length - 1];
-            loadAndPlayMusic(lastVideo.id);
-            console.log('Última canción cargada:', lastVideo.id);
+        if (CURRENT_VIDEO_STORAGE.id) {
+            loadAndPlayMusic(CURRENT_VIDEO_STORAGE.id);
+            console.log('Canción cargada desde constante:', CURRENT_VIDEO_STORAGE.id);
         }
     } catch (error) {
-        console.error('Error cargando última canción:', error);
+        console.error('Error cargando canción:', error);
     }
 }
 
@@ -653,21 +710,32 @@ function startProgressLine() {
         columnsContainer.appendChild(progressLine);
     }
     
-    progressLine.style.top = '100%';
+    // Posicionar al final del contenido (no del viewport)
+    const containerHeight = columnsContainer.scrollHeight;
+    progressLine.style.top = `${containerHeight}px`;
     progressLine.style.bottom = 'auto';
     progressLine.style.opacity = '1';
     progressLine.style.position = 'absolute';
     
     startTime = Date.now();
+    const startPosition = containerHeight;
     
     function animate() {
         if (!isPlaying) return;
         
         const elapsed = Date.now() - startTime;
-        const progress = (elapsed % animationDuration) / animationDuration;
         
-        const topPosition = 100 - (progress * 100);
-        progressLine.style.top = `${topPosition}%`;
+        // Calcular nueva posición basada en velocidad constante
+        const distanceTraveled = (elapsed / 1000) * pixelsPerSecond;
+        const newPosition = startPosition - distanceTraveled;
+        
+        progressLine.style.top = `${newPosition}px`;
+        
+        // Si llegó al principio, reiniciar o detener
+        if (newPosition <= 0) {
+            progressLine.style.top = `${containerHeight}px`;
+            startTime = Date.now(); // Reiniciar tiempo
+        }
         
         animationId = requestAnimationFrame(animate);
     }
