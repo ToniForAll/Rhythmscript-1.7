@@ -112,7 +112,7 @@ export function endScreen(score, perfectNotes, greatNotes, missNotes, correctNot
           </div>
 
           <div id="refresh" class="bigBtn size4">Reintentar</div>
-          <a href="music.html" style="text-decoration: none;"><div id="menu" class="bigBtn size4">Volver</div></a>
+          <a href="index.html" style="text-decoration: none;"><div id="menu" class="bigBtn size4">Volver</div></a>
         </div>
         <div class="mainDerecho" style="display: flex;  flex-direction: row; height: 100%; width: 50%; margin-left: 2rem;">
           <hr />

@@ -118,7 +118,7 @@ function generateStarsHTML(starsCount) {
 }
 
 function navigateToGame(levelId) {
-    window.location.href = 'game.html?level=' + levelId;
+    window.location.href = 'gameEditorMusic.html?level=' + levelId;
 }
 
 function getLevelById(levelId) {
