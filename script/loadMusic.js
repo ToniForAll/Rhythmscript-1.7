@@ -15,6 +15,7 @@ function createMusicElement(level, index) {
     musicElement.id = `music${index + 1}`;
     musicElement.style.marginTop = '2rem';
     musicElement.style.cursor = 'pointer';
+    musicElement.style.position = 'relative'; // Para posicionar el botón de eliminar
     
     const totalNotes = calculateTotalNotes(level.pattern);
     
@@ -50,13 +51,46 @@ function createMusicElement(level, index) {
                 </p>
             </div>
         </div>
+        <button class="delete-level-btn" data-level-id="${level.id}">
+            <i class="fa-solid fa-trash"></i>
+        </button>
     `;
 
-    musicElement.addEventListener('click', function() {
-        navigateToGame(level.id);
+    musicElement.addEventListener('click', function(e) {
+        // evitar ir al nivel cuando lo elimina
+        if (!e.target.closest('.delete-level-btn')) {
+            navigateToGame(level.id);
+        }
+    });
+    
+    // eliminar nivel evento
+    const deleteBtn = musicElement.querySelector('.delete-level-btn');
+    deleteBtn.addEventListener('click', function(e) {
+        e.stopPropagation(); // evita que se active el contenedor
+        deleteLevel(level.id, musicElement);
     });
     
     return musicElement;
+}
+
+function deleteLevel(levelId, element) {
+    if (confirm('¿Estás seguro de que quieres eliminar este nivel?')) {
+        const levels = JSON.parse(localStorage.getItem('rhythmLevels') || '[]');
+        const updatedLevels = levels.filter(level => level.id !== levelId);
+        
+        localStorage.setItem('rhythmLevels', JSON.stringify(updatedLevels));
+        
+        element.style.opacity = '0';
+        element.style.transform = 'translateX(-100px)';
+        element.style.transition = 'all 0.3s ease';
+        
+        setTimeout(() => {
+            element.remove();
+            loadMusicLevels();
+        }, 300);
+        
+        console.log(`Nivel ${levelId} eliminado`);
+    }
 }
 
 function calculateTotalNotes(pattern) {
