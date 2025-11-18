@@ -69,13 +69,11 @@ function saveLevel() {
     const stars = parseInt(document.getElementById('selectedStars').value);
     const songUrl = getCurrentVideoUrl();
 
-    // Validar que todos los campos estén completos
     if (!levelName || !creatorName || !difficulty || stars === 0 || !songUrl) {
         alert('Por favor, completa todos los campos del formulario.');
         return;
     }
-    
-    // Validar que el nombre del creador no exceda 10 caracteres
+
     if (creatorName.length > 10) {
         alert('El nombre del creador no puede tener más de 10 letras.');
         return;

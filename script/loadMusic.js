@@ -11,7 +11,7 @@ function loadMusicLevels() {
 
 function createMusicElement(level, index) {
     const musicElement = document.createElement('div');
-    musicElement.className = `music${index + 1}`;
+    musicElement.className = `music1`;
     musicElement.id = `music${index + 1}`;
     musicElement.style.marginTop = '2rem';
     musicElement.style.cursor = 'pointer';
@@ -19,9 +19,28 @@ function createMusicElement(level, index) {
     const totalNotes = calculateTotalNotes(level.pattern);
     
     const starsHTML = generateStarsHTML(level.stars);
+
+    switch(level.difficulty){
+        case "Easy":
+            var difficultyImageUrl = "img/facil.webp";
+            break;
+        case "Normal":
+            var difficultyImageUrl = "img/medio.webp";
+            break;
+        case "Hard":
+            var difficultyImageUrl = "img/hard.webp";
+            break;
+        case "Master":
+            var difficultyImageUrl = "img/toni.webp";
+            break;
+        default:
+            var difficultyImageUrl = "img/imagen10.webp";
+    }   
     
+    console.log(level.difficulty);
+
     musicElement.innerHTML = `
-        <img src="img/imagen10.webp" class="frontImg">
+        <img src="${difficultyImageUrl}" class="frontImg">
         <img src="img/image6.webp" class="discoImg" id="disco${index + 1}">
         <div class="musicDescrip">
             <p>${level.name}<p style="color: #361A53; font-size: 1.25rem;">${level.difficulty} By: ${level.creator}</p></p>

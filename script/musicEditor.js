@@ -710,7 +710,6 @@ function startProgressLine() {
         columnsContainer.appendChild(progressLine);
     }
     
-    // Posicionar al final del contenido (no del viewport)
     const containerHeight = columnsContainer.scrollHeight;
     progressLine.style.top = `${containerHeight}px`;
     progressLine.style.bottom = 'auto';
@@ -724,17 +723,15 @@ function startProgressLine() {
         if (!isPlaying) return;
         
         const elapsed = Date.now() - startTime;
-        
-        // Calcular nueva posición basada en velocidad constante
+
         const distanceTraveled = (elapsed / 1000) * pixelsPerSecond;
         const newPosition = startPosition - distanceTraveled;
         
         progressLine.style.top = `${newPosition}px`;
-        
-        // Si llegó al principio, reiniciar o detener
+
         if (newPosition <= 0) {
             progressLine.style.top = `${containerHeight}px`;
-            startTime = Date.now(); // Reiniciar tiempo
+            startTime = Date.now();
         }
         
         animationId = requestAnimationFrame(animate);
