@@ -313,6 +313,16 @@
       </div>
 
       <div class="buttonsMenuEditorLeft">
+        <div class="offset-control" style="font-family: 'Inter', sans-serif; position: absolute; left: -12rem; top: 10px; background: rgba(30,30,40,0.9); padding: 10px; border-radius: 8px; border: 2px solid #5a00d8; z-index: 1000;">
+            <label style="color: white; font-size: 12px; display: block; margin-bottom: 5px;">
+                Offset inicial (segundos):
+            </label>
+            <input type="number" id="progressOffsetInput" value="0" step="1" min="0" oninput="this.value = this.value.replace(/[^0-9]/g, '')" style="width: 80px; padding: 5px; border: 1px solid #444; border-radius: 4px; background: rgba(255,255,255,0.1); color: white;">
+            <button onclick="applyOffset()" 
+                    style="margin-top: 5px; padding: 5px 10px; background: #5a00d8; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">
+                Aplicar
+            </button>
+        </div>
         <button class="music-play-btn" onclick="toggleMusicPlayback()">
             <span class="wave"></span>
             <svg class="play-icon" viewBox="0 0 24 24">
@@ -328,12 +338,18 @@
       </div>
 
       <div class="buttonsMenuEditorRight">
-        <button class="music-play-btn" onclick="addNewLineToAllColumns()" style="width: 68px; height: 68px;">
-            <span class="wave"></span>
-            <svg viewBox="0 0 32 32" version="1.1" width="32" height="32" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" fill="#000000">
-              <g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>plus</title> <desc>Created with Sketch Beta.</desc> <defs> </defs> <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage"> <g id="Icon-Set-Filled" sketch:type="MSLayerGroup" transform="translate(-362.000000, -1037.000000)" fill="#ffffff"> <path d="M390,1049 L382,1049 L382,1041 C382,1038.79 380.209,1037 378,1037 C375.791,1037 374,1038.79 374,1041 L374,1049 L366,1049 C363.791,1049 362,1050.79 362,1053 C362,1055.21 363.791,1057 366,1057 L374,1057 L374,1065 C374,1067.21 375.791,1069 378,1069 C380.209,1069 382,1067.21 382,1065 L382,1057 L390,1057 C392.209,1057 394,1055.21 394,1053 C394,1050.79 392.209,1049 390,1049" id="plus" sketch:type="MSShapeGroup"> </path> </g> </g> </g>
-            </svg>
-        </button> 
+        <div class="buttonsMenuEditorRight">
+          <button class="music-play-btn" onclick="addNewLineToAllColumns()" style="" title="Agregar 1 línea">
+              <span class="wave"></span>
+              <svg viewBox="0 0 32 32" version="1.1" width="32" height="32" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" fill="#000000">
+                <g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>plus</title> <desc>Created with Sketch Beta.</desc> <defs> </defs> <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage"> <g id="Icon-Set-Filled" sketch:type="MSLayerGroup" transform="translate(-362.000000, -1037.000000)" fill="#ffffff"> <path d="M390,1049 L382,1049 L382,1041 C382,1038.79 380.209,1037 378,1037 C375.791,1037 374,1038.79 374,1041 L374,1049 L366,1049 C363.791,1049 362,1050.79 362,1053 C362,1055.21 363.791,1057 366,1057 L374,1057 L374,1065 C374,1067.21 375.791,1069 378,1069 C380.209,1069 382,1067.21 382,1065 L382,1057 L390,1057 C392.209,1057 394,1055.21 394,1053 C394,1050.79 392.209,1049 390,1049" id="plus" sketch:type="MSShapeGroup"> </path> </g> </g> </g>
+              </svg>
+          </button>
+
+          <button class="music-play-btn" onclick="addMultipleLines(20)" style="font-family: 'Inter', sans-serif; width: 48px; height: 48px;" title="Agregar 20 líneas">
+              <span class="wave">20+</span>
+          </button>
+        </div>
       </div>
         
       <div class="notesEditor">

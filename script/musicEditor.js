@@ -380,6 +380,7 @@ let progressLine = null;
 let animationId = null;
 let startTime = null;
 const pixelsPerSecond = 875; // velocidad de la barra
+let initialOffsetSeconds = 0;
 
 const CURRENT_VIDEO_STORAGE = {
     url: '',
@@ -544,7 +545,8 @@ function initYouTubePlayer(videoId) {
             'iv_load_policy': 3,
             'modestbranding': 1,
             'playsinline': 1,
-            'rel': 0
+            'rel': 0,
+            'start': initialOffsetSeconds
         },
         events: {
             'onStateChange': onPlayerStateChange,
@@ -626,7 +628,6 @@ function loadLastPlayedSong() {
     }
 }
 
-// Funcion para reproducir audio
 function playPreview() {
     const playButton = document.querySelector('.preview-play-btn');
     
@@ -648,7 +649,7 @@ function playPreview() {
             <iframe 
                 width="0" 
                 height="0" 
-                src="https://www.youtube.com/embed/${currentVideoData.id}?autoplay=1&controls=0&modestbranding=1"
+                src="https://www.youtube.com/embed/${currentVideoData.id}?autoplay=1&controls=0&modestbranding=1&start=${initialOffsetSeconds}"
                 frameborder="0" 
                 allow="autoplay">
             </iframe>
@@ -715,27 +716,34 @@ function startProgressLine() {
     }
     
     const containerHeight = columnsContainer.scrollHeight;
-    progressLine.style.top = `${containerHeight}px`;
+    
+    // Calcular posición inicial con offset
+    const initialOffsetPixels = initialOffsetSeconds * pixelsPerSecond;
+    const startPosition = Math.max(0, containerHeight - initialOffsetPixels);
+    
+    progressLine.style.top = `${startPosition}px`;
     progressLine.style.bottom = 'auto';
     progressLine.style.opacity = '1';
     progressLine.style.position = 'absolute';
     
     startTime = Date.now();
-    const startPosition = containerHeight;
     
     function animate() {
         if (!isPlaying) return;
         
         const elapsed = Date.now() - startTime;
-
         const distanceTraveled = (elapsed / 1000) * pixelsPerSecond;
         const newPosition = startPosition - distanceTraveled;
         
         progressLine.style.top = `${newPosition}px`;
 
         if (newPosition <= 0) {
-            progressLine.style.top = `${containerHeight}px`;
-            startTime = Date.now();
+            progressLine.style.top = '0px';
+            stopProgressLine();
+            
+            pauseMusic();
+            console.log('🏁 Barra de progreso llegó al final - Música detenida');
+            return;
         }
         
         animationId = requestAnimationFrame(animate);
@@ -760,6 +768,26 @@ function resetProgressLine() {
         progressLine.style.top = '100%';
         progressLine.style.bottom = 'auto';
     }
+}
+
+function setProgressOffset(seconds) {
+    initialOffsetSeconds = seconds;
+    console.log(`Offset establecido: ${seconds}s = ${seconds * pixelsPerSecond}px`);
+
+    if (isPlaying) {
+        stopProgressLine();
+        pauseMusic();
+        
+        setTimeout(() => {
+            playMusic();
+        }, 100);
+    }
+}
+
+function applyOffset() {
+    const input = document.getElementById('progressOffsetInput');
+    const seconds = parseFloat(input.value) || 0;
+    setProgressOffset(seconds);
 }
 
 function scrollToBottom() {

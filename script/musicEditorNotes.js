@@ -92,6 +92,12 @@ function addNewLineToAllColumns() {
     setTimeout(scrollToTop, 50);
 }
 
+function addMultipleLines(numberOfLines) {
+    for (let i = 0; i < numberOfLines; i++) {
+        addNewLineToAllColumns();
+    }
+}
+
 function scrollToTop() {
     const container = document.querySelector('.notesEditor-container');
     if (container) {
