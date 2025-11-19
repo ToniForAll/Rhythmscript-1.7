@@ -4,25 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RhythmscripT</title>
-    <link rel="stylesheet" href="style/music.css" />
+    <link rel="stylesheet" href="style/searchOnlineMap.css" />
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Monoton" rel="stylesheet" />
     <link rel="icon" href="img/icono.webp" type="image/x-icon">
-    <style>
-        #menu-cartel {
-            position: absolute;
-            top: -160px;
-            left: -80px;
-            width: 15rem;
-            height: 15rem; 
-            background-image: url('img/editor.webp');
-            background-size: contain;
-            background-repeat: no-repeat;
-            z-index: -500000;
-        }
-    </style>
   </head>
 
   <body id="bodyRemove">
@@ -37,9 +24,7 @@
         <nav>
           <img onclick="window.location.href='index.html'" src="img/grisazul.webp"/>
           <div class="navItems">
-            <a href="ranking.html"><button>Leaderboard</button></a>
             <a><button id="options">Options</button></a>
-            <a><button class="login-btn logout-btn">Log out</button></a>
           </div>
         </nav>
       </header>
@@ -206,30 +191,20 @@
 
       
       <main id="menu" class="mainContainer">
-        <div id="menu-cartel"></div>
-        <div class="pantallaMusic" style="align-items: flex-start;">
-          <div class="musicas">
-              <!-- Para crear nivel -->
-              <div onclick="editor()" class="music1" id="music1">
-                  <img src="img/editorIcon.webp" class="frontImg">
-                  <img src="img/image6.webp" class="discoImg" id="disco">
-                  <div class="musicDescrip">
-                      <p>Empezar Editar<p style="color: #361A53; font-size: 1.25rem;">Master if u want it</p></p>
-                  </div> 
-              </div>
-              <div onclick="onlineLevels()" class="music1" id="music1">
-                  <img src="img/searchLevel.webp" class="frontImg">
-                  <img src="img/image6.webp" class="discoImg" id="disco">
-                  <div class="musicDescrip">
-                      <p>Niveles Online<p style="color: #361A53; font-size: 1.25rem;">Master if u find it</p></p>
-                  </div> 
-              </div>
-                <!-- Niveles creados: -->
-              <h3>Niveles Guardados</h1>
-          </div>
+        <div class="search-container">
+            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar niveles online por nombre...">
         </div>
-        <img class="botones" src="img/Botones(1).webp"/>
-      </main>
+
+        <div id="resultsCount" class="results-count"></div>
+
+        <div id="levelsGrid" class="levels-grid">
+            <!-- aqui cargaran los nivelecitos -->
+        </div>
+
+        <button id="reloadButton" class="reload-button" style="display: none;">
+            Reintentar
+        </button>
+    </main>
 
       <div class="iconos">
         <a href="#" class="icon" id="instagram"></a>
@@ -244,6 +219,6 @@
     <img src="img/Nota4.webp" class="nota nota-4">
 
     <script src="script/musicEditor.js"></script>
-    <script src="script/loadMusic.js"></script>
+    <script src="script/searchOnlineMap.js"></script>
   </body>
 </html>

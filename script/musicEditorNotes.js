@@ -10,7 +10,6 @@ function toggleCircle(lineElement, columnIndex, lineNumber, uniqueId = null) {
         removeRhythmDot(dotId, button, lineElement);
         return;
     }
-
     createRhythmDot(lineElement, columnIndex, lineNumber, button, dotId);
 }
 
@@ -78,16 +77,18 @@ function addNewLineToAllColumns() {
         newButton.className = 'line-button';
         newButton.textContent = '+';
         
-        const uniqueDotId = `rhythm-dot-${columnIndex}-${uniqueIdCounter}`;
+        const uniqueDotId = `rhythm-dot-${columnIndex}-${lineCounter}-${uniqueIdCounter}`;
+        
         newButton.onclick = function() {
-            toggleCircle(this.parentElement, columnIndex, lineCounter, uniqueDotId);
+            const currentLineNumber = parseInt(this.parentElement.getAttribute('data-line'));
+            const currentColumnIndex = columnIndex;
+            toggleCircle(this.parentElement, currentColumnIndex, currentLineNumber, uniqueDotId);
         };
         
         newLine.appendChild(newButton);
         column.appendChild(newLine);
     });
     
-    console.log(`Nueva línea ${lineCounter} (ID: ${uniqueIdCounter}) agregada a todas las columnas`);
     setTimeout(scrollToTop, 50);
 }
 
@@ -98,8 +99,6 @@ function scrollToTop() {
     }
 }
 
-
-
 // guardar notas del nivel
 
 let column1Data = [];
@@ -107,47 +106,47 @@ let column2Data = [];
 let column3Data = [];
 let column4Data = [];
 
-function saveDotsToArrays() {
-    column1Data = [];
-    column2Data = [];
-    column3Data = [];
-    column4Data = [];
-    
-    const columns = document.querySelectorAll('.column-level');
-    
-    columns.forEach((column, columnIndex) => {
-        const lines = column.querySelectorAll('.line');
+function saveDotsToArraysFromActive() {
+    let maxLineNumber = 0;
+    for (const dotId in activeRhythmDots) {
+        const dot = activeRhythmDots[dotId];
+        if (dot.lineNumber > maxLineNumber) {
+            maxLineNumber = dot.lineNumber;
+        }
+    }
+
+    const totalLines = Math.max(lineCounter, maxLineNumber);
+
+    column1Data = Array(totalLines).fill(0);
+    column2Data = Array(totalLines).fill(0);
+    column3Data = Array(totalLines).fill(0);
+    column4Data = Array(totalLines).fill(0);
+
+    for (const dotId in activeRhythmDots) {
+        const dot = activeRhythmDots[dotId];
+        const lineIndex = dot.lineNumber - 1; 
         
-        lines.forEach(line => {
-            const lineNumber = parseInt(line.getAttribute('data-line'));
-            const hasDot = line.classList.contains('has-rhythm-dot');
-            
-            const value = hasDot ? 1 : 0;
-            
-            switch(columnIndex) {
+        if (lineIndex < totalLines) {
+            switch(dot.columnIndex) {
                 case 0:
-                    column1Data[lineNumber - 1] = value;
+                    column1Data[lineIndex] = 1;
                     break;
                 case 1:
-                    column2Data[lineNumber - 1] = value;
+                    column2Data[lineIndex] = 1;
                     break;
                 case 2:
-                    column3Data[lineNumber - 1] = value;
+                    column3Data[lineIndex] = 1;
                     break;
                 case 3:
-                    column4Data[lineNumber - 1] = value;
+                    column4Data[lineIndex] = 1;
                     break;
             }
-        });
-    });
-    
-    fillEmptyPositions();
-    
-    console.log('Datos guardados en arrays:');
-    console.log('Columna 1:', column1Data);
-    console.log('Columna 2:', column2Data);
-    console.log('Columna 3:', column3Data);
-    console.log('Columna 4:', column4Data);
+        } else {
+            console.warn(`Índice ${lineIndex} fuera de rango para totalLines ${totalLines}`);
+        }
+    }
+
+    return totalLines;
 }
 
 function fillEmptyPositions() {
@@ -167,63 +166,53 @@ function fillEmptyPositions() {
 }
 
 function saveDotsToArraysFromActive() {
-    column1Data = Array(lineCounter).fill(0);
-    column2Data = Array(lineCounter).fill(0);
-    column3Data = Array(lineCounter).fill(0);
-    column4Data = Array(lineCounter).fill(0);
+    let maxLineNumber = 0;
+    for (const dotId in activeRhythmDots) {
+        const dot = activeRhythmDots[dotId];
+        if (dot.lineNumber > maxLineNumber) {
+            maxLineNumber = dot.lineNumber;
+        }
+    }
+    
+    const totalLines = Math.max(lineCounter, maxLineNumber);
+    
+    column1Data = Array(totalLines).fill(0);
+    column2Data = Array(totalLines).fill(0);
+    column3Data = Array(totalLines).fill(0);
+    column4Data = Array(totalLines).fill(0);
     
     for (const dotId in activeRhythmDots) {
         const dot = activeRhythmDots[dotId];
         const lineIndex = dot.lineNumber - 1;
         
-        switch(dot.columnIndex) {
-            case 0:
-                column1Data[lineIndex] = 1;
-                break;
-            case 1:
-                column2Data[lineIndex] = 1;
-                break;
-            case 2:
-                column3Data[lineIndex] = 1;
-                break;
-            case 3:
-                column4Data[lineIndex] = 1;
-                break;
+        if (lineIndex < totalLines) {
+            switch(dot.columnIndex) {
+                case 0:
+                    column1Data[lineIndex] = 1;
+                    break;
+                case 1:
+                    column2Data[lineIndex] = 1;
+                    break;
+                case 2:
+                    column3Data[lineIndex] = 1;
+                    break;
+                case 3:
+                    column4Data[lineIndex] = 1;
+                    break;
+            }
         }
     }
-    
-    console.log('Datos guardados desde activeRhythmDots:');
-    console.log('Columna 1:', column1Data);
-    console.log('Columna 2:', column2Data);
-    console.log('Columna 3:', column3Data);
-    console.log('Columna 4:', column4Data);
 }
 
 function getAllColumnsData() {
-    saveDotsToArraysFromActive();
+    const totalLines = saveDotsToArraysFromActive(); 
     
     return {
         column1: column1Data,
         column2: column2Data,
         column3: column3Data,
         column4: column4Data,
-        totalLines: lineCounter,
+        totalLines: totalLines,
         totalDots: Object.keys(activeRhythmDots).length
     };
-}
-
-function saveToLocalStorage() {
-    const data = getAllColumnsData();
-    localStorage.setItem('rhythmPattern', JSON.stringify(data));
-    console.log('Patrón guardado en localStorage:', data);
-}
-
-function loadFromLocalStorage() {
-    const saved = localStorage.getItem('rhythmPattern');
-    if (saved) {
-        const data = JSON.parse(saved);
-        console.log('Patrón cargado desde localStorage:', data);
-        return data;
-    }
-    return null;
 }

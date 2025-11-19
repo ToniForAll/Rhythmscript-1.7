@@ -509,7 +509,6 @@
     width: 90%;
     max-width: 500px;
     max-height: 90vh;
-    overflow-y: auto;
     border: 2px solid #444;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
     overflow-y: scroll;

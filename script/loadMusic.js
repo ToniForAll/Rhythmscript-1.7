@@ -86,7 +86,6 @@ function deleteLevel(levelId, element) {
         
         setTimeout(() => {
             element.remove();
-            loadMusicLevels();
         }, 300);
         
         console.log(`Nivel ${levelId} eliminado`);

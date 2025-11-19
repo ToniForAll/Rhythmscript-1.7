@@ -11,6 +11,7 @@ const hitclam = new Audio('/sfx/drum-hitnormal.mp3');
 
 let musicName = '';
 let audioPlayer = null;
+let currentLevel = null; // Lo definiremos después
 
 hit.load();
 hitclam.load();
@@ -18,19 +19,85 @@ hitclam.load();
 const params = new URLSearchParams(window.location.search);
 const levelId = params.get('level');
 
-function getLevelById(id) {
-    const levels = JSON.parse(localStorage.getItem('rhythmLevels') || '[]');
-    return levels.find(level => level.id == id);
+// URL de tu Google Apps Script
+const SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbxZAh7WVKd26u-84P3lldUaX-bswobEf8ELcEKTU__izormXQ_7p3mN5CldhFTB_8Bw/exec';
+
+// Función para cargar nivel desde Google Sheets
+async function loadLevelFromSheets(id) {
+    try {
+        console.log('Buscando nivel online con ID:', id);
+        const proxyUrl = 'https://corsproxy.io/?';
+        const response = await fetch(`${proxyUrl}${encodeURIComponent(SHEETS_API_URL)}?id=${id}`);
+        
+        if (response.ok) {
+            const level = await response.json();
+            console.log('Nivel encontrado online:', level);
+            return level;
+        } else {
+            throw new Error('Nivel no encontrado en Google Sheets');
+        }
+    } catch (error) {
+        console.error('Error cargando nivel desde Sheets:', error);
+        return null;
+    }
 }
 
-const currentLevel = getLevelById(levelId);
+// Función para cargar nivel desde localStorage
+function loadLevelFromLocalStorage(id) {
+    const levels = JSON.parse(localStorage.getItem('rhythmLevels') || '[]');
+    const level = levels.find(level => level.id == id);
+    if (level) {
+        console.log('Nivel encontrado en localStorage:', level);
+    }
+    return level;
+}
 
-if (currentLevel) {
-    musicName = `${currentLevel.name} - ${currentLevel.creator}, ${currentLevel.difficulty}`;
-    console.log('Nivel cargado:', currentLevel);
-} else {
-    console.error('Nivel no encontrado');
-    document.body.innerHTML = '<h1>Nivel no encontrado</h1><p>El nivel que buscas no existe.</p>';
+// Función principal para cargar el nivel
+async function getLevelById(id) {
+    // Primero intentar desde Google Sheets
+    const onlineLevel = await loadLevelFromSheets(id);
+    if (onlineLevel) {
+        return onlineLevel;
+    }
+    
+    // Si no está online, buscar en localStorage
+    const localLevel = loadLevelFromLocalStorage(id);
+    if (localLevel) {
+        return localLevel;
+    }
+    
+    // Si no se encuentra en ningún lugar
+    console.error('Nivel no encontrado en ningún almacenamiento');
+    return null;
+}
+
+// Función para inicializar el nivel
+async function initializeLevel() {
+    currentLevel = await getLevelById(levelId);
+
+    if (currentLevel) {
+        musicName = `${currentLevel.name} - ${currentLevel.creator}, ${currentLevel.difficulty}`;
+        console.log('Nivel cargado:', currentLevel);
+        
+        // Iniciar la carga de música y el juego
+        if (currentLevel.songUrl) {
+            loadYouTubeMusic();
+        } else {
+            startCountdown();
+        }
+    } else {
+        console.error('Nivel no encontrado');
+        document.body.innerHTML = `
+            <div style="text-align: center; padding: 50px; color: white; background: #1a1a2e;">
+                <h1>Nivel no encontrado</h1>
+                <p>El nivel que buscas no existe o no está disponible.</p>
+                <button onclick="window.location.href = 'searchOnlineMap.html'" 
+                        style="background: #5a00d8; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 20px;">
+                    Volver a niveles
+                </button>
+            </div>
+        `;
+    }
 }
 
 function getYouTubeVideoId(url) {
@@ -40,13 +107,17 @@ function getYouTubeVideoId(url) {
 }
 
 function loadYouTubeMusic() {
-    if (!currentLevel || !currentLevel.songUrl) return;
+    if (!currentLevel || !currentLevel.songUrl) {
+        startCountdown();
+        return;
+    }
     
     const videoId = getYouTubeVideoId(currentLevel.songUrl);
     if (videoId) {
         createYouTubePlayer(videoId);
     } else {
         console.error('URL de YouTube no válida');
+        startCountdown();
     }
 }
 
@@ -76,7 +147,7 @@ function initYouTubePlayer(videoId) {
         width: '0',
         videoId: videoId,
         playerVars: {
-            'autoplay': 0, // No autoplay, lo controlaremos manualmente
+            'autoplay': 0,
             'controls': 0,
             'disablekb': 1,
             'enablejsapi': 1,
@@ -96,7 +167,6 @@ function initYouTubePlayer(videoId) {
 
 function onPlayerReady(event) {
     console.log('Reproductor de YouTube listo y cargado');
-    // La música está cargada pero no reproducida aún
     startCountdown();
 }
 
@@ -110,7 +180,6 @@ function onPlayerStateChange(event) {
 
 function onPlayerError(event) {
     console.error('Error en reproductor YouTube:', event.data);
-    // Iniciar contador incluso si hay error
     startCountdown();
 }
 
@@ -122,6 +191,10 @@ function setYouTubeVolume(volume) {
 }
 
 function main() {
+    if (!currentLevel) {
+        console.error('No se puede iniciar el juego: nivel no cargado');
+        return;
+    }
     
     const fail = new Audio('/sfx/failsound.ogg');
     const finishsong = new Audio('/sfx/applause.ogg');
@@ -135,7 +208,6 @@ function main() {
     const tecla5 = (localStorage.getItem('teclaP5') || ' ').toLowerCase();
     const valorActual = (localStorage.getItem('velocidad') || '1');
 
-    // Removemos la variable 'level' ya que usamos YouTube
     fail.volume = volumen;
     finishsong.volume = volumen;
     hit.volume = volumen;
@@ -191,12 +263,9 @@ function main() {
 
     function createCircles(musicArray, index, pathBtn, path, pathClass) {
         for (let i = 0; i < musicArray.length; i++) {
-            
-            
-            // Staggered timeout to create circles
             setTimeout(() => {
                 console.log(`Creating circle for musicArray[${i}]:`, musicArray[i]);
-                indexes[index] = musicArray[i]; // Update the local variable
+                indexes[index] = musicArray[i];
                 
                 if (musicArray[i] === 1) {
                     const circle = document.createElement("div");
@@ -216,8 +285,7 @@ function main() {
                                 console.log('circleRect:', circleRect);
                                 console.log('buttonRect:', buttonRect);
                     
-                                // Agregar un margen para la verificación
-                                const margin = 5; // Ajusta este valor según sea necesario
+                                const margin = 5;
                                 if (circleRect.bottom + margin < buttonRect.top) {
                                     if (combo >= 20) {
                                         comboBreak.play();
@@ -239,13 +307,13 @@ function main() {
                                     comboNumber.innerText = '';
                                     missNotes++;
                                     path.removeChild(circle2);
-                                    circleRemoved = true; // Mark as removed
+                                    circleRemoved = true;
                                 }
                             }
                         }
                     }, 1050);
                 }
-            }, 150 * i); // Adjust this value if needed
+            }, 150 * i);
         }
     }
 
@@ -259,7 +327,7 @@ function main() {
         pathBtn.style.transition = 'box-shadow 0.1s ease';
         const circles = document.querySelectorAll(`.${pathClass}`);
         const buttonRect = pathBtn.getBoundingClientRect();
-        const buttonThreshold = buttonRect.top + (buttonRect.height * 0.75); // 75% del botón
+        const buttonThreshold = buttonRect.top + (buttonRect.height * 0.75);
         const buttonTopAmplified = buttonRect.top - (buttonRect.height * 1.1);
         const buttonBottomAmplified = buttonRect.bottom + (buttonRect.height * 1.1);
         let circleRect;
@@ -371,7 +439,6 @@ function main() {
         mapafila4 = pattern.column4 || [];
         mapafila5 = [];
         
-        
         if (mapafila1.length > 0 && mapafila1[mapafila1.length - 1] !== 'end') {
             mapafila1.push('end');
         }
@@ -384,12 +451,9 @@ function main() {
         if (mapafila4.length > 0 && mapafila4[mapafila4.length - 1] !== 'end') {
             mapafila4.push('end');
         }
-        // if (mapafila5.length > 0 && mapafila5[mapafila5.length - 1] !== 'end') {
-         mapafila5.push('end');   
-        // }
+        mapafila5.push('end');
 
-
-        console.log(mapafila1);
+        console.log('Patrón cargado:', pattern);
     }
 
     music1 = mapafila1;
@@ -398,7 +462,6 @@ function main() {
     music4 = mapafila4;
     musicExtra = mapafila5;
 
-    //indices de los path's
     let indexes = {
         index1Value: '',
         index2Value: '',
@@ -406,7 +469,6 @@ function main() {
         index4Value: '',
         index5Value: ''
     };
-
 
     const path1 = document.querySelector(".path1");
     const path2 = document.querySelector(".path2");
@@ -470,8 +532,6 @@ function main() {
     }
 
     const intervalId = setInterval(() => {
-
-        //comprobar que todos los arrays de notas hayan terminado
         if (indexes.index1Value == 'end' && indexes.index2Value == 'end' && indexes.index3Value == 'end' && indexes.index4Value == 'end' && indexes.index5Value == 'end') {
             stopYouTubeMusic();
             
@@ -497,18 +557,10 @@ function main() {
             endScreen(score, perfectNotes, greatNotes, missNotes, correctNotes, totalNotes, maxcombo, life, musicName);
             clearInterval(intervalId);
         }
-
-        console.log("hola" + indexes.index1Value);
-        console.log("hola" + indexes.index2Value);
-        console.log("hola" + indexes.index3Value);
-        console.log("hola" + indexes.index4Value);
-        console.log("hola" + indexes.index5Value);
     }, 1000)
 
     setTimeout(() => {
-        //funcion para limpiar el nivel despues de x tiempo
         const circles = document.querySelectorAll('.circle');
-
         if (circles.length > 0) {
             circles.forEach((circle) => {
                 path1.removeChild(circle);
@@ -516,8 +568,6 @@ function main() {
         }
     }, 1200000);
 }
-
-const bodyRemove = document.getElementById('bodyRemove');
 
 function isMobile() {
     return /Mobi|Android/i.test(navigator.userAgent);
@@ -544,10 +594,9 @@ document.addEventListener('DOMContentLoaded', function() {
         nuevoDiv.appendChild(nuevoElemento2);
 
         bodyRemove.appendChild(nuevoDiv);
-    } else if (currentLevel && currentLevel.songUrl) {
-        loadYouTubeMusic();
     } else {
-        startCountdown();
+        // Inicializar el nivel cuando la página cargue
+        initializeLevel();
     }
 });
 

@@ -114,6 +114,10 @@ function editor() {
     window.location.href = 'editor.html';
 }
 
+function onlineLevels() {
+    window.location.href = 'searchOnlineMap.html';
+}
+
 closeButton.addEventListener('click', agregarClase);
 
 function agregarClase() {
