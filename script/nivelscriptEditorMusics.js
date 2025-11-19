@@ -19,10 +19,8 @@ hitclam.load();
 const params = new URLSearchParams(window.location.search);
 const levelId = params.get('level');
 
-// URL de tu Google Apps Script
 const SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbxZAh7WVKd26u-84P3lldUaX-bswobEf8ELcEKTU__izormXQ_7p3mN5CldhFTB_8Bw/exec';
 
-// Función para cargar nivel desde Google Sheets
 async function loadLevelFromSheets(id) {
     try {
         console.log('Buscando nivel online con ID:', id);
@@ -42,7 +40,6 @@ async function loadLevelFromSheets(id) {
     }
 }
 
-// Función para cargar nivel desde localStorage
 function loadLevelFromLocalStorage(id) {
     const levels = JSON.parse(localStorage.getItem('rhythmLevels') || '[]');
     const level = levels.find(level => level.id == id);
@@ -52,26 +49,21 @@ function loadLevelFromLocalStorage(id) {
     return level;
 }
 
-// Función principal para cargar el nivel
 async function getLevelById(id) {
-    // Primero intentar desde Google Sheets
     const onlineLevel = await loadLevelFromSheets(id);
     if (onlineLevel) {
         return onlineLevel;
     }
-    
-    // Si no está online, buscar en localStorage
+
     const localLevel = loadLevelFromLocalStorage(id);
     if (localLevel) {
         return localLevel;
     }
-    
-    // Si no se encuentra en ningún lugar
+
     console.error('Nivel no encontrado en ningún almacenamiento');
     return null;
 }
 
-// Función para inicializar el nivel
 async function initializeLevel() {
     currentLevel = await getLevelById(levelId);
 
@@ -155,7 +147,9 @@ function initYouTubePlayer(videoId) {
             'iv_load_policy': 3,
             'modestbranding': 1,
             'playsinline': 1,
-            'rel': 0
+            'rel': 0,
+            'preload': 1,
+            'buffering': 1 
         },
         events: {
             'onReady': onPlayerReady,
@@ -167,6 +161,9 @@ function initYouTubePlayer(videoId) {
 
 function onPlayerReady(event) {
     console.log('Reproductor de YouTube listo y cargado');
+    
+    event.target.cueVideoById(event.target.getVideoData().video_id);
+    
     startCountdown();
 }
 
@@ -603,7 +600,7 @@ document.addEventListener('DOMContentLoaded', function() {
 function startCountdown() {
     const body = document.querySelector("body");
     const countBg = document.createElement("div");
-    let counter = 4;
+    let counter = 3;
     countBg.classList.add("countBg");
     countBg.innerHTML = `<h1 class="inicio">${counter}</h1>`;
     body.appendChild(countBg);
@@ -612,23 +609,20 @@ function startCountdown() {
         counter--;
         countBg.innerHTML = `<h1 class="inicio">${counter}</h1>`;
 
-        if (counter === 1) {
+        if (counter === 0) {
             setTimeout(() => {
                 countBg.remove();
-                startMusicAndGame();
-            }, 1000);
+                
+                if (audioPlayer && audioPlayer.playVideo) {
+                    audioPlayer.playVideo();
+                }
+                
+                main();
+            }, 0);
         } else {
             setTimeout(count, 1000);
         }
     }
     
     count();
-}
-
-function startMusicAndGame() {
-    if (audioPlayer) {
-        audioPlayer.playVideo();
-    }
-    
-    main();
 }

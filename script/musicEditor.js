@@ -379,7 +379,7 @@ let currentVideoId = null;
 let progressLine = null;
 let animationId = null;
 let startTime = null;
-const pixelsPerSecond = 1050; // velocidad de la barra
+const pixelsPerSecond = 875; // velocidad de la barra
 
 const CURRENT_VIDEO_STORAGE = {
     url: '',
