@@ -392,7 +392,7 @@ function main() {
                                     }
                     
                                     combo = 0;
-                                    life -= 10;
+                                    life -= 5;
                                     changeHeight();
                     
                                     const container = document.getElementById('pointIcon');
@@ -477,7 +477,7 @@ function main() {
             }
         } else {
             if (!circleRemoved) {
-                life -= 10;
+                life -= 5;
                 if (combo >= 20) {
                     comboBreak.play();
                 }
@@ -639,7 +639,7 @@ function main() {
 
         if (life < 100) {
             changeHeight();
-            life += 10;
+            life += 5;
         }
         changeHeight();
 
