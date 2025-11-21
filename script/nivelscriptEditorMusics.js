@@ -106,11 +106,114 @@ function loadYouTubeMusic() {
     
     const videoId = getYouTubeVideoId(currentLevel.songUrl);
     if (videoId) {
+        setBackgroundThumbnail(videoId);
         createYouTubePlayer(videoId);
     } else {
         console.error('URL de YouTube no válida');
         startCountdown();
     }
+}
+
+function getYouTubeThumbnail(videoId, quality = 'maxresdefault') {
+    return `https://img.youtube.com/vi/${videoId}/${quality}.jpg`;
+}
+
+function setBackgroundThumbnail(videoId) {
+    const thumbnailUrl = getYouTubeThumbnail(videoId);
+    
+    const img = new Image();
+    
+    img.onload = function() {
+        console.log('✅ Miniatura cargada exitosamente');
+        
+        const existingThumbnail = document.querySelector('.youtube-thumbnail-container');
+        if (existingThumbnail) {
+            existingThumbnail.remove();
+        }
+
+        const container = document.createElement('div');
+        container.className = 'youtube-thumbnail-container';
+        container.style.cssText = `
+            position: fixed;
+            top: 29.5%;
+            left: 50%;
+            transform: translateX(-50.5%);
+            width: 62.5vh;
+            height: 30.5vh;
+            z-index: -6;
+            border-radius: 2px;
+            overflow: hidden;
+        `;
+
+        const thumbnail = document.createElement('img');
+        thumbnail.src = thumbnailUrl;
+        thumbnail.style.cssText = `
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.5) contrast(1.1) saturate(1.2);
+        `;
+
+        const scanlines = document.createElement('div');
+        scanlines.style.cssText = `
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 50%,
+                rgba(0, 0, 0, 0.4) 50%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 1;
+        `;
+
+        const tvNoise = document.createElement('div');
+        tvNoise.style.cssText = `
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(90deg, 
+                    rgba(255,255,255,0.03) 0%, 
+                    rgba(0,0,0,0.03) 50%, 
+                    rgba(255,255,255,0.03) 100%);
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: 2;
+        `;
+
+        const tvBezel = document.createElement('div');
+        tvBezel.style.cssText = `
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            right: -8px;
+            bottom: -8px;
+            border: 4px solid #333;
+            border-radius: 12px;
+            background: #1a1a1a;
+            pointer-events: none;
+            z-index: -1;
+        `;
+
+        container.appendChild(thumbnail);
+        container.appendChild(scanlines);
+        container.appendChild(tvNoise);
+        container.appendChild(tvBezel);
+        document.body.appendChild(container);
+    };
+    
+    img.onerror = function() {
+        console.log('❌ No se pudo cargar la miniatura');
+    };
+    
+    img.src = thumbnailUrl;
 }
 
 function createYouTubePlayer(videoId) {
@@ -290,7 +393,6 @@ function main() {
                     
                                     combo = 0;
                                     life -= 10;
-                                    scorePoints.innerText = life;
                                     changeHeight();
                     
                                     const container = document.getElementById('pointIcon');
@@ -388,7 +490,6 @@ function main() {
 
                 comboNumber.classList.add('great');
                 comboNumber.innerText = '';
-                scorePoints.innerText = life;
                 changeHeight();
                 displayPointIcon(img1);
                 missNotes++;
@@ -473,7 +574,6 @@ function main() {
     const path4 = document.querySelector(".path4");
     const path5 = document.querySelector(".path5");
 
-    const scorePoints = document.getElementById('scorePoints');
     const pointIcon = document.querySelector('.pointIcon');
     const comboNumber = document.querySelector('.combo');
 
@@ -520,8 +620,6 @@ function main() {
     pathBtn4.addEventListener('click', () => { checkForClick(pathBtn4, path4, 'circlePath4'); });
     pathBtn5.addEventListener('click', () => { checkForClick(pathBtn5, path5, 'circlePathExtra'); });
 
-    scorePoints.innerText = life;
-
     function stopYouTubeMusic() {
         if (audioPlayer) {
             audioPlayer.stopVideo();
@@ -541,11 +639,9 @@ function main() {
 
         if (life < 100) {
             changeHeight();
-            scorePoints.innerText = life;
             life += 10;
         }
         changeHeight();
-        scorePoints.innerText = life;
 
         if (life <= 0) {
             fail.play();
@@ -598,6 +694,8 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function startCountdown() {
+    document.querySelector('.loadingFrame').remove();
+
     const body = document.querySelector("body");
     const countBg = document.createElement("div");
     let counter = 3;
@@ -612,6 +710,7 @@ function startCountdown() {
         if (counter === 0) {
             setTimeout(() => {
                 countBg.remove();
+
                 
                 if (audioPlayer && audioPlayer.playVideo) {
                     audioPlayer.playVideo();

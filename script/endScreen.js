@@ -104,7 +104,7 @@ export function endScreen(score, perfectNotes, greatNotes, missNotes, correctNot
                 </div>
               </div>
               <div class="precision">
-                <h2>Precision</h2>
+                <h2>Precisión</h2>
                 <hr />
                 <p>${percentage.toFixed(2)} %</p>
               </div>
