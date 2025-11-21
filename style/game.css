@@ -8,7 +8,7 @@ body {
   background-color: #111111;
   background-image: 
     linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)),
-    url('../img/backgroundgame.jpg');
+    url('../img/backgroundgame.webp');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
