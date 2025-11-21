@@ -57,49 +57,85 @@ function renderLevels(levels) {
     
     grid.innerHTML = levels.map(level => {
         const totalNotes = countTotalNotesInLevel(level);
+        const videoId = getYouTubeVideoId(level.songUrl);
+        const thumbnailUrl = videoId ? `https://img.youtube.com/vi/${videoId}/sddefault.jpg` : '';
         
         return `
             <div class="level-card" data-level-id="${level.id}">
-                <div class="level-header">
-                    <h3 class="level-name">${escapeHtml(level.name)}</h3>
-                    <span class="level-difficulty difficulty-${getDifficultyClass(level.difficulty)}">
-                        ${level.difficulty || 'Normal'}
-                    </span>
-                </div>
-                
-                <div class="level-creator">
-                    Creado por: ${escapeHtml(level.creator || 'Anónimo')}
-                </div>
-                
-                ${totalNotes > 0 ? `
-                <div class="level-notes">
-                    ${totalNotes} nota${totalNotes !== 1 ? 's' : ''} en total
-                </div>
-                ` : ''}
-                
-                ${level.songUrl ? `
-                <div class="level-song">
-                    URL disponible
-                </div>
-                ` : ''}
-                
-                <div class="level-meta">
-                    <div class="stars-container">
-                        ${getStarsHTML(level.stars || 1)}
+                <div class="level-card-content">
+                    <div class="level-thumbnail">
+                        ${thumbnailUrl ? `
+                            <img src="${thumbnailUrl}" alt="${escapeHtml(level.name)}" 
+                                 onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjExMiIgdmlld0JveD0iMCAwIDIwMCAxMTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMTEyIiBmaWxsPSIjMjAyMDIwIi8+CjxwYXRoIGQ9Ik03NSA1NkM3NSA1My43OTAxIDc2Ljc5MDEgNTIgNzkgNTJIMTIxQzEyMy4yMSA1MiAxMjUgNTMuNzkwMSAxMjUgNTZWNjBDMTI1IDYyLjIwOTkgMTIzLjIxIDY0IDEyMSA2NEg3OUM3Ni43OTAxIDY0IDc1IDYyLjIwOTkgNzUgNjBWNTZaIiBmaWxsPSIjNjY2Ii8+Cjx0ZXh0IHg9IjEwMCUiIHk9Ijk1JSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9ImVuZCIgZmlsbD0iIzY2NiIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjEwIj5ObyBpbWFnZW48L3RleHQ+Cjwvc3ZnPg=='">
+                        ` : `
+                            <div class="thumbnail-placeholder">
+                                <svg width="50" height="50" viewBox="0 0 24 24">
+                                    <path fill="#666" d="M8 5v14l11-7z"/>
+                                </svg>
+                                <span>Sin miniatura</span>
+                            </div>
+                        `}
                     </div>
-                    <button class="play-button" onclick="playLevel('${level.id}')">
-                        JUGAR
-                    </button>
+                    
+                    <div class="level-info">
+                        <div class="level-header">
+                            <h3 class="level-name">${escapeHtml(level.name)}</h3>
+                            <span class="level-difficulty difficulty-${getDifficultyClass(level.difficulty)}">
+                                ${level.difficulty || 'Normal'}
+                            </span>
+                        </div>
+                        
+                        <div class="level-creator">
+                            <strong>Creado por:</strong> ${escapeHtml(level.creator || 'Anónimo')}
+                        </div>
+                        
+                        ${totalNotes > 0 ? `
+                        <div class="level-notes">
+                            🎵 ${totalNotes} nota${totalNotes !== 1 ? 's' : ''} en total
+                        </div>
+                        ` : ''}
+                        
+                        <div class="level-stats">
+                            <div class="stars-container">
+                                ${getStarsHTML(level.stars || 1)}
+                            </div>
+                            
+                            ${level.dateCreated ? `
+                            <div class="level-date">
+                                ${new Date(level.dateCreated).toLocaleDateString()}
+                            </div>
+                            ` : ''}
+                        </div>
+                        
+                        <div class="level-actions">
+                            <button class="play-button" onclick="playLevel('${level.id}')">
+                                JUGAR
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                
-                ${level.dateCreated ? `
-                <div class="level-date">
-                    Creado: ${new Date(level.dateCreated).toLocaleDateString()}
-                </div>
-                ` : ''}
             </div>
         `;
     }).join('');
+}
+
+function getYouTubeVideoId(url) {
+    if (!url) return null;
+    
+    const patterns = [
+        /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/,
+        /youtube\.com\/embed\/([^?]+)/,
+        /youtube\.com\/v\/([^?]+)/,
+        /youtube\.com\/.*[?&]v=([^&]+)/
+    ];
+    
+    for (const pattern of patterns) {
+        const match = url.match(pattern);
+        if (match && match[1]) {
+            return match[1].split('?')[0].split('&')[0];
+        }
+    }
+    return null;
 }
 
 function getDifficultyClass(difficulty) {

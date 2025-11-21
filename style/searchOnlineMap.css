@@ -489,10 +489,11 @@ form {
     box-shadow: 0 0 20px rgba(90, 0, 216, 0.4);
 }
 
+/* Grid de 2 columnas */
 .levels-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
     max-width: 1200px;
     margin: 0 auto;
 }
@@ -500,12 +501,13 @@ form {
 .level-card {
     background: rgba(30, 30, 40, 0.9);
     border-radius: 15px;
-    padding: 20px;
+    padding: 0;
     border: 2px solid #444;
     transition: all 0.3s ease;
     cursor: pointer;
     position: relative;
     overflow: hidden;
+    height: fit-content;
 }
 
 .level-card:hover {
@@ -514,37 +516,84 @@ form {
     box-shadow: 0 10px 30px rgba(90, 0, 216, 0.3);
 }
 
-.level-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #5a00d8, #8a2be2);
+.level-card-content {
+    display: flex;
+    height: 200px;
+}
+
+/* informacion de la izqueirda */
+
+.level-thumbnail {
+    flex: 0 0 200px;
+    height: 100%;
+    background: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+}
+
+.level-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.level-card:hover .level-thumbnail img {
+    transform: scale(1.05);
+}
+
+.thumbnail-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    text-align: center;
+    padding: 20px;
+}
+
+.thumbnail-placeholder span {
+    margin-top: 8px;
+    font-size: 12px;
+}
+
+/* informacion de la derecha del div e*/
+
+.level-info {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .level-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
 .level-name {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 700;
     color: white;
     margin: 0;
     flex: 1;
+    line-height: 1.3;
 }
 
 .level-difficulty {
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 10px;
     font-weight: 600;
     text-transform: uppercase;
+    white-space: nowrap;
+    margin-left: 10px;
 }
 
 .difficulty-easy {
@@ -565,17 +614,12 @@ form {
 
 .level-creator {
     color: #aaa;
-    font-size: 14px;
-    margin-bottom: 10px;
+    font-size: 13px;
+    margin-bottom: 8px;
 }
 
-.level-meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 15px;
-    padding-top: 15px;
-    border-top: 1px solid #444;
+.level-creator strong {
+    color: #888;
 }
 
 .level-notes {
@@ -587,23 +631,13 @@ form {
     gap: 5px;
 }
 
-.level-notes::before {
-    content: '🎵';
-    font-size: 14px;
-}
-
-.level-song {
-    color: #888;
-    font-size: 12px;
-    margin-bottom: 8px;
+.level-stats {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 5px;
-}
-
-.level-song::before {
-    content: '🎵';
-    font-size: 14px;
+    margin: 10px 0;
+    padding-top: 10px;
+    border-top: 1px solid #333;
 }
 
 .stars-container {
@@ -613,7 +647,16 @@ form {
 
 .star {
     color: #ffd700;
-    font-size: 16px;
+    font-size: 14px;
+}
+
+.level-date {
+    color: #666;
+    font-size: 11px;
+}
+
+.level-actions {
+    margin-top: auto;
 }
 
 .play-button {
@@ -626,6 +669,7 @@ form {
     font-size: 12px;
     font-weight: 600;
     transition: all 0.3s ease;
+    width: 100%;
 }
 
 .play-button:hover {
@@ -633,20 +677,11 @@ form {
     box-shadow: 0 0 15px rgba(90, 0, 216, 0.6);
 }
 
-.level-date {
-    color: #666;
-    font-size: 12px;
-    margin-top: 5px;
-}
-
 .empty-state {
     text-align: center;
     padding: 60px 20px;
     color: #666;
-    position: absolute;
-    top: 40%;
-    left: 40%;
-
+    grid-column: 1 / -1;
 }
 
 .empty-state h3 {
@@ -663,16 +698,6 @@ form {
     color: #aaa;
     margin-bottom: 20px;
     font-size: 14px;
-}
-
-@media (max-width: 768px) {
-    .levels-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .search-container {
-        margin: 0 auto 20px auto;
-    }
 }
 
 .reload-button {
@@ -694,13 +719,37 @@ form {
     box-shadow: 0 5px 15px rgba(90, 0, 216, 0.4);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
     .levels-grid {
         grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .level-card-content {
+        height: 180px;
+    }
+    
+    .level-thumbnail {
+        flex: 0 0 180px;
+    }
+}
+
+@media (max-width: 768px) {
+    .level-card-content {
+        flex-direction: column;
+        height: auto;
+    }
+    
+    .level-thumbnail {
+        flex: 0 0 150px;
+        width: 100%;
+    }
+    
+    .level-info {
+        padding: 15px;
     }
     
     .search-container {
         margin: 0 auto 20px auto;
     }
 }
-
