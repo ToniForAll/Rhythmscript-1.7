@@ -114,7 +114,7 @@ function loadYouTubeMusic() {
     }
 }
 
-function getYouTubeThumbnail(videoId, quality = 'maxresdefault') {
+function getYouTubeThumbnail(videoId, quality = 'sddefault') {
     return `https://img.youtube.com/vi/${videoId}/${quality}.jpg`;
 }
 
