@@ -15,7 +15,7 @@ function createMusicElement(level, index) {
     musicElement.id = `music${index + 1}`;
     musicElement.style.marginTop = '2rem';
     musicElement.style.cursor = 'pointer';
-    musicElement.style.position = 'relative'; // Para posicionar el botón de eliminar
+    musicElement.style.position = 'relative';
     
     const totalNotes = calculateTotalNotes(level.pattern);
     
@@ -51,27 +51,37 @@ function createMusicElement(level, index) {
                 </p>
             </div>
         </div>
-        <button class="delete-level-btn" data-level-id="${level.id}">
-            <i class="fa-solid fa-trash"></i>
-        </button>
+        <div class="level-actions">
+            <button class="edit-level-btn" data-level-id="${level.id}" title="Editar nivel">
+                <i class="fa-solid fa-edit"></i>
+            </button>
+            <button class="delete-level-btn" data-level-id="${level.id}" title="Eliminar nivel">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+        </div>
     `;
 
     musicElement.addEventListener('click', function(e) {
-        // evitar ir al nivel cuando lo elimina
-        if (!e.target.closest('.delete-level-btn')) {
+        if (!e.target.closest('.level-actions')) {
             navigateToGame(level.id);
         }
     });
     
-    // eliminar nivel evento
+    const editBtn = musicElement.querySelector('.edit-level-btn');
+    editBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        editLevel(level.id);
+    });
+    
     const deleteBtn = musicElement.querySelector('.delete-level-btn');
     deleteBtn.addEventListener('click', function(e) {
-        e.stopPropagation(); // evita que se active el contenedor
+        e.stopPropagation();
         deleteLevel(level.id, musicElement);
     });
     
     return musicElement;
 }
+
 
 function deleteLevel(levelId, element) {
     if (confirm('¿Estás seguro de que quieres eliminar este nivel?')) {
@@ -129,3 +139,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Página cargada, inicializando niveles...');
     loadMusicLevels();
 });
+
+function editLevel(levelId) {
+    window.location.href = 'editor.html?edit=' + levelId; // Cambia 'editor.html' por tu página de edición
+}
