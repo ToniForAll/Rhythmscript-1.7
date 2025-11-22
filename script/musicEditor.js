@@ -797,6 +797,22 @@ function scrollToBottom() {
     }
 }
 
+function scrollToTop() {
+  const container = document.querySelector('.notesEditor-container');
+  container.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+}
+
+function scrollToBottom() {
+  const container = document.querySelector('.notesEditor-container');
+  container.scrollTo({
+    top: container.scrollHeight,
+    behavior: 'smooth'
+  });
+}
+
 window.addEventListener('load', function() {
     scrollToBottom();
     
