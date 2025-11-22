@@ -213,4 +213,9 @@ document.addEventListener('DOMContentLoaded', function() {
             window.location.href = 'editorMapList.html';
         }
     }
+
+    setTimeout(() => {
+        addTimelineMarkers();
+        observeContainerChanges();
+    }, 100);
 });

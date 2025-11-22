@@ -88,7 +88,7 @@ function addNewLineToAllColumns() {
         newLine.appendChild(newButton);
         column.appendChild(newLine);
     });
-    
+
     setTimeout(scrollToTop, 50);
 }
 

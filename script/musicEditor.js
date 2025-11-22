@@ -818,3 +818,63 @@ window.addEventListener('load', function() {
     
     loadLastPlayedSong();
 });
+
+// marcas de lineas para los segundos
+
+function addTimelineMarkers() {
+    const columnsContainer = document.querySelector('.notesEditor-columns');
+    const containerHeight = columnsContainer.scrollHeight;
+    
+    const existingMarkers = columnsContainer.querySelectorAll('.timeline-marker');
+    existingMarkers.forEach(marker => marker.remove());
+
+    const lineSpacing = 875;
+    const totalLines = Math.ceil(containerHeight / lineSpacing);
+
+    for (let i = 0; i <= totalLines; i++) {
+        const seconds = i;
+        const positionFromBottom = i * lineSpacing;
+        
+        const timelineMarker = document.createElement('div');
+        timelineMarker.className = 'timeline-marker';
+        timelineMarker.style.position = 'absolute';
+        timelineMarker.style.left = '0';
+        timelineMarker.style.right = '0';
+        timelineMarker.style.height = '4px';
+        timelineMarker.style.backgroundColor = 'rgba(133, 5, 198, 0.59)';
+        timelineMarker.style.zIndex = '5';
+        timelineMarker.style.pointerEvents = 'none';
+
+        timelineMarker.style.bottom = `${positionFromBottom}px`;
+        
+        const timeLabel = document.createElement('span');
+        timeLabel.className = 'time-label';
+        timeLabel.textContent = `${seconds}s`;
+        timeLabel.style.position = 'absolute';
+        timeLabel.style.left = '5px';
+        timeLabel.style.top = '-10px';
+        timeLabel.style.color = 'rgba(246, 246, 246, 0.94)';
+        timeLabel.style.fontSize = '18px';
+        timeLabel.style.fontFamily = 'Arial, sans-serif';
+        timeLabel.style.backgroundColor = 'rgba(101, 7, 195, 0.74)';
+        timeLabel.style.padding = '2px 4px';
+        timeLabel.style.borderRadius = '2px';
+        
+        timelineMarker.appendChild(timeLabel);
+        columnsContainer.appendChild(timelineMarker);
+    }
+    
+    console.log(`Se agregaron ${totalLines + 1} marcadores de tiempo`);
+}
+
+function observeContainerChanges() {
+    const columnsContainer = document.querySelector('.notesEditor-columns');
+    
+    const resizeObserver = new ResizeObserver(entries => {
+        for (let entry of entries) {
+            addTimelineMarkers();
+        }
+    });
+    
+    resizeObserver.observe(columnsContainer);
+}
