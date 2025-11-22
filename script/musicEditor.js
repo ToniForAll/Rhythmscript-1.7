@@ -784,9 +784,12 @@ function setProgressOffset(seconds) {
     }
 }
 
-function applyOffset() {
-    const input = document.getElementById('progressOffsetInput');
-    const seconds = parseFloat(input.value) || 0;
+function applyOffsetImmediately(value) {
+    const cleanValue = value.replace(/[^0-9]/g, '');
+    
+    document.getElementById('progressOffsetInput').value = cleanValue;
+    
+    const seconds = parseFloat(cleanValue) || 0;
     setProgressOffset(seconds);
 }
 
