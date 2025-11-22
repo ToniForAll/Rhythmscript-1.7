@@ -68,21 +68,26 @@ async function saveLevelToSheets(levelData) {
     try {
         const proxyUrl = 'https://corsproxy.io/?';
         
-        fetch(proxyUrl + encodeURIComponent(SHEETS_API_URL), {
+        console.log('Enviando a Sheets:', levelData);
+        
+        const response = await fetch(proxyUrl + encodeURIComponent(SHEETS_API_URL), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(levelData)
-        }).catch(error => {
-            console.log('Error ignorado (probablemente se guardó):', error);
         });
         
-        return { success: true, message: 'Nivel enviado a Google Sheets' };
+        if (response.ok) {
+            const result = await response.json();
+            return result;
+        } else {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
         
     } catch (error) {
-        console.log('Error ignorado:', error);
-        return { success: true, message: 'Nivel publicado' };
+        console.log('Error en conexión con Sheets:', error);
+        return { success: true, message: 'publicado' };
     }
 }
 
@@ -105,45 +110,59 @@ async function saveLevel() {
     
     const patternData = getAllColumnsData();
     
+    const urlParams = new URLSearchParams(window.location.search);
+    const editLevelId = urlParams.get('edit');
+    const isEditMode = !!editLevelId;
+    
+    const levelId = isEditMode ? editLevelId : Date.now().toString();
+    
     const levelData = {
-        id: Date.now().toString(),
+        id: levelId,
         name: levelName,
         creator: creatorName,
         difficulty: difficulty,
         stars: stars,
         songUrl: songUrl,
         pattern: patternData,
-        createdAt: new Date().toISOString()
+        createdAt: isEditMode ? (originalLevelData?.createdAt || new Date().toISOString()) : new Date().toISOString()
     };
 
     const submitBtn = document.querySelector('#levelForm button[type="submit"]');
     const originalText = submitBtn.textContent;
-    submitBtn.textContent = 'Guardando...';
+    submitBtn.textContent = isEditMode ? 'Actualizando...' : 'Guardando...';
     submitBtn.disabled = true;
 
     try {
-        saveLevelToLocalStorage(levelData);
+        if (isEditMode) {
+            updateLevelInStorage(levelData);
+        } else {
+            saveLevelToLocalStorage(levelData);
+        }
         
         const onlineResult = await saveLevelToSheets(levelData);
-
-        if (onlineResult.success === true) {
-            alert(`¡Nivel "${levelName}" creado exitosamente por ${creatorName} y guardado online!`);
-        } else if (onlineResult.success === 'unknown') {
-            alert(`¡Nivel "${levelName}" creado por ${creatorName}! (Guardado localmente - Estado online: No verificado)`);
+        
+        if (onlineResult.success) {
+            const action = onlineResult.action || (isEditMode ? 'updated' : 'created');
+            if (action === 'updated') {
+                alert(`¡Nivel "${levelName}" actualizado exitosamente!`);
+            } else {
+                alert(`¡Nivel "${levelName}" ${isEditMode ? 'actualizado' : 'creado'} exitosamente!`);
+            }
         } else {
-            alert(`¡Nivel "${levelName}" creado por ${creatorName}! (Guardado localmente - Error online: ${onlineResult.error})`);
+            alert(`¡Nivel "${levelName}" ${isEditMode ? 'actualizado' : 'creado'} localmente! (Error online: ${onlineResult.error})`);
         }
         
         window.location.href = 'editorMapList.html';
         
     } catch (error) {
-        alert(`¡Nivel "${levelName}" creado por ${creatorName}! (Guardado localmente - Error inesperado)`);
-        window.location.href = 'editorMapList.html';
+        console.error('Error al guardar:', error);
+        alert(`Error: ${error.message}`);
     } finally {
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
     }
 }
+
 
 function saveLevelToLocalStorage(levelData) {
     const existingLevels = JSON.parse(localStorage.getItem('rhythmLevels') || '[]');
@@ -167,6 +186,31 @@ document.getElementById('createModal').addEventListener('click', function(e) {
     }
 });
 
+function updateButtonText() {
+    const createButton = document.querySelector('.login-btn.logout-btn');
+    const urlParams = new URLSearchParams(window.location.search);
+    const isEditMode = urlParams.has('edit');
+    
+    if (createButton) {
+        createButton.textContent = isEditMode ? 'Edit' : 'Create';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-    setupStars();
+    updateButtonText();
+    setupStars();   
+    const urlParams = new URLSearchParams(window.location.search);
+    const editLevelId = urlParams.get('edit');
+    
+    if (editLevelId) {
+        console.log('Modo edición detectado, ID:', editLevelId);
+        const success = loadLevelForEditing(editLevelId);
+        
+        if (success) {
+            
+        } else {
+            alert('Error: No se pudo cargar el nivel para editar');
+            window.location.href = 'editorMapList.html';
+        }
+    }
 });
