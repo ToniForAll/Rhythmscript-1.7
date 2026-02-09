@@ -1,4 +1,4 @@
-const SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbxZAh7WVKd26u-84P3lldUaX-bswobEf8ELcEKTU__izormXQ_7p3mN5CldhFTB_8Bw/exec';
+const SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbxmUmpCWCnoWiqMq1mxY8Qm2SYmeG5eFw0iv53P8adOlO4UxXqALkDIB4OBbvgePq0i/exec';
 
 let allOnlineLevels = [];
 

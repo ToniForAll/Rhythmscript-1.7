@@ -901,3 +901,38 @@ button.login-btn {
   width: 420px;
   height: auto;
 }
+
+.hold-note {
+    position: absolute;
+    top: -6rem;
+    margin-bottom: 0.5rem;
+    width: 6rem;
+    z-index: 2;
+    animation: Bajarabajo 1s linear;
+}
+
+.hold-note-start {
+    height: 6rem;
+    border-radius: 0 0 50% 50%;
+    background-color: #ff6b6b;
+}
+
+.hold-note-middle {
+    height: 16rem;
+    border-radius: 0;
+    background-color: #ff6b6b;
+    top: -12rem; /* Para que se conecte con la anterior */
+}
+
+.hold-note-end {
+    height: 6rem;
+    border-radius: 50% 50% 0 0;
+    background-color: #ff6b6b;
+    top: -18rem; /* Para que se conecte con la anterior */
+}
+
+/* Efecto cuando se está manteniendo una nota larga */
+.teclasContainer button[data-holding-note] {
+    background-color: #6054bd !important;
+    box-shadow: 0 0 20px 5px rgb(19, 47, 255), inset 0 0 20px 5px rgb(19, 47, 255) !important;
+}
