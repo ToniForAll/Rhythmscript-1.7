@@ -1,4 +1,4 @@
-const SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbxZAh7WVKd26u-84P3lldUaX-bswobEf8ELcEKTU__izormXQ_7p3mN5CldhFTB_8Bw/exec';
+const API_BASE_URL = '/api';  // ¡Así de simple!
 
 let selectedStars = 0;
 
@@ -64,13 +64,11 @@ function resetStars() {
     });
 }
 
-async function saveLevelToSheets(levelData) {
+async function saveLevelToDB(levelData) {
     try {
-        const proxyUrl = 'https://corsproxy.io/?';
+        console.log('Enviando a Vercel + freedb.tech:', levelData);
         
-        console.log('Enviando a Sheets:', levelData);
-        
-        const response = await fetch(proxyUrl + encodeURIComponent(SHEETS_API_URL), {
+        const response = await fetch(`${API_BASE_URL}/levels`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -78,16 +76,20 @@ async function saveLevelToSheets(levelData) {
             body: JSON.stringify(levelData)
         });
         
-        if (response.ok) {
-            const result = await response.json();
-            return result;
-        } else {
+        if (!response.ok) {
             throw new Error(`Error HTTP: ${response.status}`);
         }
         
+        return await response.json();
+        
     } catch (error) {
-        console.log('Error en conexión con Sheets:', error);
-        return { success: true, message: 'publicado' };
+        console.error('Error:', error);
+        // Fallback a localStorage
+        return { 
+            success: false, 
+            error: error.message,
+            fallback: true 
+        };
     }
 }
 
@@ -139,7 +141,7 @@ async function saveLevel() {
             saveLevelToLocalStorage(levelData);
         }
         
-        const onlineResult = await saveLevelToSheets(levelData);
+        const onlineResult = await saveLevelToDB(levelData);
         
         if (onlineResult.success) {
             const action = onlineResult.action || (isEditMode ? 'updated' : 'created');
