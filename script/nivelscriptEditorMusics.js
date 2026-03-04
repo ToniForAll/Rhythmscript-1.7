@@ -1,8 +1,5 @@
 import { endScreen } from "./endScreen.js";
 
-// ============================================
-// CONFIGURACIÓN DE LA API
-// ============================================
 const API_BASE_URL = 'https://api-rhythmscript.onrender.com/api';
 
 const hit = new Audio('/sfx/soft-hitsoft.mp3');
