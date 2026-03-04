@@ -822,3 +822,157 @@ button.login-btn {
   color: white;
   padding: 0px 10px;
 }
+
+/* Estilos para el menú de usuario */
+.user-menu-container {
+    position: relative;
+    display: inline-block;
+}
+
+.user-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 15px;
+    min-width: 200px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    margin-top: 10px;
+}
+
+.user-dropdown.hidden {
+    display: none;
+}
+
+.user-info {
+    padding: 10px;
+    border-bottom: 1px solid #444;
+    color: white;
+    font-weight: 500;
+    text-align: center;
+    font-size: 16px;
+}
+
+.user-info .user-fullname {
+    color: #00ff88;
+    font-size: 18px;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.user-info .user-username {
+    color: #aaa;
+    font-size: 14px;
+}
+
+.user-dropdown .logout-btn {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    background: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.user-dropdown .logout-btn:hover {
+    background: #ff6666;
+}
+
+/* Modal de confirmación */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.modal-overlay.hidden {
+    display: none;
+}
+
+.modal-content {
+    font-family: "Inter", sans-serif;
+    background: #2a2a2a;
+    padding: 25px;
+    border-radius: 12px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    border: 2px solid #7503b3;
+}
+
+.modal-content h3 {
+    color: white;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+}
+
+.modal-content p {
+    color: #ccc;
+    margin-bottom: 20px;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.modal-buttons button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: opacity 0.3s;
+    font-size: 14px;
+}
+
+.confirmExit {
+  display: flex;
+  padding: 5px;
+  justify-content: center;
+  background: #ff4444;
+  color: white;
+  border-radius: 5px;
+  transition: ease 0.3s;
+  
+}
+
+.confirmExit:hover {
+  scale: 1.03;
+  cursor: pointer;
+}
+
+.modal-buttons .confirm-btn {
+    background: #ff4444;
+    color: white;
+    flex: 1;
+}
+
+.modal-buttons .confirm-btn:hover {
+    opacity: 0.9;
+}
+
+.modal-buttons .cancel-btn {
+    background: #666;
+    color: white;
+    flex: 1;
+}
+
+.modal-buttons .cancel-btn:hover {
+    opacity: 0.9;
+}

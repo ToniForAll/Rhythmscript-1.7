@@ -178,14 +178,27 @@
     <img src="img/Frame_3.webp" class="bgImage" />
     <div class="siteContainer">
       <header class="header">
-        <nav>
-          <img onclick="window.location.href='index.html'" src="img/grisazul.webp" />
-          <div class="navItems">
-            <a href="onii.html"><button>KneeSurgery</button></a>
-            <a href="form.html"><button class="login-btn formToggle">Account</button></a>
-          </div>
-        </nav>
+          <nav>
+              <img onclick="window.location.href='index.html'" src="img/grisazul.webp" />
+              
+              <div class="navItems" id="navItems">
+                  <a href="onii.html"><button>KneeSurgery</button></a>
+                  <!-- El contenido de Account se cargará dinámicamente -->
+              </div>
+          </nav>
       </header>
+
+      <!-- Modal de confirmación de cierre de sesión -->
+      <div id="logoutModal" class="modal-overlay hidden">
+          <div class="modal-content">
+              <h3>¿Cerrar sesión?</h3>
+              <p>¿Estás seguro de que quieres cerrar la sesión?</p>
+              <div class="modal-buttons">
+                  <button id="confirmLogout" class="confirm-btn">Sí, cerrar sesión</button>
+                  <button id="cancelLogout" class="cancel-btn">Cancelar</button>
+              </div>
+          </div>
+      </div>
       <div class="miniHeader">
         <div class="reproductor">
           <div class="reproductorAnimacion">
@@ -264,6 +277,7 @@
     <img src="img/Nota4.webp" class="salto nota-4" />
 
     <script src="script/index.js" type="module"></script>
+    <script src="script/sesion.js" type="module"></script>
     <script>
       window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
     </script>
