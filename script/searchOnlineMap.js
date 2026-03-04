@@ -1,8 +1,151 @@
 const API_BASE_URL = 'https://api-rhythmscript.onrender.com/api';
 
 let allOnlineLevels = [];
+let currentLevelData = null; 
 
-// CARGAR NIVELES DESDE LA API
+function getCurrentUser() {
+    const userStr = sessionStorage.getItem('user');
+    return userStr ? JSON.parse(userStr) : null;
+}
+
+async function loadTopScores(levelId) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/scores/${levelId}`);
+        
+        if (response.ok) {
+            const data = await response.json();
+            return data.scores || [];
+        } else {
+            console.log('No hay puntuaciones para este nivel');
+            return [];
+        }
+    } catch (error) {
+        console.error('Error cargando puntuaciones:', error);
+        return [];
+    }
+}
+
+//modal para las puntuaciones tas loco
+async function showLevelModal(level) {
+    currentLevelData = level;
+    
+    // Cargar top scores
+    const topScores = await loadTopScores(level.id);
+    
+    let modal = document.getElementById('levelModal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'levelModal';
+        modal.className = 'modal-overlay';
+        modal.innerHTML = `
+            <div class="modal-content level-modal">
+                <div class="modal-header">
+                    <h2 id="modalLevelName"></h2>
+                    <button class="modal-close" onclick="closeLevelModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="level-info-section">
+                        <div class="level-details">
+                            <p><strong>Creador:</strong> <span id="modalCreator"></span></p>
+                            <p><strong>Dificultad:</strong> <span id="modalDifficulty" class="difficulty-badge"></span></p>
+                            <p><strong>Notas totales:</strong> <span id="modalTotalNotes"></span></p>
+                            <p><strong>Fecha:</strong> <span id="modalDate"></span></p>
+                        </div>
+                        <div class="level-thumbnail-modal">
+                            <img id="modalThumbnail" src="" alt="Thumbnail">
+                        </div>
+                    </div>
+                    
+                    <div class="scores-section">
+                        <h3>🏆 Top 50</h3>
+                        <div class="scores-table-container">
+                            <table class="scores-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Jugador</th>
+                                        <th>Puntuación</th>
+                                        <th>Fecha</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="scoresTableBody">
+                                    <tr><td colspan="4" class="loading-scores">Cargando puntuaciones...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="play-button" onclick="playLevel('${level.id}')">JUGAR NIVEL</button>
+                    <button class="close-button" onclick="closeLevelModal()">Cerrar</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+    
+    document.getElementById('modalLevelName').textContent = level.name;
+    document.getElementById('modalCreator').textContent = level.creator || 'Anónimo';
+    
+    const difficultySpan = document.getElementById('modalDifficulty');
+    difficultySpan.textContent = level.difficulty || 'Normal';
+    difficultySpan.className = `difficulty-badge difficulty-${getDifficultyClass(level.difficulty)}`;
+    
+    const totalNotes = countTotalNotesInLevel(level);
+    document.getElementById('modalTotalNotes').textContent = totalNotes;
+    
+    const date = level.createdAt ? new Date(level.createdAt).toLocaleDateString() : 'Desconocida';
+    document.getElementById('modalDate').textContent = date;
+    
+    // Thumbnail
+    const videoId = getYouTubeVideoId(level.songUrl);
+    const thumbnailUrl = videoId ? `https://img.youtube.com/vi/${videoId}/sddefault.jpg` : '';
+    const modalThumbnail = document.getElementById('modalThumbnail');
+    if (thumbnailUrl) {
+        modalThumbnail.src = thumbnailUrl;
+        modalThumbnail.style.display = 'block';
+    } else {
+        modalThumbnail.style.display = 'none';
+    }
+    
+    renderScoresTable(topScores);
+    
+    modal.classList.add('show');
+}
+
+function renderScoresTable(scores) {
+    const tbody = document.getElementById('scoresTableBody');
+    
+    if (!tbody) return;
+    
+    if (scores.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="no-scores">No hay puntuaciones para este nivel</td></tr>`;
+        return;
+    }
+    
+    tbody.innerHTML = scores.map((score, index) => {
+        const date = new Date(score.created_at).toLocaleDateString();
+        const formattedScore = score.score.toLocaleString();
+        
+        return `
+            <tr class="${index < 3 ? `top-${index + 1}` : ''}">
+                <td class="rank">${index + 1}</td>
+                <td class="player-name">${escapeHtml(score.username)}</td>
+                <td class="score-value">${formattedScore}</td>
+                <td class="score-date">${date}</td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function closeLevelModal() {
+    const modal = document.getElementById('levelModal');
+    if (modal) {
+        modal.classList.remove('show');
+    }
+}
+
+// cargar los niveles
 async function loadLevelsFromAPI() {
     try {
         console.log('Cargando niveles..');
@@ -96,22 +239,12 @@ function renderLevels(levels) {
                         </div>
                         ` : ''}
                         
-                        <div class="level-stats">
-                            <div class="stars-container">
-                                ${getStarsHTML(level.stars || 1)}
-                            </div>
-                            
+                        <div class="level-stats">                        
                             ${level.createdAt ? `
                             <div class="level-date">
                                 ${new Date(level.createdAt).toLocaleDateString()}
                             </div>
                             ` : ''}
-                        </div>
-                        
-                        <div class="level-actions">
-                            <button class="play-button" onclick="playLevel('${level.id}')">
-                                JUGAR
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -274,10 +407,19 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-document.addEventListener('click', (e) => {
+document.addEventListener('click', async (e) => {
     const card = e.target.closest('.level-card');
-    if (card && !e.target.closest('.play-button')) {
+    if (card) {
         const levelId = card.getAttribute('data-level-id');
-        playLevel(levelId);
+        const level = allOnlineLevels.find(l => l.id == levelId);
+        if (level) {
+            await showLevelModal(level);
+        }
+    }
+});
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        closeLevelModal();
     }
 });

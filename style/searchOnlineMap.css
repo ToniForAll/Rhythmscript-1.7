@@ -669,11 +669,10 @@ form {
     font-size: 12px;
     font-weight: 600;
     transition: all 0.3s ease;
-    width: 100%;
 }
 
 .play-button:hover {
-    transform: scale(1.05);
+    transform: scale(1.02);
     box-shadow: 0 0 15px rgba(90, 0, 216, 0.6);
 }
 
@@ -751,5 +750,327 @@ form {
     
     .search-container {
         margin: 0 auto 20px auto;
+    }
+}
+
+
+/* ============================================
+   modal para los niveles y las puntuaciones
+   ============================================ */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+    font-family: "Inter", sans-serif;
+}
+
+.modal-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content.level-modal {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border: 2px solid #5a00d8;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 900px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 0 30px rgba(90, 0, 216, 0.5);
+    animation: modalAppear 0.3s ease;
+}
+
+@keyframes modalAppear {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+    border-bottom: 1px solid #333;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 20px 20px 0 0;
+}
+
+.modal-header h2 {
+    color: white;
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    background: linear-gradient(145deg, #5a00d8, #8a2be2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: #aaa;
+    font-size: 30px;
+    cursor: pointer;
+    transition: color 0.3s;
+    line-height: 1;
+    padding: 0;
+}
+
+.modal-close:hover {
+    color: #ff6b6b;
+}
+
+.modal-body {
+    padding: 30px;
+}
+
+.level-info-section {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 30px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 20px;
+    border: 1px solid #333;
+}
+
+.level-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.level-details p {
+    margin: 0;
+    color: #ccc;
+    font-size: 14px;
+}
+
+.level-details strong {
+    color: #8a2be2;
+    min-width: 100px;
+    display: inline-block;
+}
+
+.difficulty-badge {
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    display: inline-block;
+}
+
+.difficulty-easy {
+    background: linear-gradient(145deg, #4ecdc4, #44a08d);
+    color: white;
+}
+
+.difficulty-normal {
+    background: linear-gradient(145deg, #667eea, #764ba2);
+    color: white;
+}
+
+.difficulty-hard {
+    background: linear-gradient(145deg, #ff6b6b, #ee5a52);
+    color: white;
+}
+
+.difficulty-expert {
+    background: linear-gradient(145deg, #c8a2c8, #dd72dd);
+    color: white;
+}
+
+.level-thumbnail-modal {
+    flex: 0 0 200px;
+    height: 150px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid #5a00d8;
+}
+
+.level-thumbnail-modal img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.scores-section {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    padding: 20px;
+    border: 1px solid #333;
+}
+
+.scores-section h3 {
+    color: white;
+    margin: 0 0 20px 0;
+    font-size: 18px;
+    text-align: center;
+}
+
+.scores-table-container {
+    overflow-x: auto;
+}
+
+.scores-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: white;
+}
+
+.scores-table th {
+    background: rgba(90, 0, 216, 0.3);
+    padding: 12px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 2px solid #5a00d8;
+    text-align: left;
+}
+
+.scores-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #333;
+    font-size: 14px;
+}
+
+.scores-table tbody tr:hover {
+    background: rgba(90, 0, 216, 0.1);
+}
+
+.scores-table .rank {
+    font-weight: bold;
+    color: #8a2be2;
+    width: 50px;
+}
+
+.scores-table .player-name {
+    color: #4ecdc4;
+}
+
+.scores-table .score-value {
+    font-weight: bold;
+    color: #ffd700;
+}
+
+.scores-table .score-date {
+    color: #aaa;
+    font-size: 12px;
+}
+
+.scores-table .top-1 .rank::before {
+    content: "🥇 ";
+}
+
+.scores-table .top-2 .rank::before {
+    content: "🥈 ";
+}
+
+.scores-table .top-3 .rank::before {
+    content: "🥉 ";
+}
+
+.loading-scores, .no-scores {
+    text-align: center;
+    padding: 30px !important;
+    color: #666;
+    font-style: italic;
+}
+
+.modal-footer {
+    display: flex;
+    gap: 10px;
+    padding: 20px 30px;
+    border-top: 1px solid #333;
+    justify-content: flex-end;
+}
+
+.modal-footer .play-button {
+    background: linear-gradient(145deg, #5a00d8, #8a2be2);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    min-width: 150px;
+}
+
+.modal-footer .play-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(90, 0, 216, 0.6);
+}
+
+.modal-footer .close-button {
+    background: transparent;
+    color: #aaa;
+    border: 1px solid #444;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.modal-footer .close-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .level-info-section {
+        flex-direction: column;
+    }
+    
+    .level-thumbnail-modal {
+        width: 100%;
+        height: 180px;
+    }
+    
+    .modal-content.level-modal {
+        width: 95%;
+        max-height: 95vh;
+    }
+    
+    .scores-table th {
+        font-size: 10px;
+        padding: 8px;
+    }
+    
+    .scores-table td {
+        font-size: 12px;
+        padding: 8px;
+    }
+    
+    .modal-footer {
+        flex-direction: column;
+    }
+    
+    .modal-footer button {
+        width: 100%;
     }
 }
