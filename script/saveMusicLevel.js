@@ -1,38 +1,5 @@
-const API_BASE_URL = '/api';  // ¡Así de simple!
-
+const API_BASE_URL = 'https://api-rhythmscript.onrender.com/api';
 let selectedStars = 0;
-
-function openCreateForm() {
-    const modal = document.getElementById('createModal');
-    modal.style.display = 'flex';
-    
-    resetStars();
-    
-    const currentUrl = getCurrentVideoUrl();
-    if (currentUrl) {
-        document.getElementById('songUrlDisplay').textContent = currentUrl;
-        console.log('URL cargada automáticamente:', currentUrl);
-    } else {
-        document.getElementById('songUrlDisplay').textContent = 'No hay canción cargada';
-    }
-}
-
-function getCurrentVideoUrl() {
-    if (CURRENT_VIDEO_STORAGE.url) {
-        return CURRENT_VIDEO_STORAGE.url;
-    }
-    
-    if (currentVideoData && currentVideoData.url) {
-        return currentVideoData.url;
-    }
-    
-    return '';
-}
-
-function closeCreateForm() {
-    const modal = document.getElementById('createModal');
-    modal.style.display = 'none';
-}
 
 function setupStars() {
     const stars = document.querySelectorAll('.star');
@@ -64,9 +31,78 @@ function resetStars() {
     });
 }
 
-async function saveLevelToDB(levelData) {
+function getCurrentVideoUrl() {
+    if (typeof CURRENT_VIDEO_STORAGE !== 'undefined' && CURRENT_VIDEO_STORAGE.url) {
+        return CURRENT_VIDEO_STORAGE.url;
+    }
+    
+    if (typeof currentVideoData !== 'undefined' && currentVideoData && currentVideoData.url) {
+        return currentVideoData.url;
+    }
+    
+    return '';
+}
+
+function openCreateForm() {
+    const modal = document.getElementById('createModal');
+    if (!modal) return;
+    
+    modal.style.display = 'flex';
+    
+    const title = modal.querySelector('h3');
+    const confirmBtn = modal.querySelector('.confirm-btn');
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const isEditMode = urlParams.has('edit');
+    
+    if (isEditMode) {
+        title.textContent = 'Editar Nivel';
+        confirmBtn.textContent = 'Actualizar Nivel';
+    } else {
+        title.textContent = 'Crear Nuevo Nivel';
+        confirmBtn.textContent = 'Crear Nivel';
+        resetStars();
+    }
+    
+    const currentUrl = getCurrentVideoUrl();
+    const songUrlDisplay = document.getElementById('songUrlDisplay');
+    if (songUrlDisplay) {
+        songUrlDisplay.textContent = currentUrl || 'No hay canción cargada';
+    }
+}
+
+function closeCreateForm() {
+    const modal = document.getElementById('createModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+function saveLevelToLocalStorage(levelData) {
+    const existingLevels = JSON.parse(localStorage.getItem('rhythmLevels') || '[]');
+    const filteredLevels = existingLevels.filter(level => level.id !== levelData.id);
+    filteredLevels.push(levelData);
+    localStorage.setItem('rhythmLevels', JSON.stringify(filteredLevels));
+    console.log('Nivel guardado en localStorage:', levelData);
+}
+
+function updateLevelInStorage(levelData) {
+    const levels = JSON.parse(localStorage.getItem('rhythmLevels') || '[]');
+    const levelIndex = levels.findIndex(level => level.id === levelData.id);
+    
+    if (levelIndex !== -1) {
+        levels[levelIndex] = levelData;
+        localStorage.setItem('rhythmLevels', JSON.stringify(levels));
+        console.log('Nivel actualizado en localStorage:', levelData);
+    } else {
+        throw new Error('Nivel no encontrado para actualizar');
+    }
+}
+
+// guardar nivel en la nube
+async function saveLevelToAPI(levelData) {
     try {
-        console.log('Enviando a Vercel + freedb.tech:', levelData);
+        console.log('Enviando nivel a la API:', levelData);
         
         const response = await fetch(`${API_BASE_URL}/levels`, {
             method: 'POST',
@@ -77,14 +113,16 @@ async function saveLevelToDB(levelData) {
         });
         
         if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status}`);
+            const errorText = await response.text();
+            throw new Error(`Error HTTP: ${response.status} - ${errorText}`);
         }
         
-        return await response.json();
+        const result = await response.json();
+        console.log('Respuesta de la API:', result);
+        return result;
         
     } catch (error) {
-        console.error('Error:', error);
-        // Fallback a localStorage
+        console.error('Error al guardar en API:', error);
         return { 
             success: false, 
             error: error.message,
@@ -100,6 +138,7 @@ async function saveLevel() {
     const stars = parseInt(document.getElementById('selectedStars').value);
     const songUrl = getCurrentVideoUrl();
 
+    // Validaciones
     if (!levelName || !creatorName || !difficulty || stars === 0 || !songUrl) {
         alert('Por favor, completa todos los campos del formulario.');
         return;
@@ -107,6 +146,12 @@ async function saveLevel() {
 
     if (creatorName.length > 10) {
         alert('El nombre del creador no puede tener más de 10 letras.');
+        return;
+    }
+    
+    // Obtener datos del patrón del editor
+    if (typeof getAllColumnsData !== 'function') {
+        alert('Error: No se puede obtener el patrón del nivel');
         return;
     }
     
@@ -126,7 +171,7 @@ async function saveLevel() {
         stars: stars,
         songUrl: songUrl,
         pattern: patternData,
-        createdAt: isEditMode ? (originalLevelData?.createdAt || new Date().toISOString()) : new Date().toISOString()
+        createdAt: isEditMode ? (window.originalLevelData?.createdAt || new Date().toISOString()) : new Date().toISOString()
     };
 
     const submitBtn = document.querySelector('#levelForm button[type="submit"]');
@@ -135,58 +180,33 @@ async function saveLevel() {
     submitBtn.disabled = true;
 
     try {
+        // 1. Guardar en localStorage como respaldo
         if (isEditMode) {
             updateLevelInStorage(levelData);
         } else {
             saveLevelToLocalStorage(levelData);
         }
         
-        const onlineResult = await saveLevelToDB(levelData);
+        // 2. Intentar guardar en la API
+        const apiResult = await saveLevelToAPI(levelData);
         
-        if (onlineResult.success) {
-            const action = onlineResult.action || (isEditMode ? 'updated' : 'created');
-            if (action === 'updated') {
-                alert(`¡Nivel "${levelName}" actualizado exitosamente!`);
-            } else {
-                alert(`¡Nivel "${levelName}" ${isEditMode ? 'actualizado' : 'creado'} exitosamente!`);
-            }
+        if (apiResult.success) {
+            alert(`¡Nivel "${levelName}" ${isEditMode ? 'actualizado' : 'publicado'} exitosamente!`);
         } else {
-            alert(`¡Nivel "${levelName}" ${isEditMode ? 'actualizado' : 'creado'} localmente! (Error online: ${onlineResult.error})`);
+            alert(`¡Nivel "${levelName}" guardado localmente! (Error en nube: ${apiResult.error})`);
         }
         
+        // Redirigir a la lista de niveles
         window.location.href = 'editorMapList.html';
         
     } catch (error) {
-        console.error('Error al guardar:', error);
+        console.error('❌ Error al guardar:', error);
         alert(`Error: ${error.message}`);
     } finally {
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
     }
 }
-
-
-function saveLevelToLocalStorage(levelData) {
-    const existingLevels = JSON.parse(localStorage.getItem('rhythmLevels') || '[]');
-    
-    const filteredLevels = existingLevels.filter(level => level.id !== levelData.id);
-    filteredLevels.push(levelData);
-    
-    localStorage.setItem('rhythmLevels', JSON.stringify(filteredLevels));
-    
-    console.log('Nivel guardado localmente:', levelData);
-}
-
-document.getElementById('levelForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    saveLevel();
-});
-
-document.getElementById('createModal').addEventListener('click', function(e) {
-    if (e.target === this) {
-        closeCreateForm();
-    }
-});
 
 function updateButtonText() {
     const createButton = document.querySelector('.login-btn.logout-btn');
@@ -199,25 +219,70 @@ function updateButtonText() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Configurar el botón de crear/editar
     updateButtonText();
-    setupStars();   
+    
+    // Configurar las estrellas
+    setupStars();
+    
+    // Verificar si estamos en modo edición
     const urlParams = new URLSearchParams(window.location.search);
     const editLevelId = urlParams.get('edit');
     
     if (editLevelId) {
-        console.log('Modo edición detectado, ID:', editLevelId);
-        const success = loadLevelForEditing(editLevelId);
+        console.log('🔧 Modo edición detectado, ID:', editLevelId);
         
-        if (success) {
-            
+        // Mostrar indicador de carga
+        const submitBtn = document.querySelector('#levelForm button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.textContent = 'Cargando...';
+            submitBtn.disabled = true;
+        }
+        
+        // Cargar el nivel para editar (función definida en editExitingLevel.js)
+        if (typeof loadLevelForEditing === 'function') {
+            loadLevelForEditing(editLevelId).then(success => {
+                if (submitBtn) {
+                    submitBtn.textContent = 'Actualizar Nivel';
+                    submitBtn.disabled = false;
+                }
+                
+                if (!success) {
+                    alert('Error: No se pudo cargar el nivel para editar');
+                    window.location.href = 'editorMapList.html';
+                }
+            });
         } else {
-            alert('Error: No se pudo cargar el nivel para editar');
-            window.location.href = 'editorMapList.html';
+            console.error('Función loadLevelForEditing no encontrada');
         }
     }
 
     setTimeout(() => {
-        addTimelineMarkers();
-        observeContainerChanges();
+        if (typeof addTimelineMarkers === 'function') {
+            addTimelineMarkers();
+        }
+        if (typeof observeContainerChanges === 'function') {
+            observeContainerChanges();
+        }
     }, 100);
 });
+
+// Evento del formulario
+document.getElementById('levelForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    saveLevel();
+});
+
+// Cerrar modal al hacer clic fuera
+document.getElementById('createModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeCreateForm();
+    }
+});
+
+// Exponer funciones necesarias globalmente
+window.saveLevel = saveLevel;
+window.openCreateForm = openCreateForm;
+window.closeCreateForm = closeCreateForm;
+window.resetStars = resetStars;
+window.getCurrentVideoUrl = getCurrentVideoUrl;

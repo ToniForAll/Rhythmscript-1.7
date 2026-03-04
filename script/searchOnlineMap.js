@@ -1,27 +1,28 @@
-const SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbxZAh7WVKd26u-84P3lldUaX-bswobEf8ELcEKTU__izormXQ_7p3mN5CldhFTB_8Bw/exec';
+const API_BASE_URL = 'https://api-rhythmscript.onrender.com/api';
 
 let allOnlineLevels = [];
 
-async function loadLevelsFromSheets() {
+// CARGAR NIVELES DESDE LA API
+async function loadLevelsFromAPI() {
     try {
-        console.log('Cargando niveles desde Google Sheets...');
+        console.log('Cargando niveles..');
         
-        const proxyUrl = 'https://corsproxy.io/?';
-        const response = await fetch(proxyUrl + encodeURIComponent(SHEETS_API_URL));
+        const response = await fetch(`${API_BASE_URL}/levels`);
         
         if (response.ok) {
             const levels = await response.json();
-            console.log('Niveles cargados desde Sheets:', levels);
+            console.log('Niveles cargados:', levels);
             return Array.isArray(levels) ? levels : [];
         } else {
-            throw new Error(`Error HTTP: ${response.status}`);
+            throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
         }
     } catch (error) {
-        console.error('Error cargando niveles desde Sheets:', error);
+        console.error('Error cargando niveles desde API:', error);
         throw error; 
     }
 }
 
+// RENDERIZAR NIVELES
 function renderLevels(levels) {
     const grid = getElementSafe('levelsGrid');
     const resultsCount = getElementSafe('resultsCount');
@@ -34,6 +35,9 @@ function renderLevels(levels) {
             <div class="empty-state">
                 <h3>No hay niveles online</h3>
                 <p>Los niveles creados aparecerán aquí cuando se guarden en la nube</p>
+                <p style="font-size: 12px; color: #888; margin-top: 10px;">
+                    Conectado a: ${API_BASE_URL}
+                </p>
             </div>
         `;
         
@@ -100,9 +104,9 @@ function renderLevels(levels) {
                                 ${getStarsHTML(level.stars || 1)}
                             </div>
                             
-                            ${level.dateCreated ? `
+                            ${level.createdAt ? `
                             <div class="level-date">
-                                ${new Date(level.dateCreated).toLocaleDateString()}
+                                ${new Date(level.createdAt).toLocaleDateString()}
                             </div>
                             ` : ''}
                         </div>
@@ -216,24 +220,26 @@ async function reloadLevels() {
     }
 }
 
+// funcion de inicializacion
 async function init() {
     try {
         document.getElementById('levelsGrid').innerHTML = `
             <div class="empty-state">
                 <h3>Cargando niveles online...</h3>
-                <p>Conectando con Google Sheets</p>
+                <p style="font-size: 12px; color: #888;">Servidor: ${API_BASE_URL}</p>
             </div>
         `;
         
-        allOnlineLevels = await loadLevelsFromSheets();
+        allOnlineLevels = await loadLevelsFromAPI();
         
         renderLevels(allOnlineLevels);
         
         const searchInput = document.getElementById('searchInput');
-        searchInput.addEventListener('input', (e) => {
-            const filteredLevels = searchLevels(allOnlineLevels, e.target.value);
-            renderLevels(filteredLevels);
-        });
+        if (searchInput) {
+            // Remover event listener anterior para evitar duplicados
+            searchInput.removeEventListener('input', searchHandler);
+            searchInput.addEventListener('input', searchHandler);
+        }
         
         console.log('Niveles online cargados exitosamente:', allOnlineLevels.length);
         
@@ -241,19 +247,35 @@ async function init() {
         console.error('Error cargando niveles online:', error);
         document.getElementById('levelsGrid').innerHTML = `
             <div class="empty-state">
-                <h3>Error al conectar con Google Sheets</h3>
+                <h3>Error al conectar</h3>
                 <p>No se pudieron cargar los niveles online</p>
-                <p style="font-size: 12px; color: #ff6b6b;">Error: ${error.message}</p>
+                <p style="font-size: 12px; color: #888;">API: ${API_BASE_URL}</p>
+                <p style="font-size: 12px; color: #ff6b6b; margin-top: 10px;">Error: ${error.message}</p>
+                <p style="font-size: 12px; color: #aaa; margin-top: 5px;">
+                    Verifica que el backend en Render esté activo:<br>
+                    <a href="${API_BASE_URL.replace('/api', '')}/health" target="_blank" style="color: #66b3ff;">
+                        Probar conexión
+                    </a>
+                </p>
             </div>
         `;
         document.getElementById('reloadButton').style.display = 'block';
     }
 }
 
+// Handler de búsqueda separado para poder removerlo
+function searchHandler(e) {
+    const filteredLevels = searchLevels(allOnlineLevels, e.target.value);
+    renderLevels(filteredLevels);
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     init();
     
-    document.getElementById('reloadButton').addEventListener('click', reloadLevels);
+    const reloadButton = document.getElementById('reloadButton');
+    if (reloadButton) {
+        reloadButton.addEventListener('click', reloadLevels);
+    }
 });
 
 document.addEventListener('click', (e) => {

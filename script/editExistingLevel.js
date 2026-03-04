@@ -1,39 +1,89 @@
-let isEditMode = false;
 let currentEditLevelId = null;
 let originalLevelData = null;
 
-function loadLevelForEditing(levelId) {
-    const levels = JSON.parse(localStorage.getItem('rhythmLevels') || '[]');
-    const levelToEdit = levels.find(level => level.id === levelId);
-    
-    if (!levelToEdit) {
-        console.error('Nivel no encontrado:', levelId);
+async function loadLevelForEditing(levelId) {
+    try {
+        console.log('🔍 Buscando nivel:', levelId);
+        
+        // Intentar cargar desde API primero
+        const response = await fetch(`${API_BASE_URL}/levels/${levelId}`);
+        
+        if (response.ok) {
+            const level = await response.json();
+            console.log('Nivel cargado desde API para editar:', level);
+            
+            // Guardar datos originales
+            originalLevelData = level;
+            currentEditLevelId = levelId;
+            
+            // Rellenar el formulario
+            populateFormWithLevelData(level);
+            
+            // Cargar patrón en el editor
+            if (level.pattern) {
+                loadPatternIntoEditor(level.pattern);
+            }
+            
+            return true;
+        } else {
+            console.log('o encontrado en API, buscando en localStorage...');
+            const localLevels = JSON.parse(localStorage.getItem('rhythmLevels') || '[]');
+            const level = localLevels.find(l => l.id === levelId);
+            
+            if (level) {
+                console.log('Nivel cargado desde localStorage:', level);
+                
+                originalLevelData = level;
+                currentEditLevelId = levelId;
+                
+                populateFormWithLevelData(level);
+                
+                if (level.pattern) {
+                    loadPatternIntoEditor(level.pattern);
+                }
+                
+                return true;
+            }
+            
+            return false;
+        }
+    } catch (error) {
+        console.error('❌ Error al cargar nivel para editar:', error);
         return false;
     }
-    
-    currentEditLevelId = levelId;
-    originalLevelData = levelToEdit;
-    isEditMode = true;
-    
-    console.log('Cargando nivel para edición:', levelToEdit);
-    
-    if (levelToEdit.songUrl) {
-        CURRENT_VIDEO_STORAGE.url = levelToEdit.songUrl;
-        CURRENT_VIDEO_STORAGE.id = getYouTubeId(levelToEdit.songUrl);
-        loadAndPlayMusic(CURRENT_VIDEO_STORAGE.id);
-    }
-    
-    loadPatternIntoEditor(levelToEdit.pattern);
-    
-    populateFormWithLevelData(levelToEdit);
-    
-    return true;
 }
 
+// rellenar formulario
+function populateFormWithLevelData(levelData) {
+    document.getElementById('levelName').value = levelData.name || '';
+    document.getElementById('creatorName').value = levelData.creator || '';
+    document.getElementById('levelDifficulty').value = levelData.difficulty || 'Normal';
+    
+    const stars = levelData.stars || 1;
+    document.getElementById('selectedStars').value = stars;
+    
+    // Actualizar visualización de estrellas (usa selectedStars global)
+    const starElements = document.querySelectorAll('.star');
+    starElements.forEach((star, index) => {
+        if (index < stars) {
+            star.classList.add('active');
+        } else {
+            star.classList.remove('active');
+        }
+    });
+    
+    window.selectedStars = stars;
+
+    if (levelData.songUrl) {
+        document.getElementById('songUrlDisplay').textContent = levelData.songUrl;
+    }
+}
+
+// cargar patron del nivel
 function loadPatternIntoEditor(pattern) {
     if (!pattern) return;
     
-    console.log('Cargando patrón en editor:', pattern);
+    console.log('🎵 Cargando patrón en editor:', pattern);
     
     clearAllDots();
     
@@ -72,7 +122,9 @@ function ensureEnoughLines(requiredLines) {
     if (requiredLines > currentLines) {
         const linesToAdd = requiredLines - currentLines;
         for (let i = 0; i < linesToAdd; i++) {
-            addNewLineToAllColumns();
+            if (typeof addNewLineToAllColumns === 'function') {
+                addNewLineToAllColumns();
+            }
         }
     }
 }
@@ -98,26 +150,30 @@ function createDotAtPosition(columnIndex, lineNumber) {
         targetLine.appendChild(rhythmDot);
         targetLine.classList.add('has-rhythm-dot');
         
-        activeRhythmDots[uniqueDotId] = {
-            element: rhythmDot,
-            columnIndex: columnIndex,
-            lineNumber: lineNumber,
-            lineElement: targetLine,
-            uniqueId: uniqueDotId
-        };
+        if (typeof activeRhythmDots !== 'undefined') {
+            activeRhythmDots[uniqueDotId] = {
+                element: rhythmDot,
+                columnIndex: columnIndex,
+                lineNumber: lineNumber,
+                lineElement: targetLine,
+                uniqueId: uniqueDotId
+            };
+        }
         
-        updateButtonState(button, columnIndex, true);
-
-        setupButtonClickHandler(button, columnIndex, lineNumber, uniqueDotId);
+        if (button) {
+            updateButtonState(button, columnIndex, true);
+            setupButtonClickHandler(button, columnIndex, lineNumber, uniqueDotId);
+        }
     }
 }
 
 function setupButtonClickHandler(button, columnIndex, lineNumber, uniqueDotId) {
     button.onclick = null;
-
     button.onclick = function() {
         const lineElement = this.parentElement;
-        toggleCircle(lineElement, columnIndex, lineNumber, uniqueDotId);
+        if (typeof toggleCircle === 'function') {
+            toggleCircle(lineElement, columnIndex, lineNumber, uniqueDotId);
+        }
     };
 }
 
@@ -130,13 +186,13 @@ function setupAllButtonsAfterLoad() {
         const columns = document.querySelectorAll('.column-level');
         const columnIndex = Array.from(columns).indexOf(columnElement);
         
-        const existingDotId = Object.keys(activeRhythmDots).find(dotId => {
-            const dot = activeRhythmDots[dotId];
-            return dot.columnIndex === columnIndex && dot.lineNumber === lineNumber;
-        });
+        const existingDotId = typeof activeRhythmDots !== 'undefined' ? 
+            Object.keys(activeRhythmDots).find(dotId => {
+                const dot = activeRhythmDots[dotId];
+                return dot.columnIndex === columnIndex && dot.lineNumber === lineNumber;
+            }) : null;
         
         const dotId = existingDotId || `rhythm-dot-${columnIndex}-${lineNumber}`;
-
         setupButtonClickHandler(button, columnIndex, lineNumber, dotId);
     });
 }
@@ -145,8 +201,10 @@ function clearAllDots() {
     document.querySelectorAll('.rhythm-dot').forEach(dot => dot.remove());
     document.querySelectorAll('.line').forEach(line => line.classList.remove('has-rhythm-dot'));
     
-    for (const dotId in activeRhythmDots) {
-        delete activeRhythmDots[dotId];
+    if (typeof activeRhythmDots !== 'undefined') {
+        for (const dotId in activeRhythmDots) {
+            delete activeRhythmDots[dotId];
+        }
     }
     
     document.querySelectorAll('.line-button').forEach(button => {
@@ -155,92 +213,18 @@ function clearAllDots() {
     });
 }
 
-function populateFormWithLevelData(levelData) {
-    document.getElementById('levelName').value = levelData.name || '';
-    document.getElementById('creatorName').value = levelData.creator || '';
-    document.getElementById('levelDifficulty').value = levelData.difficulty || 'Normal';
-    
-    const stars = levelData.stars || 1;
-    selectedStars = stars;
-    document.getElementById('selectedStars').value = stars;
-
-    const starElements = document.querySelectorAll('.star');
-    starElements.forEach((star, index) => {
-        if (index < stars) {
-            star.classList.add('active');
-        } else {
-            star.classList.remove('active');
-        }
-    });
-
-    if (levelData.songUrl) {
-        document.getElementById('songUrlDisplay').textContent = levelData.songUrl;
-    }
-}
-
-function updateLevelInStorage(levelData) {
-    const levels = JSON.parse(localStorage.getItem('rhythmLevels') || '[]');
-    const levelIndex = levels.findIndex(level => level.id === levelData.id);
-    
-    if (levelIndex !== -1) {
-        levels[levelIndex] = levelData;
-        localStorage.setItem('rhythmLevels', JSON.stringify(levels));
-        console.log('Nivel actualizado en localStorage:', levelData);
+function updateButtonState(button, columnIndex, hasDot) {
+    if (!button) return;
+    if (hasDot) {
+        button.textContent = '−';
+        button.classList.add('active', 'minus');
     } else {
-        throw new Error('Nivel no encontrado para actualizar');
+        button.textContent = '+';
+        button.classList.remove('active', 'minus');
     }
 }
 
-async function updateLevelInSheets(levelData) {
-    try {
-        const proxyUrl = 'https://corsproxy.io/?';
-        const updateData = {
-            ...levelData,
-            action: 'update'
-        };
-        
-        console.log('Enviando actualización a Sheets:', updateData);
-        
-        const response = await fetch(proxyUrl + encodeURIComponent(SHEETS_API_URL), {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(updateData)
-        });
-        
-        if (response.ok) {
-            const result = await response.json();
-            return result;
-        } else {
-            throw new Error(`Error HTTP: ${response.status}`);
-        }
-        
-    } catch (error) {
-        console.log('Error en actualización online:', error);
-        return { success: false, error: error.message };
-    }
-}
-
-function openCreateForm() {
-    const modal = document.getElementById('createModal');
-    modal.style.display = 'flex';
-    
-    const title = modal.querySelector('h3');
-    if (isEditMode) {
-        title.textContent = '✏️ Editar Nivel';
-        document.querySelector('.confirm-btn').textContent = 'Actualizar Nivel';
-    } else {
-        title.textContent = '🎵 Crear Nuevo Nivel';
-        document.querySelector('.confirm-btn').textContent = 'Crear Nivel';
-        resetStars();
-    }
-    
-    const currentUrl = getCurrentVideoUrl();
-    if (currentUrl) {
-        document.getElementById('songUrlDisplay').textContent = currentUrl;
-    } else {
-        document.getElementById('songUrlDisplay').textContent = 'No hay canción cargada';
-    }
-}
-
+window.loadLevelForEditing = loadLevelForEditing;
+window.loadPatternIntoEditor = loadPatternIntoEditor;
+window.originalLevelData = originalLevelData;
+window.currentEditLevelId = currentEditLevelId;
