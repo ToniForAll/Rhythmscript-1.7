@@ -35,9 +35,6 @@ function renderLevels(levels) {
             <div class="empty-state">
                 <h3>No hay niveles online</h3>
                 <p>Los niveles creados aparecerán aquí cuando se guarden en la nube</p>
-                <p style="font-size: 12px; color: #888; margin-top: 10px;">
-                    Conectado a: ${API_BASE_URL}
-                </p>
             </div>
         `;
         
@@ -226,7 +223,6 @@ async function init() {
         document.getElementById('levelsGrid').innerHTML = `
             <div class="empty-state">
                 <h3>Cargando niveles online...</h3>
-                <p style="font-size: 12px; color: #888;">Servidor: ${API_BASE_URL}</p>
             </div>
         `;
         
