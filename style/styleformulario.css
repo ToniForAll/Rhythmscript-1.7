@@ -7,6 +7,7 @@ body {
     width: 100vw;
     height: 100vh;
     overflow: hidden;
+    background-color: #000000;
 }
 
 .bgImage {
@@ -15,6 +16,7 @@ body {
     height: 100%;
     object-fit: fill;
     z-index: 1;
+    opacity: 1;
 }
 
 .siteContainer {
@@ -173,21 +175,21 @@ button.login-btn {
 }
 
 #instagram {
-    background-image: url('../img/facebook.png');
+    background-image: url('../img/facebook.webp');
     background-size: cover;
     background-repeat: no-repeat;
     margin: 0;
 }
 
 #x {
-    background-image: url('../img/x.png');
+    background-image: url('../img/x.webp');
     background-size: cover;
     background-repeat: no-repeat;
     margin: 0;
 }
 
 #facebook {
-    background-image: url('../img/instagram.png');
+    background-image: url('../img/instagram.webp');
     background-size: cover;
     background-repeat: no-repeat;
     margin: 0;
@@ -407,6 +409,12 @@ button.login-btn {
     height: 50px;
     width: 100%;
     cursor: pointer;
+    transition: ease 0.3s;
+}
+
+.button-submit:hover {
+    background-color: #2d79f3;
+    scale: 1.03;
 }
 
 .p {
