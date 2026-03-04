@@ -112,9 +112,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// ============================================
-// EXPORTAR FUNCIONES GLOBALES
-// ============================================
 window.getCurrentUser = getCurrentUser;
 window.logout = logout;
 window.toggleUserMenu = toggleUserMenu;

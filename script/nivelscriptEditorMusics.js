@@ -1,17 +1,16 @@
 import { endScreen } from "./endScreen.js";
 
-// let userData = localStorage.getItem('userData');
-
-// validacion para volver a la pagina de inicio si no inicia sesion
-
-// if (!userData) { window.location.href = 'index.html' };
+// ============================================
+// CONFIGURACIÓN DE LA API
+// ============================================
+const API_BASE_URL = 'https://api-rhythmscript.onrender.com/api';
 
 const hit = new Audio('/sfx/soft-hitsoft.mp3');
 const hitclam = new Audio('/sfx/drum-hitnormal.mp3');
 
 let musicName = '';
 let audioPlayer = null;
-let currentLevel = null; // Lo definiremos después
+let currentLevel = null;
 
 hit.load();
 hitclam.load();
@@ -19,48 +18,51 @@ hitclam.load();
 const params = new URLSearchParams(window.location.search);
 const levelId = params.get('level');
 
-const SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbxZAh7WVKd26u-84P3lldUaX-bswobEf8ELcEKTU__izormXQ_7p3mN5CldhFTB_8Bw/exec';
-
-async function loadLevelFromSheets(id) {
+// Cargar nivel desde la API
+async function loadLevelFromAPI(id) {
     try {
-        console.log('Buscando nivel online con ID:', id);
-        const proxyUrl = 'https://corsproxy.io/?';
-        const response = await fetch(`${proxyUrl}${encodeURIComponent(SHEETS_API_URL)}?id=${id}`);
+        console.log('🔍 Buscando nivel online con ID:', id);
+        const response = await fetch(`${API_BASE_URL}/levels/${id}`);
         
         if (response.ok) {
             const level = await response.json();
-            console.log('Nivel encontrado online:', level);
+            console.log('✅ Nivel encontrado en API:', level);
             return level;
         } else {
-            throw new Error('Nivel no encontrado en Google Sheets');
+            console.log('❌ Nivel no encontrado en API');
+            return null;
         }
     } catch (error) {
-        console.error('Error cargando nivel desde Sheets:', error);
+        console.error('Error cargando nivel desde API:', error);
         return null;
     }
 }
 
+// Cargar nivel desde localStorage (respaldo)
 function loadLevelFromLocalStorage(id) {
     const levels = JSON.parse(localStorage.getItem('rhythmLevels') || '[]');
     const level = levels.find(level => level.id == id);
     if (level) {
-        console.log('Nivel encontrado en localStorage:', level);
+        console.log('📦 Nivel encontrado en localStorage:', level);
     }
     return level;
 }
 
+// Obtener nivel por ID (prioriza API, luego localStorage)
 async function getLevelById(id) {
-    const onlineLevel = await loadLevelFromSheets(id);
-    if (onlineLevel) {
-        return onlineLevel;
+    // Intentar cargar desde API primero
+    const apiLevel = await loadLevelFromAPI(id);
+    if (apiLevel) {
+        return apiLevel;
     }
 
+    // Si no está en API, buscar en localStorage
     const localLevel = loadLevelFromLocalStorage(id);
     if (localLevel) {
         return localLevel;
     }
 
-    console.error('Nivel no encontrado en ningún almacenamiento');
+    console.error('❌ Nivel no encontrado en ningún almacenamiento');
     return null;
 }
 
@@ -69,7 +71,7 @@ async function initializeLevel() {
 
     if (currentLevel) {
         musicName = `${currentLevel.name} - ${currentLevel.creator}, ${currentLevel.difficulty}`;
-        console.log('Nivel cargado:', currentLevel);
+        console.log('🎵 Nivel cargado:', currentLevel);
         
         // Iniciar la carga de música y el juego
         if (currentLevel.songUrl) {
@@ -78,12 +80,12 @@ async function initializeLevel() {
             startCountdown();
         }
     } else {
-        console.error('Nivel no encontrado');
+        console.error('❌ Nivel no encontrado');
         document.body.innerHTML = `
             <div style="text-align: center; padding: 50px; color: white; background: #1a1a2e;">
-                <h1>Nivel no encontrado</h1>
+                <h1>❌ Nivel no encontrado</h1>
                 <p>El nivel que buscas no existe o no está disponible.</p>
-                <button onclick="window.location.href = 'searchOnlineMap.html'" 
+                <button onclick="window.location.href = 'editorMapList.html'" 
                         style="background: #5a00d8; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 20px;">
                     Volver a niveles
                 </button>
@@ -264,9 +266,7 @@ function initYouTubePlayer(videoId) {
 
 function onPlayerReady(event) {
     console.log('Reproductor de YouTube listo y cargado');
-    
     event.target.cueVideoById(event.target.getVideoData().video_id);
-    
     startCountdown();
 }
 
@@ -551,7 +551,7 @@ function main() {
         }
         mapafila5.push('end');
 
-        console.log('Patrón cargado:', pattern);
+        console.log('🎯 Patrón cargado:', pattern);
     }
 
     music1 = mapafila1;
