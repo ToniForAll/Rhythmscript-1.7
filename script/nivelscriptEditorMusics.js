@@ -15,7 +15,65 @@ hitclam.load();
 const params = new URLSearchParams(window.location.search);
 const levelId = params.get('level');
 
-// Cargar nivel desde la API
+// funciones para guardar score
+function getCurrentUser() {
+    const userStr = sessionStorage.getItem('user');
+    return userStr ? JSON.parse(userStr) : null;
+}
+
+async function saveScore() {
+    const user = getCurrentUser();
+    
+    if (!user) {
+        console.log('Usuario no logueado - no se guarda puntuación');
+        return;
+    }
+    
+    // puntuaciones
+    const totalNotes = perfectNotes + greatNotes + missNotes;
+    const accuracy = totalNotes > 0 
+        ? ((perfectNotes + greatNotes) / totalNotes * 100).toFixed(2) 
+        : 0;
+    
+    const smax = totalNotes * 300;
+    const preresultado = (score / smax) * 1000000;
+    let numeroRedondeado = Math.round(preresultado);
+    let resultado = numeroRedondeado.toString().padStart(6, '0');
+
+    const scoreData = {
+        level_id: levelId,
+        level_name: currentLevel?.name || 'Nivel',
+        username: user.username,
+        score: resultado,
+        perfect_notes: perfectNotes,
+        great_notes: greatNotes,
+        miss_notes: missNotes,
+        max_combo: maxcombo,
+        accuracy: parseFloat(accuracy)
+    };
+    
+    console.log('Guardando puntuación:', scoreData);
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/scores`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(scoreData)
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            console.log('Puntuación guardada:', result);
+        } else {
+            console.error('Error al guardar puntuación');
+        }
+    } catch (error) {
+        console.error('❌ Error de red al guardar puntuación:', error);
+    }
+}
+
 async function loadLevelFromAPI(id) {
     try {
         console.log('🔍 Buscando nivel online con ID:', id);
@@ -23,10 +81,10 @@ async function loadLevelFromAPI(id) {
         
         if (response.ok) {
             const level = await response.json();
-            console.log('✅ Nivel encontrado en API:', level);
+            console.log('Nivel encontrado en API:', level);
             return level;
         } else {
-            console.log('❌ Nivel no encontrado en API');
+            console.log('Nivel no encontrado en API');
             return null;
         }
     } catch (error) {
@@ -35,31 +93,28 @@ async function loadLevelFromAPI(id) {
     }
 }
 
-// Cargar nivel desde localStorage (respaldo)
 function loadLevelFromLocalStorage(id) {
     const levels = JSON.parse(localStorage.getItem('rhythmLevels') || '[]');
     const level = levels.find(level => level.id == id);
     if (level) {
-        console.log('📦 Nivel encontrado en localStorage:', level);
+        console.log('Nivel encontrado en localStorage:', level);
     }
     return level;
 }
 
-// Obtener nivel por ID (prioriza API, luego localStorage)
+// prioriza API, luego localStorage
 async function getLevelById(id) {
-    // Intentar cargar desde API primero
     const apiLevel = await loadLevelFromAPI(id);
     if (apiLevel) {
         return apiLevel;
     }
 
-    // Si no está en API, buscar en localStorage
     const localLevel = loadLevelFromLocalStorage(id);
     if (localLevel) {
         return localLevel;
     }
 
-    console.error('❌ Nivel no encontrado en ningún almacenamiento');
+    console.error('Nivel no encontrado en ningún almacenamiento');
     return null;
 }
 
@@ -286,6 +341,17 @@ function setYouTubeVolume(volume) {
         audioPlayer.setVolume(youtubeVolume);
     }
 }
+
+// Variables globales para estadísticas
+let maxcombo = 0;
+let combo = 0;
+let score = 0;
+let perfectNotes = 0;
+let greatNotes = 0;
+let missNotes = 0;
+let totalNotes = 0;
+let correctNotes = 0;
+let life = 100;
 
 function main() {
     if (!currentLevel) {
@@ -589,15 +655,16 @@ function main() {
     pathBtn3.textContent = tecla3.toUpperCase();
     pathBtn4.textContent = tecla4.toUpperCase();
 
-    let maxcombo = 0;
-    let combo = 0;
-    let score = 0;
-    let perfectNotes = 0;
-    let greatNotes = 0;
-    let missNotes = 0;
-    let totalNotes = 0;
-    let correctNotes = 0;
-    let life = 100;
+    // Resetear estadísticas
+    maxcombo = 0;
+    combo = 0;
+    score = 0;
+    perfectNotes = 0;
+    greatNotes = 0;
+    missNotes = 0;
+    totalNotes = 0;
+    correctNotes = 0;
+    life = 100;
 
     countTotalNotes(music1);
     countTotalNotes(music2);
@@ -623,9 +690,11 @@ function main() {
         }
     }
 
-    const intervalId = setInterval(() => {
+    const intervalId = setInterval(async () => {
         if (indexes.index1Value == 'end' && indexes.index2Value == 'end' && indexes.index3Value == 'end' && indexes.index4Value == 'end' && indexes.index5Value == 'end') {
             stopYouTubeMusic();
+            
+            await saveScore();
             
             setTimeout(() => {
                 endScreen(score, perfectNotes, greatNotes, missNotes, correctNotes, totalNotes, maxcombo, life, musicName);
@@ -643,6 +712,10 @@ function main() {
         if (life <= 0) {
             fail.play();
             stopYouTubeMusic();
+
+            // GUARDAR PUNTUACIÓN EN CASO DE FALLO
+            console.log('💀 Partida fallida - Score final:', score);
+            await saveScore();
 
             endScreen(score, perfectNotes, greatNotes, missNotes, correctNotes, totalNotes, maxcombo, life, musicName);
             clearInterval(intervalId);
