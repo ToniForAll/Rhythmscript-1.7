@@ -57,7 +57,7 @@ async function showLevelModal(level) {
                     </div>
                     
                     <div class="scores-section">
-                        <h3>🏆 Top 50</h3>
+                        <h3>Top 50</h3>
                         <div class="scores-table-container">
                             <table class="scores-table">
                                 <thead>
