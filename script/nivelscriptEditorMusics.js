@@ -146,22 +146,14 @@ async function saveScore() {
     
     // Evitar guardar múltiples veces
     if (window.puntuacionGuardada) {
-        console.log('⏭️ Puntuación ya guardada, omitiendo...');
+        console.log('Puntuación ya guardada, omitiendo...');
         return;
     }
     
-    const totalNotesInLevel = currentLevel?.pattern ? 
-        (currentLevel.pattern.column1?.length) + 
-        (currentLevel.pattern.column2?.length) + 
-        (currentLevel.pattern.column3?.length) + 
-        (currentLevel.pattern.column4?.length) : 0;
-    
-    const accuracy = totalNotesInLevel > 0 
-        ? ((perfectNotes + greatNotes) / totalNotesInLevel * 100).toFixed(2) 
-        : 0;
-    
-    const smax = totalNotesInLevel * 300;
-    const preresultado = totalNotesInLevel > 0 ? (score / smax) * 1000000 : 0;
+    const smax = totalNotes * 300;
+    const preresultado = (score / smax) * 1000000;
+    const accuracy = (score / smax) * 100;
+
     let numeroRedondeado = Math.round(preresultado);
     let resultado = numeroRedondeado.toString().padStart(6, '0');
 
@@ -845,8 +837,6 @@ function main() {
             if (isMultiplayer && roomId && socket && !resultadosEnviados) {
                 resultadosEnviados = true;
                 
-                // Calcular score formateado
-                const totalNotes = perfectNotes + greatNotes + missNotes;
                 const smax = totalNotes * 300;
                 const preresultado = (score / smax) * 1000000;
                 let numeroRedondeado = Math.round(preresultado);

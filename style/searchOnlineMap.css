@@ -935,6 +935,12 @@ form {
     text-align: center;
 }
 
+.scores-table th:nth-child(1) { width: 10%; }  /* # */
+.scores-table th:nth-child(2) { width: 30%; }  /* Jugador */
+.scores-table th:nth-child(3) { width: 25%; }  /* Puntuación */
+.scores-table th:nth-child(4) { width: 15%; }  /* Max Combo*/
+.scores-table th:nth-child(5) { width: 20%; }  /* Fecha */
+
 .scores-table-container {
     overflow-x: auto;
 }
@@ -969,6 +975,16 @@ form {
     font-weight: bold;
     color: #8a2be2;
     width: 50px;
+}
+
+.combo-value {
+    color: #4ecdc4;
+    font-weight: bold;
+    text-align: center;
+}
+
+.failed-score .combo-value {
+    color: #ff9f9f;
 }
 
 .scores-table .player-name {

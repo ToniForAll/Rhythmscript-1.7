@@ -69,6 +69,7 @@ async function showLevelModal(level) {
                                         <th>#</th>
                                         <th>Jugador</th>
                                         <th>Puntuación</th>
+                                        <th>Max Combo</th>
                                         <th>Fecha</th>
                                     </tr>
                                 </thead>
@@ -137,13 +138,14 @@ function renderScoresTable(scores) {
     if (!tbody) return;
     
     if (scores.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" class="no-scores">No hay puntuaciones para este nivel</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" class="no-scores">No hay puntuaciones para este nivel</td></tr>`;
         return;
     }
     
     tbody.innerHTML = scores.map((score, index) => {
         const date = new Date(score.created_at).toLocaleDateString();
         const formattedScore = score.score.toLocaleString();
+        const formattedCombo = score.max_combo ? score.max_combo.toLocaleString() : '0';
         
         // Determinar la clase CSS según si completó o no
         const rowClass = score.completed === false ? 'failed-score' : (index < 3 ? `top-${index + 1}` : '');
@@ -154,6 +156,7 @@ function renderScoresTable(scores) {
                 <td class="rank">${index + 1}</td>
                 <td class="player-name">${escapeHtml(score.username)}</td>
                 <td class="${scoreClass}">${formattedScore}</td>
+                <td class="combo-value">${formattedCombo}x</td>
                 <td class="score-date">${date}</td>
             </tr>
         `;
