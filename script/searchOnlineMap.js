@@ -28,8 +28,7 @@ async function loadTopScores(levelId) {
 //modal para las puntuaciones tas loco
 async function showLevelModal(level) {
     currentLevelData = level;
-    
-    // Cargar top scores
+
     const topScores = await loadTopScores(level.id);
     
     let modal = document.getElementById('levelModal');
@@ -41,7 +40,7 @@ async function showLevelModal(level) {
             <div class="modal-content level-modal">
                 <div class="modal-header">
                     <h2 id="modalLevelName"></h2>
-                    <button class="modal-close" onclick="closeLevelModal()">&times;</button>
+                    <button class="modal-close" id="modalCloseBtn">&times;</button>
                 </div>
                 <div class="modal-body">
                     <div class="level-info-section">
@@ -57,8 +56,8 @@ async function showLevelModal(level) {
                     </div>
 
                     <div class="modal-footer">
-                        <button class="play-button" onclick="playLevel('${level.id}')">JUGAR NIVEL</button>
-                        <button class="close-button" onclick="closeLevelModal()">Cerrar</button>
+                        <button class="play-button" id="modalPlayBtn">JUGAR NIVEL</button>
+                        <button class="close-button" id="modalCloseBtn2">Cerrar</button>
                     </div>
                     
                     <div class="scores-section">
@@ -83,8 +82,17 @@ async function showLevelModal(level) {
             </div>
         `;
         document.body.appendChild(modal);
+
+        document.getElementById('modalCloseBtn').addEventListener('click', closeLevelModal);
+        document.getElementById('modalCloseBtn2').addEventListener('click', closeLevelModal);
+        
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeLevelModal();
+            }
+        });
     }
-    
+
     document.getElementById('modalLevelName').textContent = level.name;
     document.getElementById('modalCreator').textContent = level.creator || 'Anónimo';
     
@@ -108,6 +116,15 @@ async function showLevelModal(level) {
     } else {
         modalThumbnail.style.display = 'none';
     }
+
+    const playBtn = document.getElementById('modalPlayBtn');
+    
+    const newPlayBtn = playBtn.cloneNode(true);
+    playBtn.parentNode.replaceChild(newPlayBtn, playBtn);
+    
+    newPlayBtn.addEventListener('click', () => {
+        playLevel(level.id);
+    });
     
     renderScoresTable(topScores);
     
