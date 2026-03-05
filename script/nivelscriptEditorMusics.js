@@ -89,9 +89,8 @@ function initSocket() {
         
         socket.on('game-results', ({ player1, player2, winner }) => {
             console.log('🏆 ¡RESULTADOS RECIBIDOS EN EL CLIENTE!', { player1, player2, winner });
-            console.log('📍 URL actual:', window.location.href);
-            console.log('👤 Usuario actual:', getCurrentUser()?.username);
             
+            // IMPORTANTE: Ocultar el overlay de espera INMEDIATAMENTE
             hideWaitingForResults();
             
             // Guardar resultados
@@ -102,13 +101,14 @@ function initSocket() {
                 timestamp: Date.now()
             }));
             
-            // Verificar que se guardaron correctamente
-            const saved = sessionStorage.getItem('lastMatchResults');
-            console.log('💾 Resultados guardados en sessionStorage:', saved);
+            console.log('💾 Resultados guardados, redirigiendo en 1 segundo...');
             
-            window.location.href = `multiplayer.html?room=${roomId}&results=true`;
+            // Pequeño retraso para asegurar que todo se guarde
+            setTimeout(() => {
+                console.log('🔄 Redirigiendo a multiplayer.html');
+                window.location.href = `multiplayer.html?room=${roomId}&results=true`;
+            }, 1000);
         });
-
 
         // También agrega un evento de prueba
         socket.on('test', (data) => {
@@ -943,36 +943,34 @@ function showWaitingForResults() {
         `;
         document.body.appendChild(overlay);
         
-        // Intentar recuperar resultados si el socket se reconecta
-        if (socket) {
-            socket.once('game-results', (results) => {
-                console.log('📦 Resultados recibidos mientras esperaba:', results);
-                hideWaitingForResults();
-                sessionStorage.setItem('lastMatchResults', JSON.stringify({
-                    ...results,
-                    timestamp: Date.now()
-                }));
-                window.location.href = `multiplayer.html?room=${roomId}&results=true`;
-            });
-        }
-        
-        // Timeout más largo
+        // Timeout de seguridad más corto (10 segundos)
         timeoutEspera = setTimeout(() => {
-            const timeoutMsg = document.querySelector('.timeout-message');
-            if (timeoutMsg) timeoutMsg.style.display = 'block';
+            console.log('⏰ Timeout: No se recibieron resultados, forzando redirección');
             
-            // Auto-redirigir después de más tiempo
-            setTimeout(() => {
-                if (document.getElementById('waitingOverlay')) {
-                    console.log('⏰ Timeout final: redirigiendo a sala');
-                    window.location.href = `multiplayer.html?room=${roomId}`;
-                }
-            }, 30000);
-        }, 20000);
+            // Intentar obtener resultados del servidor
+            if (socket && socket.connected) {
+                socket.emit('get-room-results', { roomId }, (res) => {
+                    if (res.success && res.results) {
+                        console.log('📦 Resultados recuperados por timeout:', res.results);
+                        sessionStorage.setItem('lastMatchResults', JSON.stringify({
+                            ...res.results,
+                            timestamp: Date.now()
+                        }));
+                        window.location.href = `multiplayer.html?room=${roomId}&results=true`;
+                    } else {
+                        // Si no hay resultados, volver a la sala
+                        window.location.href = `multiplayer.html?room=${roomId}`;
+                    }
+                });
+            } else {
+                window.location.href = `multiplayer.html?room=${roomId}`;
+            }
+        }, 10000); // 10 segundos
     }
 }
 
 function hideWaitingForResults() {
+    console.log('🔴 Ocultando overlay de espera');
     if (timeoutEspera) {
         clearTimeout(timeoutEspera);
         timeoutEspera = null;
@@ -980,6 +978,7 @@ function hideWaitingForResults() {
     const overlay = document.getElementById('waitingOverlay');
     if (overlay) {
         overlay.remove();
+        console.log('✅ Overlay eliminado');
     }
 }
 
