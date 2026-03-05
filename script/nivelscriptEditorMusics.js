@@ -8,6 +8,7 @@ const hitclam = new Audio('/sfx/drum-hitnormal.mp3');
 let musicName = '';
 let audioPlayer = null;
 let currentLevel = null;
+let nivelCompletado = false;
 
 hit.load();
 hitclam.load();
@@ -149,7 +150,6 @@ async function saveScore() {
         return;
     }
     
-    // puntuaciones
     const totalNotesInLevel = currentLevel?.pattern ? 
         (currentLevel.pattern.column1?.length) + 
         (currentLevel.pattern.column2?.length) + 
@@ -157,11 +157,11 @@ async function saveScore() {
         (currentLevel.pattern.column4?.length) : 0;
     
     const accuracy = totalNotesInLevel > 0 
-        ? ((perfectNotes + greatNotes) / totalNotes * 100).toFixed(2) 
+        ? ((perfectNotes + greatNotes) / totalNotesInLevel * 100).toFixed(2) 
         : 0;
     
-    const smax = totalNotes * 300;
-    const preresultado = (score / smax) * 1000000;
+    const smax = totalNotesInLevel * 300;
+    const preresultado = totalNotesInLevel > 0 ? (score / smax) * 1000000 : 0;
     let numeroRedondeado = Math.round(preresultado);
     let resultado = numeroRedondeado.toString().padStart(6, '0');
 
@@ -174,10 +174,12 @@ async function saveScore() {
         great_notes: greatNotes,
         miss_notes: missNotes,
         max_combo: maxcombo,
-        accuracy: parseFloat(accuracy)
+        accuracy: parseFloat(accuracy),
+        completed: nivelCompletado
     };
     
     console.log('Guardando puntuación (única vez):', scoreData);
+    console.log(`📊 Estado: ${nivelCompletado ? '✅ COMPLETADO' : '❌ PERDIDO'}`);
     
     try {
         const response = await fetch(`${API_BASE_URL}/scores`, {
@@ -191,7 +193,7 @@ async function saveScore() {
         if (response.ok) {
             const result = await response.json();
             console.log('Puntuación guardada:', result);
-            window.puntuacionGuardada = true; // Marcar como guardada
+            window.puntuacionGuardada = true;
         } else {
             console.error('Error al guardar puntuación');
         }
@@ -836,6 +838,8 @@ function main() {
         if (indexes.index1Value == 'end' && indexes.index2Value == 'end' && indexes.index3Value == 'end' && indexes.index4Value == 'end' && indexes.index5Value == 'end') {
             stopYouTubeMusic();
             
+            nivelCompletado = true;
+            
             await saveScore();
             
             if (isMultiplayer && roomId && socket && !resultadosEnviados) {
@@ -850,7 +854,6 @@ function main() {
                 
                 console.log('📤 Enviando resultado al servidor (único):', resultado);
                 
-                // Enviar con callback de confirmación
                 socket.emit('game-result', {
                     roomId: roomId,
                     score: resultado
@@ -883,6 +886,8 @@ function main() {
             fail.play();
             stopYouTubeMusic();
 
+            nivelCompletado = false;
+            
             await saveScore();
 
             if (isMultiplayer && roomId && socket && !resultadosEnviados) {

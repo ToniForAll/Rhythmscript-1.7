@@ -997,6 +997,25 @@ form {
     content: "🥉 ";
 }
 
+.failed-score {
+    background-color: rgba(255, 68, 68, 0.1);
+}
+
+.failed-score:hover {
+    background-color: rgba(255, 68, 68, 0.2) !important;
+}
+
+.score-value.failed {
+    color: #ff6b6b !important;
+    font-weight: bold;
+}
+
+.score-value.failed::after {
+    content: ' 💀';
+    font-size: 12px;
+    opacity: 0.7;
+}
+
 .loading-scores, .no-scores {
     text-align: center;
     padding: 30px !important;

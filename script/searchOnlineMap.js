@@ -145,11 +145,15 @@ function renderScoresTable(scores) {
         const date = new Date(score.created_at).toLocaleDateString();
         const formattedScore = score.score.toLocaleString();
         
+        // Determinar la clase CSS según si completó o no
+        const rowClass = score.completed === false ? 'failed-score' : (index < 3 ? `top-${index + 1}` : '');
+        const scoreClass = score.completed === false ? 'score-value failed' : 'score-value';
+        
         return `
-            <tr class="${index < 3 ? `top-${index + 1}` : ''}">
+            <tr class="${rowClass}">
                 <td class="rank">${index + 1}</td>
                 <td class="player-name">${escapeHtml(score.username)}</td>
-                <td class="score-value">${formattedScore}</td>
+                <td class="${scoreClass}">${formattedScore}</td>
                 <td class="score-date">${date}</td>
             </tr>
         `;
