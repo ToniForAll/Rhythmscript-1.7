@@ -1026,12 +1026,6 @@ form {
     font-weight: bold;
 }
 
-.score-value.failed::after {
-    content: ' 💀';
-    font-size: 12px;
-    opacity: 0.7;
-}
-
 .loading-scores, .no-scores {
     text-align: center;
     padding: 30px !important;
