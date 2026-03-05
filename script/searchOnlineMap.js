@@ -55,6 +55,11 @@ async function showLevelModal(level) {
                             <img id="modalThumbnail" src="" alt="Thumbnail">
                         </div>
                     </div>
+
+                    <div class="modal-footer">
+                        <button class="play-button" onclick="playLevel('${level.id}')">JUGAR NIVEL</button>
+                        <button class="close-button" onclick="closeLevelModal()">Cerrar</button>
+                    </div>
                     
                     <div class="scores-section">
                         <h3>Top 50</h3>
@@ -74,10 +79,6 @@ async function showLevelModal(level) {
                             </table>
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="play-button" onclick="playLevel('${level.id}')">JUGAR NIVEL</button>
-                    <button class="close-button" onclick="closeLevelModal()">Cerrar</button>
                 </div>
             </div>
         `;

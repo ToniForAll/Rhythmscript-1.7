@@ -788,10 +788,15 @@ form {
     width: 90%;
     max-width: 900px;
     max-height: 90vh;
-    overflow-y: auto;
     position: relative;
     box-shadow: 0 0 30px rgba(90, 0, 216, 0.5);
     animation: modalAppear 0.3s ease;
+    overflow-y: auto;
+    &::-webkit-scrollbar {
+        display: none;
+    }
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
 
 @keyframes modalAppear {
@@ -1003,7 +1008,6 @@ form {
     display: flex;
     gap: 10px;
     padding: 20px 30px;
-    border-top: 1px solid #333;
     justify-content: flex-end;
 }
 

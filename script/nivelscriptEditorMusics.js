@@ -14,6 +14,150 @@ hitclam.load();
 
 const params = new URLSearchParams(window.location.search);
 const levelId = params.get('level');
+const isMultiplayer = params.get('multiplayer') === 'true';
+const roomId = params.get('room');
+let gameFinished = false;
+let resultadosEnviados = false;
+let timeoutEspera = null;
+
+// Variable para almacenar resultado
+let playerScore = 0;
+let socket = null;
+
+function initSocket() {
+    if (!isMultiplayer || !roomId) {
+        console.log('⏭️ No es modo multijugador, omitiendo socket');
+        return null;
+    }
+    
+    const user = getCurrentUser();
+    if (!user) {
+        console.error('❌ No hay usuario para modo multijugador');
+        alert('Debes iniciar sesión para jugar en modo multijugador');
+        window.location.href = 'form.html';
+        return null;
+    }
+    
+    try {
+        // Usar la misma URL que funcionó en multiplayer.js
+        const SOCKET_URL = 'https://api-rhythmscript.onrender.com';
+        
+        console.log('🔌 Conectando a socket multijugador en:', SOCKET_URL);
+        console.log('👤 Usuario:', user.username);
+        console.log('🚪 Sala:', roomId);
+        
+        socket = io(SOCKET_URL, {
+            auth: {
+                username: user.username
+            },
+            transports: ['polling'],
+            path: '/socket.io/',
+            reconnection: true,
+            reconnectionAttempts: 5,
+            reconnectionDelay: 1000
+        });
+        
+        socket.on('connect', () => {
+            console.log('✅ Conectado al servidor multijugador. Socket ID:', socket.id);
+            
+            // Verificar si hay una sala pendiente
+            socket.emit('check-existing-room', (response) => {
+                if (response.hasRoom) {
+                    console.log(`🔄 Sala pendiente encontrada: ${response.roomId}`);
+                    socket.emit('reconnect-to-room', { roomId: response.roomId });
+                    
+                    // Además, pedir resultados si ya terminó
+                    socket.emit('get-room-results', { roomId: response.roomId }, (res) => {
+                        if (res.success && res.results) {
+                            console.log('📦 Resultados recuperados:', res.results);
+                            hideWaitingForResults();
+                            
+                            sessionStorage.setItem('lastMatchResults', JSON.stringify({
+                                ...res.results,
+                                timestamp: Date.now()
+                            }));
+                            
+                            setTimeout(() => {
+                                window.location.href = `multiplayer.html?&results=true`;
+                            }, 500);
+                        }
+                    });
+                }
+            });
+        });
+        
+        socket.on('game-results', ({ player1, player2, winner }) => {
+            console.log('🏆 ¡RESULTADOS RECIBIDOS EN EL CLIENTE!', { player1, player2, winner });
+            console.log('📍 URL actual:', window.location.href);
+            console.log('👤 Usuario actual:', getCurrentUser()?.username);
+            
+            hideWaitingForResults();
+            
+            // Guardar resultados
+            sessionStorage.setItem('lastMatchResults', JSON.stringify({
+                player1,
+                player2,
+                winner,
+                timestamp: Date.now()
+            }));
+            
+            // Verificar que se guardaron correctamente
+            const saved = sessionStorage.getItem('lastMatchResults');
+            console.log('💾 Resultados guardados en sessionStorage:', saved);
+            
+            window.location.href = `multiplayer.html?room=${roomId}&results=true`;
+        });
+
+
+        // También agrega un evento de prueba
+        socket.on('test', (data) => {
+            console.log('📨 Test event received:', data);
+        });
+        
+        socket.on('disconnect', (reason) => {
+            console.log('❌ Desconectado del servidor multijugador:', reason);
+        });
+        
+        socket.on('connect_error', (error) => {
+            console.error('❌ Error de conexión multijugador:', error);
+        });
+        
+        return socket;
+    } catch (error) {
+        console.error('❌ Error iniciando socket:', error);
+        return null;
+    }
+}
+
+function showMultiplayerResults(player1, player2, winner) {
+    // Determinar si el jugador actual es el ganador
+    const user = getCurrentUser();
+    const isWinner = user?.username === winner;
+    
+    const modal = document.createElement('div');
+    modal.className = 'multiplayer-results-modal';
+    modal.innerHTML = `
+        <div class="results-content">
+            <h2>${isWinner ? '🎉 ¡VICTORIA! 🎉' : '😢 Derrota'}</h2>
+            <div class="results-players">
+                <div class="player-result ${player1.username === winner ? 'winner' : ''}">
+                    <h3>${player1.username}</h3>
+                    <p class="score">${player1.score}</p>
+                </div>
+                <div class="vs">VS</div>
+                <div class="player-result ${player2.username === winner ? 'winner' : ''}">
+                    <h3>${player2.username}</h3>
+                    <p class="score">${player2.score}</p>
+                </div>
+            </div>
+            <h3 class="winner-announcement">Ganador: ${winner}</h3>
+            <button onclick="window.location.href='multiplayer.html'" class="back-button">
+                Volver a salas
+            </button>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
 
 // funciones para guardar score
 function getCurrentUser() {
@@ -26,6 +170,12 @@ async function saveScore() {
     
     if (!user) {
         console.log('Usuario no logueado - no se guarda puntuación');
+        return;
+    }
+    
+    // Evitar guardar múltiples veces
+    if (window.puntuacionGuardada) {
+        console.log('⏭️ Puntuación ya guardada, omitiendo...');
         return;
     }
     
@@ -52,7 +202,7 @@ async function saveScore() {
         accuracy: parseFloat(accuracy)
     };
     
-    console.log('Guardando puntuación:', scoreData);
+    console.log('Guardando puntuación (única vez):', scoreData);
     
     try {
         const response = await fetch(`${API_BASE_URL}/scores`, {
@@ -66,6 +216,7 @@ async function saveScore() {
         if (response.ok) {
             const result = await response.json();
             console.log('Puntuación guardada:', result);
+            window.puntuacionGuardada = true; // Marcar como guardada
         } else {
             console.error('Error al guardar puntuación');
         }
@@ -124,6 +275,19 @@ async function initializeLevel() {
     if (currentLevel) {
         musicName = `${currentLevel.name} - ${currentLevel.creator}, ${currentLevel.difficulty}`;
         console.log('🎵 Nivel cargado:', currentLevel);
+        
+        // Inicializar socket si es multijugador ANTES de la cuenta regresiva
+        if (isMultiplayer) {
+            console.log('🎮 Modo multijugador detectado, inicializando socket...');
+            const socketInitialized = initSocket();
+            
+            if (!socketInitialized) {
+                console.error('❌ No se pudo inicializar socket multijugador');
+                alert('Error al conectar con el servidor multijugador');
+                window.location.href = 'multiplayer.html';
+                return;
+            }
+        }
         
         // Iniciar la carga de música y el juego
         if (currentLevel.songUrl) {
@@ -560,6 +724,9 @@ function main() {
                 circleRemoved = true;
             }
         }
+        if (isMultiplayer) {
+            playerScore = score;
+        }
     }
 
     function displayPointIcon(icon) {
@@ -696,6 +863,34 @@ function main() {
             
             await saveScore();
             
+            if (isMultiplayer && roomId && socket && !resultadosEnviados) {
+                resultadosEnviados = true;
+                
+                // Calcular score formateado
+                const totalNotes = perfectNotes + greatNotes + missNotes;
+                const smax = totalNotes * 300;
+                const preresultado = (score / smax) * 1000000;
+                let numeroRedondeado = Math.round(preresultado);
+                let resultado = numeroRedondeado.toString().padStart(6, '0');
+                
+                console.log('📤 Enviando resultado al servidor (único):', resultado);
+                
+                // Enviar con callback de confirmación
+                socket.emit('game-result', {
+                    roomId: roomId,
+                    score: resultado
+                }, (ack) => {
+                    console.log('📨 Servidor confirmó recepción:', ack);
+                });
+                
+                localStorage.setItem('lastMultiplayerScore', resultado);
+                
+                showWaitingForResults();
+                clearInterval(intervalId);
+                return;
+            }
+            
+            // Modo single player
             setTimeout(() => {
                 endScreen(score, perfectNotes, greatNotes, missNotes, correctNotes, totalNotes, maxcombo, life, musicName);
                 finishsong.play();
@@ -713,14 +908,37 @@ function main() {
             fail.play();
             stopYouTubeMusic();
 
-            // GUARDAR PUNTUACIÓN EN CASO DE FALLO
-            console.log('💀 Partida fallida - Score final:', score);
             await saveScore();
+
+            if (isMultiplayer && roomId && socket && !resultadosEnviados) {
+                resultadosEnviados = true;
+                
+                const totalNotes = perfectNotes + greatNotes + missNotes;
+                const smax = totalNotes * 300;
+                const preresultado = (score / smax) * 1000000;
+                let numeroRedondeado = Math.round(preresultado);
+                let resultado = numeroRedondeado.toString().padStart(6, '0');
+                
+                console.log('📤 Enviando resultado al servidor (fallo):', resultado);
+                
+                socket.emit('game-result', {
+                    roomId: roomId,
+                    score: resultado
+                }, (ack) => {
+                    console.log('📨 Servidor confirmó recepción (fallo):', ack);
+                });
+                
+                localStorage.setItem('lastMultiplayerScore', resultado);
+                
+                showWaitingForResults();
+                clearInterval(intervalId);
+                return;
+            }
 
             endScreen(score, perfectNotes, greatNotes, missNotes, correctNotes, totalNotes, maxcombo, life, musicName);
             clearInterval(intervalId);
         }
-    }, 1000)
+    }, 1000);
 
     setTimeout(() => {
         const circles = document.querySelectorAll('.circle');
@@ -730,6 +948,75 @@ function main() {
             });
         }
     }, 1200000);
+}
+
+function showWaitingForResults() {
+    if (!document.getElementById('waitingOverlay')) {
+        const overlay = document.createElement('div');
+        overlay.id = 'waitingOverlay';
+        overlay.className = 'waiting-overlay';
+        overlay.innerHTML = `
+            <div class="waiting-content">
+                <h2>🎮 Partida finalizada</h2>
+                <p>Esperando resultados del oponente...</p>
+                <div class="loading-spinner"></div>
+                <p class="timeout-message" style="font-size: 14px; color: #888; margin-top: 20px; display: none;">
+                    ¿El oponente no termina? <br>
+                    <button onclick="forceReturnToLobby()" style="background: #5a00d8; color: white; border: none; padding: 8px 16px; border-radius: 20px; margin-top: 10px; cursor: pointer;">
+                        Volver a la sala
+                    </button>
+                </p>
+                <p class="debug-info" style="font-size: 12px; color: #666; margin-top: 15px;">
+                    Socket: ${socket?.connected ? '✅' : '❌'} | Sala: ${roomId}
+                </p>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+        
+        // Intentar recuperar resultados si el socket se reconecta
+        if (socket) {
+            socket.once('game-results', (results) => {
+                console.log('📦 Resultados recibidos mientras esperaba:', results);
+                hideWaitingForResults();
+                sessionStorage.setItem('lastMatchResults', JSON.stringify({
+                    ...results,
+                    timestamp: Date.now()
+                }));
+                window.location.href = `multiplayer.html?room=${roomId}&results=true`;
+            });
+        }
+        
+        // Timeout más largo
+        timeoutEspera = setTimeout(() => {
+            const timeoutMsg = document.querySelector('.timeout-message');
+            if (timeoutMsg) timeoutMsg.style.display = 'block';
+            
+            // Auto-redirigir después de más tiempo
+            setTimeout(() => {
+                if (document.getElementById('waitingOverlay')) {
+                    console.log('⏰ Timeout final: redirigiendo a sala');
+                    window.location.href = `multiplayer.html?room=${roomId}`;
+                }
+            }, 30000);
+        }, 20000);
+    }
+}
+
+function hideWaitingForResults() {
+    if (timeoutEspera) {
+        clearTimeout(timeoutEspera);
+        timeoutEspera = null;
+    }
+    const overlay = document.getElementById('waitingOverlay');
+    if (overlay) {
+        overlay.remove();
+    }
+}
+
+
+function forceReturnToLobby() {
+    hideWaitingForResults();
+    window.location.href = `multiplayer.html?room=${roomId}`;
 }
 
 function isMobile() {
@@ -795,3 +1082,5 @@ function startCountdown() {
     
     count();
 }
+
+window.forceReturnToLobby = forceReturnToLobby;

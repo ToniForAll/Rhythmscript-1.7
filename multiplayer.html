@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RhythmScript - Multijugador</title>
+    <link rel="stylesheet" href="style/styleformulario.css">
+    <link rel="stylesheet" href="style/multiplayer.css">
+</head>
+<body>
+    <img src="img/Frame7_70.webp" class="bgImage" />
+    
+    <div class="siteContainer">
+        <header class="header">
+            <nav>
+                <img onclick="window.location.href='index.html'" src="img/grisazul.webp" />
+                <div class="navItems" id="navItems"></div>
+            </nav>
+        </header>
+
+        <!-- Pantalla de lista de salas -->
+        <div id="roomListScreen" class="rooms-container">
+            <div class="rooms-header">
+                <button id="refreshRoomsBtn">Actualizar</button>
+                <button id="createRoomBtn">Crear Sala</button>
+            </div>
+            <div id="roomsList" class="rooms-list"></div>
+        </div>
+
+        <!-- Pantalla de sala de espera -->
+        <div id="waitingRoomScreen" class="waiting-room hidden">
+            <div class="room-header">
+                <div>
+                    <span class="room-id" id="roomIdDisplay"></span>
+                    <p style="color: #aaa; margin-top: 5px;">Comparte este código con un amigo</p>
+                </div>
+                <button id="leaveRoomBtn" class="leave-button">Abandonar</button>
+            </div>
+
+            <div class="players-list" id="playersList"></div>
+
+            <div class="levels-selection">
+                <h3>Seleccionar Nivel (Solo el creador)</h3>
+                <div id="levelsSelectionGrid" class="levels-grid-select"></div>
+            </div>
+
+            <div id="selectedLevelDisplay" style="color: #4ecdc4; margin: 10px 0;"></div>
+
+            <button id="readyBtn" class="ready-button">Listo para jugar</button>
+        </div>
+    </div>
+
+    <script src="script/sesion.js"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="script/multiplayer.js"></script>
+</body>
+</html>
