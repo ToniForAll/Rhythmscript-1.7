@@ -129,36 +129,6 @@ function initSocket() {
     }
 }
 
-function showMultiplayerResults(player1, player2, winner) {
-    // Determinar si el jugador actual es el ganador
-    const user = getCurrentUser();
-    const isWinner = user?.username === winner;
-    
-    const modal = document.createElement('div');
-    modal.className = 'multiplayer-results-modal';
-    modal.innerHTML = `
-        <div class="results-content">
-            <h2>${isWinner ? '🎉 ¡VICTORIA! 🎉' : '😢 Derrota'}</h2>
-            <div class="results-players">
-                <div class="player-result ${player1.username === winner ? 'winner' : ''}">
-                    <h3>${player1.username}</h3>
-                    <p class="score">${player1.score}</p>
-                </div>
-                <div class="vs">VS</div>
-                <div class="player-result ${player2.username === winner ? 'winner' : ''}">
-                    <h3>${player2.username}</h3>
-                    <p class="score">${player2.score}</p>
-                </div>
-            </div>
-            <h3 class="winner-announcement">Ganador: ${winner}</h3>
-            <button onclick="window.location.href='multiplayer.html'" class="back-button">
-                Volver a salas
-            </button>
-        </div>
-    `;
-    document.body.appendChild(modal);
-}
-
 // funciones para guardar score
 function getCurrentUser() {
     const userStr = sessionStorage.getItem('user');
@@ -180,8 +150,13 @@ async function saveScore() {
     }
     
     // puntuaciones
-    const totalNotes = perfectNotes + greatNotes + missNotes;
-    const accuracy = totalNotes > 0 
+    const totalNotesInLevel = currentLevel?.pattern ? 
+        (currentLevel.pattern.column1?.length) + 
+        (currentLevel.pattern.column2?.length) + 
+        (currentLevel.pattern.column3?.length) + 
+        (currentLevel.pattern.column4?.length) : 0;
+    
+    const accuracy = totalNotesInLevel > 0 
         ? ((perfectNotes + greatNotes) / totalNotes * 100).toFixed(2) 
         : 0;
     
