@@ -1,5 +1,3 @@
-// multiplayer.js - Versión mejorada con selector de niveles (solo creador)
-
 const user = getCurrentUser();
 if (!user) window.location.href = 'form.html';
 
@@ -300,7 +298,12 @@ function showWaitingRoom(roomId) {
     document.getElementById('roomListScreen').classList.add('hidden');
     document.getElementById('waitingRoomScreen').classList.remove('hidden');
     document.getElementById('roomIdDisplay').textContent = roomId;
+
+    selectedLevelInfo = null;
+    
     loadLevels();
+    
+    console.log('Sala de espera mostrada para sala:', roomId);
 }
 
 function renderWaitingRoom(players) {
