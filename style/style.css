@@ -976,3 +976,72 @@ button.login-btn {
 .modal-buttons .cancel-btn:hover {
     opacity: 0.9;
 }
+
+/* Contenedor del botón para posicionar el indicador */
+.pvp-button-container {
+    position: relative;
+    display: inline-block;
+}
+
+/* Círculo de notificación - versión mejorada */
+.room-notification {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    min-width: 20px;
+    height: 20px;
+    background-color: #ff4444;
+    border-radius: 20px;
+    border: 2px solid white;
+    box-shadow: 0 0 10px #ff4444, 0 0 20px #ff4444, 0 0 30px #ff4444;
+    animation: pulse-notification 1.5s infinite;
+    display: none; /* Oculto por defecto */
+    z-index: 100;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 20px; /* Misma altura para centrar verticalmente */
+    padding: 0 6px; /* Padding horizontal para que el texto no esté pegado */
+    box-sizing: border-box;
+    white-space: nowrap; /* Evita que el texto se desborde */
+}
+
+/* Cuando hay salas, se muestra */
+.room-notification.active {
+    display: inline-block;
+}
+
+/* Si hay más de 9 salas, mostramos 9+ */
+.room-notification.many {
+    font-size: 10px; /* Un poco más pequeño para que quepa "9+" */
+    padding: 0 4px;
+}
+
+/* Animación de pulso */
+@keyframes pulse-notification {
+    0% {
+        box-shadow: 0 0 10px #ff4444, 0 0 20px #ff4444, 0 0 30px #ff4444;
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 0 15px #ff4444, 0 0 30px #ff4444, 0 0 45px #ff4444;
+        transform: scale(1.1);
+    }
+    100% {
+        box-shadow: 0 0 10px #ff4444, 0 0 20px #ff4444, 0 0 30px #ff4444;
+        transform: scale(1);
+    }
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+    .room-notification {
+        top: -5px;
+        right: -5px;
+        min-width: 18px;
+        height: 18px;
+        line-height: 18px;
+        font-size: 10px;
+    }
+}

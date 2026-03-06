@@ -257,7 +257,12 @@
 
         <div class="bigBtn size2" id="options">Options</div>
 
-        <a href="multiplayer.html" style="text-decoration: none;" id="editor"><div class="bigBtn size1 playBtn">Salas PVP</div></a>
+        <a href="multiplayer.html" style="text-decoration: none;" class="pvp-button-container">
+            <div class="bigBtn size1 playBtn">
+                Salas PVP
+                <span class="room-notification" id="roomNotification"></span>
+            </div>
+        </a>
 
         <div class="versionDisplay">
           <p>v5.0!</p>
@@ -281,6 +286,7 @@
     <script>
       window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
     </script>
-    <script defer src="/_vercel/insights/script.js"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="script/notificationRooms.js" type="module"></script>
   </body>
 </html>
