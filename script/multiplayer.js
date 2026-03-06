@@ -59,20 +59,32 @@ socket.on('rooms-list', (rooms) => {
 });
 
 socket.on('room-update', ({ players }) => {
+    const previousLength = roomPlayers.length;
+    const previousReadyStates = roomPlayers.map(p => p.ready);
+    
     roomPlayers = players;
     renderWaitingRoom(players);
+
+    if (previousLength === 1 && players.length === 2) {
+        console.log('🔊 Nuevo jugador se unió!');
+        playJoinSound();
+    }
     
-    // Determinar si el usuario actual es el creador
+    players.forEach((player, index) => {
+        const wasReady = previousReadyStates[index];
+        if (!wasReady && player.ready && player.username !== user.username) {
+            playJoinSound();
+        }
+    });
+    
     if (players.length > 0 && players[0]?.username === user.username) {
         isCreator = true;
     } else {
         isCreator = false;
     }
     
-    // Actualizar la interfaz según el rol
     updateLevelSelectionInterface();
     
-    // Verificar si ya hay un nivel seleccionado y habilitar botón ready
     const currentPlayer = players.find(p => p.username === user.username);
     const readyBtn = document.getElementById('readyBtn');
     
@@ -112,6 +124,17 @@ socket.on('game-start', ({ levelId }) => {
 // ============================================
 // FUNCIONES DE SALA
 // ============================================
+
+function playJoinSound() {
+    try {
+        const audio = new Audio('/sfx/notification.wav'); // Ajusta la ruta según tu archivo
+        audio.volume = 0.5; // Volumen moderado
+        audio.play().catch(e => console.log('Error reproduciendo sonido:', e));
+    } catch (error) {
+        console.log('No se pudo reproducir el sonido');
+    }
+}
+
 function createRoom() {
     socket.emit('create-room', (res) => {
         if (res.success) {
