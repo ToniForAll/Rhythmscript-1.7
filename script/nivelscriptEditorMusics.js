@@ -88,12 +88,10 @@ function initSocket() {
         });
         
         socket.on('game-results', ({ player1, player2, winner }) => {
-            console.log('🏆 ¡RESULTADOS RECIBIDOS EN EL CLIENTE!', { player1, player2, winner });
+            console.log('¡RESULTADOS RECIBIDOS EN EL CLIENTE!', { player1, player2, winner });
             
-            // IMPORTANTE: Ocultar el overlay de espera INMEDIATAMENTE
             hideWaitingForResults();
             
-            // Guardar resultados
             sessionStorage.setItem('lastMatchResults', JSON.stringify({
                 player1,
                 player2,
@@ -101,13 +99,9 @@ function initSocket() {
                 timestamp: Date.now()
             }));
             
-            console.log('💾 Resultados guardados, redirigiendo en 1 segundo...');
-            
-            // Pequeño retraso para asegurar que todo se guarde
-            setTimeout(() => {
-                console.log('🔄 Redirigiendo a multiplayer.html');
-                window.location.href = `multiplayer.html?room=${roomId}&results=true`;
-            }, 1000);
+            // Redirigir a la sala
+            console.log(`🔄 Redirigiendo a multiplayer.html?room=${roomId}`);
+            window.location.href = `multiplayer.html?room=${roomId}`;
         });
 
         // También agrega un evento de prueba
@@ -927,7 +921,7 @@ function showWaitingForResults() {
         overlay.className = 'waiting-overlay';
         overlay.innerHTML = `
             <div class="waiting-content">
-                <h2>🎮 Partida finalizada</h2>
+                <h2>Partida finalizada</h2>
                 <p>Esperando resultados del oponente...</p>
                 <div class="loading-spinner"></div>
                 <p class="timeout-message" style="font-size: 14px; color: #888; margin-top: 20px; display: none;">

@@ -385,6 +385,53 @@
     }
 }
 
+.multiplayer-results-modal .results-content.victory {
+    border: 3px solid #ffd700;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+    background: linear-gradient(135deg, #1a1a2e, #2a1a3e);
+}
+
+.multiplayer-results-modal .results-content.defeat {
+    border: 3px solid #ff4444;
+    box-shadow: 0 0 30px rgba(255, 68, 68, 0.3);
+    background: linear-gradient(135deg, #1a1a2e, #2e1a1a);
+}
+
+.multiplayer-results-modal h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px currentColor;
+}
+
+.results-content.victory h2 {
+    color: #ffd700;
+}
+
+.results-content.defeat h2 {
+    color: #ff4444;
+}
+
+.player-result.winner {
+    transform: scale(1.05);
+    border-color: #ffd700;
+    background: rgba(255, 215, 0, 0.15);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+    animation: winnerPulse 2s infinite;
+}
+
+@keyframes winnerPulse {
+    0% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.4); }
+    50% { box-shadow: 0 0 40px rgba(255, 215, 0, 0.8); }
+    100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.4); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+
 /* Modal de resultados superpuesto en la sala */
 .results-room-overlay {
     position: fixed;

@@ -13,6 +13,7 @@ let currentRoom = null;
 let selectedLevelInfo = null;
 let isCreator = false; 
 let roomPlayers = []; 
+let currentResultAudio = null;
 
 // ============================================
 // aqui se verifica si venimos de un partida con resultados
@@ -23,6 +24,44 @@ const roomParam = urlParams.get('room');
 const timeoutParam = urlParams.get('timeout');
 
 console.log('🔍 URL Params:', { resultsParam, roomParam, timeoutParam });
+
+if (roomParam) {
+    console.log('🎯 Sala detectada en URL:', roomParam);
+    currentRoom = roomParam;
+    
+    // Ir directamente a la sala de espera
+    document.getElementById('roomListScreen').classList.add('hidden');
+    document.getElementById('waitingRoomScreen').classList.remove('hidden');
+    document.getElementById('roomIdDisplay').textContent = roomParam;
+    
+    // Cargar niveles
+    loadLevels();
+    
+    // Reconectar a la sala cuando el socket esté listo
+    if (socket.connected) {
+        console.log('🔌 Socket ya conectado, reconectando a sala');
+        socket.emit('reconnect-to-room', { roomId: roomParam });
+    } else {
+        socket.once('connect', () => {
+            console.log('✅ Socket conectado, reconectando a sala');
+            socket.emit('reconnect-to-room', { roomId: roomParam });
+        });
+    }
+    
+    // Verificar si hay resultados guardados para mostrar
+    const lastResults = JSON.parse(sessionStorage.getItem('lastMatchResults') || 'null');
+    if (lastResults) {
+        console.log('📦 Mostrando resultados guardados:', lastResults);
+        setTimeout(() => {
+            showResultsModal(lastResults.player1, lastResults.player2, lastResults.winner);
+            sessionStorage.removeItem('lastMatchResults');
+        }, 1000);
+    }
+} else {
+    console.log('📋 No hay sala en URL, mostrando lista');
+    document.getElementById('roomListScreen').classList.remove('hidden');
+    document.getElementById('waitingRoomScreen').classList.add('hidden');
+}
 
 if (resultsParam === 'true' && roomParam) {
     const lastResults = JSON.parse(sessionStorage.getItem('lastMatchResults') || 'null');
@@ -322,7 +361,10 @@ function showWaitingRoom(roomId) {
     document.getElementById('waitingRoomScreen').classList.remove('hidden');
     document.getElementById('roomIdDisplay').textContent = roomId;
 
-    selectedLevelInfo = null;
+    const hasResults = sessionStorage.getItem('lastMatchResults');
+    if (!hasResults) {
+        selectedLevelInfo = null;
+    }
     
     loadLevels();
     
@@ -435,10 +477,14 @@ function escapeHtml(text) {
 // MODAL DE RESULTADOS
 // ============================================
 function showResultsModal(player1, player2, winner) {
-    console.log('🏆 Mostrando modal de resultados:', { player1, player2, winner });
-    
     const user = getCurrentUser();
     const isWinner = user?.username === winner;
+    
+    playResultSound(isWinner);
+
+    if (isWinner) {
+        launchVictoryConfetti();
+    }
     
     const existingModal = document.querySelector('.multiplayer-results-modal');
     if (existingModal) existingModal.remove();
@@ -446,7 +492,7 @@ function showResultsModal(player1, player2, winner) {
     const modal = document.createElement('div');
     modal.className = 'multiplayer-results-modal';
     modal.innerHTML = `
-        <div class="results-content">
+        <div class="results-content ${isWinner ? 'victory' : 'defeat'}">
             <h2>${isWinner ? '¡VICTORIA!' : 'Derrota'}</h2>
             <div class="results-players">
                 <div class="player-result ${player1.username === winner ? 'winner' : ''}">
@@ -468,9 +514,93 @@ function showResultsModal(player1, player2, winner) {
     document.body.appendChild(modal);
 }
 
+function playResultSound(isVictory) {
+    try {
+        if (currentResultAudio) {
+            currentResultAudio.pause();
+            currentResultAudio.currentTime = 0;
+        }
+        
+        const audio = new Audio(isVictory ? '/sfx/victory.ogg' : '/sfx/defeat.wav');
+        audio.volume = 0.6;
+        audio.play().catch(e => console.log('Error reproduciendo sonido:', e));
+
+        currentResultAudio = audio;
+
+        audio.addEventListener('ended', () => {
+            if (currentResultAudio === audio) {
+                currentResultAudio = null;
+            }
+        });
+    } catch (error) {
+        console.log('No se pudo reproducir el sonido');
+    }
+}
+
+function launchVictoryConfetti() {
+    if (typeof confetti === 'undefined') {
+        console.warn('canvas-confetti no está cargado');
+        return;
+    }
+    
+    // Configuración con z-index alto
+    const defaultOptions = {
+        zIndex: 99000, // Mayor que el modal (que tiene 15000)
+    };
+    
+    // Disparo principal
+    confetti({
+        ...defaultOptions,
+        particleCount: 150,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#5a00d8', '#8a2be2', '#ffd700', '#ff4444', '#4ecdc4']
+    });
+    
+    // Disparos laterales
+    setTimeout(() => {
+        confetti({
+            ...defaultOptions,
+            particleCount: 100,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0, y: 0.7 }
+        });
+        confetti({
+            ...defaultOptions,
+            particleCount: 100,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1, y: 0.7 }
+        });
+    }, 200);
+    
+    // Tercera oleada
+    setTimeout(() => {
+        confetti({
+            ...defaultOptions,
+            particleCount: 200,
+            spread: 100,
+            origin: { y: 0.5 },
+            startVelocity: 30,
+            colors: ['#5a00d8', '#ffd700']
+        });
+    }, 400);
+}
+
 function closeResultsModal() {
     const modal = document.querySelector('.multiplayer-results-modal');
-    if (modal) modal.remove();
+    if (modal) {
+        modal.remove();
+    }
+    
+    // DETENER EL SONIDO DE VICTORIA/DERROTA
+    if (currentResultAudio) {
+        currentResultAudio.pause();
+        currentResultAudio.currentTime = 0;
+        currentResultAudio = null;
+        console.log('🔇 Sonido de resultado detenido');
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
