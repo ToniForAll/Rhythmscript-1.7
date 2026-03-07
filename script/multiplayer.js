@@ -14,6 +14,7 @@ let selectedLevelInfo = null;
 let isCreator = false; 
 let roomPlayers = []; 
 let currentResultAudio = null;
+let allLevels = [];
 
 // ============================================
 // aqui se verifica si venimos de un partida con resultados
@@ -280,16 +281,19 @@ async function updateLevelInfo(levelId) {
         const infoPanel = document.getElementById('selectedLevelInfo');
         if (infoPanel) {
             infoPanel.innerHTML = `
-                <div class="level-info-panel">
+                <div class="level-info-panel-content">
                     <div class="level-info-thumbnail">
-                        <img src="${thumbnailUrl}" alt="${level.name}" 
-                             onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjExMiIgdmlld0JveD0iMCAwIDIwMCAxMTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMTEyIiBmaWxsPSIjMjAyMDIwIi8+CjxwYXRoIGQ9Ik03NSA1NkM3NSA1My43OTAxIDc2Ljc5MDEgNTIgNzkgNTJIMTIxQzEyMy4yMSA1MiAxMjUgNTMuNzkwMSAxMjUgNTZWNjBDMTI1IDYyLjIwOTkgMTIzLjIxIDY0IDEyMSA2NEg3OUM3Ni43OTAxIDY0IDc1IDYyLjIwOTkgNzUgNjBWNTZaIiBmaWxsPSIjNjY2Ii8+Cjx0ZXh0IHg9IjEwMCUiIHk9Ijk1JSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9ImVuZCIgZmlsbD0iIzY2NiIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjEwIj5ObyBpbWFnZW48L3RleHQ+Cjwvc3ZnPg=='">
+                        <img src="${thumbnailUrl}" alt="${escapeHtml(level.name)}" 
+                             onerror="this.style.display='none'">
                     </div>
                     <div class="level-info-details">
                         <h4>${escapeHtml(level.name)}</h4>
-                        <p><span>Dificultad:</span> <span class="difficulty-badge difficulty-${getDifficultyClass(level.difficulty)}">${level.difficulty || 'Normal'}</span></p>
+                        <p><span>Dificultad:</span> 
+                            <span class="difficulty-badge difficulty-${getDifficultyClass(level.difficulty)}">
+                                ${level.difficulty || 'Normal'}
+                            </span>
+                        </p>
                         <p><span>Creador:</span> ${escapeHtml(level.creator || 'Anónimo')}</p>
-                        <p class="level-selected-badge">Nivel Seleccionado!</p>
                     </div>
                 </div>
             `;
@@ -360,6 +364,11 @@ function showWaitingRoom(roomId) {
     document.getElementById('roomListScreen').classList.add('hidden');
     document.getElementById('waitingRoomScreen').classList.remove('hidden');
     document.getElementById('roomIdDisplay').textContent = roomId;
+    
+    // Mostrar el creador si está disponible
+    if (roomPlayers.length > 0) {
+        document.getElementById('roomCreatorDisplay').textContent = `Creador: ${roomPlayers[0].username}`;
+    }
 
     const hasResults = sessionStorage.getItem('lastMatchResults');
     if (!hasResults) {
@@ -406,40 +415,72 @@ async function loadLevels() {
     try {
         const API_URL = 'https://api-rhythmscript.onrender.com/api';
         const res = await fetch(`${API_URL}/levels`);
-        const levels = await res.json();
+        allLevels = await res.json();
         
-        const grid = document.getElementById('levelsSelectionGrid');
-        if (!grid) return;
+        renderLevelsGrid(allLevels);
         
-        // Crear contenedor para la selección de niveles si no existe
-        if (!document.getElementById('levelSelectionContainer')) {
-            const container = document.createElement('div');
-            container.id = 'levelSelectionContainer';
-            container.className = 'level-selection-container';
-            grid.parentNode.insertBefore(container, grid);
-            container.appendChild(grid);
-            
-            // Agregar panel de información
-            const infoPanel = document.createElement('div');
-            infoPanel.id = 'selectedLevelInfo';
-            infoPanel.className = 'selected-level-info';
-            container.appendChild(infoPanel);
+        // Configurar buscador
+        const searchInput = document.getElementById('levelSearchInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                const filteredLevels = allLevels.filter(level => 
+                    level.name.toLowerCase().includes(searchTerm) ||
+                    (level.creator && level.creator.toLowerCase().includes(searchTerm)) ||
+                    (level.difficulty && level.difficulty.toLowerCase().includes(searchTerm))
+                );
+                renderLevelsGrid(filteredLevels);
+            });
         }
-        
-        grid.innerHTML = levels.map(l => `
-            <div class="level-select-card" data-level-id="${l.id}" onclick="selectLevel('${l.id}', '${escapeHtml(l.name)}')">
-                <h4>${escapeHtml(l.name)}</h4>
-                <p>${escapeHtml(l.difficulty || 'Normal')}</p>
-                <p class="level-creator">${escapeHtml(l.creator || 'Anónimo')}</p>
-            </div>
-        `).join('');
-        
-        // Aplicar restricciones de interfaz según el rol
-        updateLevelSelectionInterface();
         
     } catch (error) {
         console.error('Error cargando niveles:', error);
     }
+}
+
+function renderLevelsGrid(levels) {
+    const grid = document.getElementById('levelsSelectionGrid');
+    if (!grid) return;
+    
+    if (levels.length === 0) {
+        grid.innerHTML = '<div class="no-levels-message">No se encontraron niveles</div>';
+        return;
+    }
+    
+    grid.innerHTML = levels.map(level => {
+        const videoId = getYouTubeVideoId(level.songUrl);
+        const thumbnailUrl = videoId ? `https://img.youtube.com/vi/${videoId}/sddefault.jpg` : '';
+        const isSelected = selectedLevelInfo?.id === level.id;
+        
+        return `
+            <div class="level-horizontal-card ${isSelected ? 'selected' : ''}" 
+                 data-level-id="${level.id}" 
+                 onclick="selectLevel('${level.id}', '${escapeHtml(level.name)}')">
+                
+                <div class="card-decoration"></div>
+                
+                <div class="card-content">
+                    <div class="level-info">
+                        <h4 class="level-name">${escapeHtml(level.name)}</h4>
+                        <div class="level-meta">
+                            <span class="level-difficulty-badge difficulty-${getDifficultyClass(level.difficulty)}">
+                                ${level.difficulty || 'Normal'}
+                            </span>
+                            <span class="level-creator">${escapeHtml(level.creator || 'Anónimo')}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="level-thumbnail">
+                        ${thumbnailUrl ? 
+                            `<img src="${thumbnailUrl}" alt="${escapeHtml(level.name)}" 
+                                 onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjkwIiB2aWV3Qm94PSIwIDAgMTIwIDkwIiBmaWxsPSIjMjAyMDIwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik00MCAzMEw4MCAzMEw4MCA2MEw0MCA2MFoiIGZpbGw9IiM1YTAwZDgiLz48dGV4dCB4PSI2MCIgeT0iNDUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiNmZmZmZmYiIGZvbnQtc2l6ZT0iMTIiPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg=='">` 
+                            : `<div class="no-thumbnail">📹</div>`
+                        }
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
 }
 
 function getYouTubeVideoId(url) {

@@ -66,32 +66,115 @@
 
 /* Sala de espera */
 .waiting-room {
-    width: 800px;
+    width: 1200px;
+    max-width: 95%;
     margin: 0 auto;
     padding: 20px;
+    max-height: calc(100vh - 100px);
     overflow-y: auto;
-    &::-webkit-scrollbar {
-        display: none;
-    }
     scrollbar-width: none;
     -ms-overflow-style: none;
+}
+
+.waiting-room::-webkit-scrollbar {
+    display: none;
 }
 
 .room-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
-    padding: 20px;
-    background: rgba(90, 0, 216, 0.2);
-    border-radius: 10px;
+    margin-bottom: 25px;
+    padding: 15px 20px;
+    background: linear-gradient(145deg, rgba(90, 0, 216, 0.2), rgba(138, 43, 226, 0.1));
+    border-radius: 15px;
+    border: 1px solid #5a00d8;
+}
+
+.room-title {
+    display: flex;
+    align-items: center;
+    gap: 15px;
 }
 
 .room-id {
-    font-size: 24px;
+    font-size: 28px;
     font-weight: bold;
     color: #5a00d8;
     letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(90, 0, 216, 0.5);
+}
+
+.room-creator {
+    font-size: 16px;
+    color: #aaa;
+    padding: 4px 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+}
+
+.room-layout {
+    display: flex;
+    gap: 25px;
+    min-height: 600px;
+}
+
+.levels-column {
+    flex: 1.5;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 20px;
+    padding: 20px;
+    border: 1px solid #333;
+    display: flex;
+    flex-direction: column;
+}
+
+.levels-header {
+    margin-bottom: 20px;
+}
+
+.levels-header h3 {
+    color: white;
+    font-size: 20px;
+    margin: 0 0 15px 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #5a00d8;
+}
+
+.search-box {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.level-search-input {
+    width: 93%;
+    padding: 12px 40px 12px 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid #444;
+    border-radius: 30px;
+    color: white;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.level-search-input:focus {
+    outline: none;
+    border-color: #5a00d8;
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 15px rgba(90, 0, 216, 0.3);
+}
+
+.level-search-input::placeholder {
+    color: #666;
+}
+
+.search-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+    font-size: 16px;
 }
 
 .players-list {
@@ -101,20 +184,8 @@
     margin-bottom: 30px;
 }
 
-.player-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px;
-    border-bottom: 1px solid #333;
-}
-
 .player-item:last-child {
     border-bottom: none;
-}
-
-.player-item.ready {
-    background: rgba(78, 205, 196, 0.1);
 }
 
 .player-name {
@@ -140,28 +211,153 @@
 }
 
 .levels-grid-select {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 10px;
-    max-height: 300px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
     overflow-y: auto;
-    padding: 10px;
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
+    padding: 5px;
+    max-height: 550px;
+    width: 100%; 
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+
+.level-horizontal-card {
+    background: linear-gradient(145deg, #1e1e2a, #151520);
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    min-height: 100px;
+    width: 100%;
+    display: flex;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.level-horizontal-card:hover {
+    transform: translateY(-3px) scale(1.02);
+    border-color: #5a00d8;
+    box-shadow: 0 8px 20px rgba(90, 0, 216, 0.4);
+}
+
+.level-horizontal-card.selected {
+    border-color: #5a00d8;
+    border-width: 2px;
+    background: linear-gradient(145deg, #252535, #1d1d2a);
+    box-shadow: 0 0 25px rgba(90, 0, 216, 0.6);
+}
+
+.level-horizontal-card.selected::after {
+    content: '✓';
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    color: #5a00d8;
+    font-size: 20px;
+    font-weight: bold;
+    z-index: 5;
+    text-shadow: 0 0 10px rgba(90, 0, 216, 0.8);
+}
+
+.card-decoration {
+    position: absolute;
+    left: -20px;
+    top: 0;
+    bottom: 0;
+    width: 100px;
+    background:  #5a00d8;
+    transform: skewX(-10deg);
+    transform-origin: left;
+    box-shadow: 2px 0 10px rgba(90, 0, 216, 0.5);
+    z-index: 2;
+}
+
+.card-content {
+    display: flex;
+    width: 100%;
+    padding: 12px 0px 12px 25px;
+    gap: 15px;
+    align-items: center;
+    position: relative;
+    z-index: 3;
+}
+
+.level-info {
+    flex: 1;
+    min-width: 0;
+    padding-left: 70px;
+}
+
+.level-name {
+    margin: 0 0 8px 0;
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.level-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+
+.level-difficulty-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.level-difficulty-badge.difficulty-easy {
+    background: linear-gradient(145deg, #4ecdc4, #44a08d);
+}
+
+.level-difficulty-badge.difficulty-normal {
+    background: linear-gradient(145deg, #667eea, #764ba2);
+}
+
+.level-difficulty-badge.difficulty-hard {
+    background: linear-gradient(145deg, #ff6b6b, #ee5a52);
+}
+
+.level-difficulty-badge.difficulty-expert {
+    background: linear-gradient(145deg, #c8a2c8, #dd72dd);
 }
 
 .level-select-card {
-    background: rgba(50, 50, 60, 0.9);
+    background: linear-gradient(145deg, #252535, #1e1e2a);
     border: 1px solid #444;
-    border-radius: 8px;
-    padding: 10px;
+    border-radius: 10px;
+    padding: 12px 10px;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.3s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-height: 80px;
 }
 
 .level-select-card:hover {
+    transform: translateY(-3px);
     border-color: #5a00d8;
-    transform: scale(1.02);
+    box-shadow: 0 5px 15px rgba(90, 0, 216, 0.3);
 }
 
 .level-select-card h4 {
@@ -177,31 +373,70 @@
 }
 
 .ready-button {
-    background: #4ecdc4;
-    color: black;
+    background: linear-gradient(145deg, #4ecdc4, #45b7aa);
+    color: #1a1a2e;
     border: none;
-    padding: 15px 30px;
-    border-radius: 30px;
+    padding: 15px 25px;
+    border-radius: 40px;
     font-size: 18px;
     font-weight: bold;
     cursor: pointer;
     width: 100%;
-    margin-top: 20px;
+    transition: all 0.3s;
+    letter-spacing: 1px;
+    box-shadow: 0 5px 15px rgba(78, 205, 196, 0.3);
+    margin-top: auto;
+}
+
+.ready-button:hover:not(:disabled) {
+    transform: scale(1.02);
+    box-shadow: 0 8px 25px rgba(78, 205, 196, 0.5);
 }
 
 .ready-button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    background: linear-gradient(145deg, #666, #555);
 }
 
 .leave-button {
     background: transparent;
     color: #ff6b6b;
-    border: 1px solid #ff6b6b;
-    padding: 10px 20px;
+    border: 2px solid #ff6b6b;
+    padding: 8px 20px;
     border-radius: 25px;
     cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s;
 }
+
+.leave-button:hover {
+    background: rgba(255, 107, 107, 0.2);
+    transform: scale(1.05);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .room-layout {
+        flex-direction: column;
+    }
+    
+    .levels-grid-select {
+        max-height: 300px;
+    }
+    
+    .room-header {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+    
+    .room-title {
+        flex-direction: column;
+        gap: 5px;
+    }
+}
+
 
 /* Modal de resultados */
 .results-modal-overlay {
@@ -548,19 +783,6 @@
     min-height: 200px;
 }
 
-.levels-grid-select {
-    flex: 2;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 12px;
-    max-height: 600px;
-    overflow-y: auto;
-    padding: 15px;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 12px;
-    border: 1px solid #333;
-}
-
 .level-select-card {
     background: linear-gradient(145deg, #252535, #1e1e2a);
     border: 2px solid #444;
@@ -595,9 +817,9 @@
 
 .level-select-card.selected {
     border-color: #5a00d8;
+    border-width: 2px;
     background: linear-gradient(145deg, #2a2a3a, #23232f);
     box-shadow: 0 0 20px rgba(90, 0, 216, 0.4);
-    position: relative;
 }
 
 .level-select-card.selected::after {
@@ -606,30 +828,174 @@
     top: 5px;
     right: 8px;
     color: #5a00d8;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: bold;
-    text-shadow: 0 0 10px rgba(90, 0, 216, 0.8);
 }
 
 .level-select-card h4 {
-    margin: 0 0 8px 0;
+    margin: 0 0 5px 0;
     color: white;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
-    padding-right: 20px;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .level-select-card p {
-    margin: 5px 0;
+    margin: 2px 0;
     color: #aaa;
-    font-size: 12px;
+    font-size: 11px;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .level-select-card .level-creator {
     color: #888;
-    font-size: 11px;
-    margin-top: 8px;
+    font-size: 10px;
+    margin-top: 5px;
     font-style: italic;
+}
+
+.level-creator {
+    color: #aaa;
+    font-size: 12px;
+    font-style: italic;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.level-stats {
+    display: flex;
+    gap: 15px;
+    font-size: 12px;
+    color: #888;
+}
+
+.stat {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.stat-icon {
+    font-size: 14px;
+}
+
+.level-thumbnail {
+    width: 200px;
+    height: 130%;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+    background: #1a1a2a;
+}
+
+.level-horizontal-card:hover .level-thumbnail {
+    border-color: #5a00d8;
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(90, 0, 216, 0.4);
+}
+
+.level-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.no-thumbnail {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(145deg, #252535, #1e1e2a);
+    color: #666;
+    font-size: 24px;
+}
+
+/* Estilo para el mensaje de no niveles */
+.no-levels-message {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+    font-style: italic;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    border: 1px dashed #444;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .card-content {
+        padding: 10px 10px 10px 20px;
+        gap: 10px;
+    }
+    
+    .level-name {
+        font-size: 16px;
+    }
+    
+    .level-thumbnail {
+        width: 70px;
+        height: 50px;
+    }
+    
+    .level-meta {
+        gap: 5px;
+    }
+    
+    .level-difficulty-badge {
+        padding: 3px 8px;
+        font-size: 10px;
+    }
+    
+    .level-creator {
+        font-size: 11px;
+    }
+    
+    .level-stats {
+        font-size: 11px;
+        gap: 10px;
+    }
+}
+
+/* Columna derecha - Información */
+.info-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.players-panel {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 20px;
+    padding: 20px;
+    border: 1px solid #333;
+}
+
+.players-panel h3 {
+    color: white;
+    font-size: 18px;
+    margin: 0 0 15px 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #5a00d8;
+}
+
+
+.player-name .creator-badge {
+    background: #5a00d8;
+    color: white;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    margin-left: 8px;
 }
 
 /* Panel de información del nivel seleccionado */
@@ -643,9 +1009,67 @@
 }
 
 .level-info-panel {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 20px;
+    padding: 20px;
+    border: 1px solid #333;
+    min-height: 200px;
+    flex: 1;
+}
+
+.level-info-panel .level-info-panel-content {
     display: flex;
-    flex-direction: column;
     gap: 15px;
+    align-items: center;
+}
+
+.level-info-panel .level-info-thumbnail {
+    width: 100px;
+    height: 70px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #444;
+}
+
+.level-info-panel .level-info-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.level-info-panel .level-info-details {
+    flex: 1;
+}
+
+.level-info-panel .level-info-details h4 {
+    color: white;
+    font-size: 18px;
+    margin: 0 0 8px 0;
+}
+
+.level-info-panel .level-info-details p {
+    margin: 5px 0;
+    color: #ccc;
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.level-info-panel .difficulty-badge {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+}
+
+.no-level-selected {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #666;
+    font-style: italic;
+    text-align: center;
+    padding: 30px;
 }
 
 .level-info-thumbnail {
@@ -736,40 +1160,46 @@
 
 /* Mejoras en la lista de jugadores */
 .players-list {
-    background: rgba(0, 0, 0, 0.4);
-    border-radius: 15px;
-    padding: 20px;
-    margin-bottom: 30px;
-    border: 1px solid #333;
+    min-height: 120px;
 }
 
 .player-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 20px;
-    border-bottom: 1px solid #333;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
     transition: all 0.3s;
 }
 
 .player-item:last-child {
-    border-bottom: none;
+    margin-bottom: 0;
 }
 
 .player-item.ready {
     background: rgba(78, 205, 196, 0.15);
-    border-left: 4px solid #4ecdc4;
+    border-left-color: #4ecdc4;
+}
+
+.player-item.ready .player-status {
+    color: #4ecdc4;
 }
 
 .player-name {
-    font-size: 18px;
     color: white;
+    font-size: 16px;
     font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
 .player-status {
     color: #aaa;
-    font-size: 14px;
+    font-size: 13px;
+    font-weight: 500;
 }
 
 /* Botón ready mejorado */

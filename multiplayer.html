@@ -35,23 +35,45 @@
         <!-- Pantalla de sala de espera -->
         <div id="waitingRoomScreen" class="waiting-room hidden">
             <div class="room-header">
-                <div>
+                <div class="room-title">
                     <span class="room-id" id="roomIdDisplay"></span>
-                    <p style="color: #aaa; margin-top: 5px;">Comparte este código con un amigo</p>
+                    <span class="room-creator" id="roomCreatorDisplay"></span>
                 </div>
                 <button id="leaveRoomBtn" class="leave-button">Abandonar</button>
             </div>
 
-            <div class="players-list" id="playersList"></div>
+            <div class="room-layout">
+                <!-- COLUMNA IZQUIERDA: Lista de niveles con buscador -->
+                <div class="levels-column">
+                    <div class="levels-header">
+                        <h3>Seleccionar Nivel</h3>
+                        <div class="search-box">
+                            <input type="text" id="levelSearchInput" placeholder="Buscar nivel..." class="level-search-input">
+                        </div>
+                    </div>
+                    
+                    <div class="levels-grid-select" id="levelsSelectionGrid"></div>
+                </div>
 
-            <div class="levels-selection">
-                <h3>Seleccionar Nivel (Solo el creador)</h3>
-                <div id="levelsSelectionGrid" class="levels-grid-select"></div>
+                <!-- COLUMNA DERECHA: Información de sala y jugadores -->
+                <div class="info-column">
+                    <!-- Panel de jugadores -->
+                    <div class="players-panel">
+                        <h3>Jugadores en sala</h3>
+                        <div class="players-list" id="playersList"></div>
+                    </div>
+
+                    <!-- Panel de información del nivel seleccionado -->
+                    <div class="level-info-panel" id="selectedLevelInfo">
+                        <div class="no-level-selected">
+                            <p>Selecciona un nivel para ver sus detalles</p>
+                        </div>
+                    </div>
+
+                    <!-- Botón de listo -->
+                    <button id="readyBtn" class="ready-button" disabled>LISTO PARA JUGAR</button>
+                </div>
             </div>
-
-            <div id="selectedLevelDisplay" style="color: #4ecdc4; margin: 10px 0;"></div>
-
-            <button id="readyBtn" class="ready-button">Listo para jugar</button>
         </div>
     </div>
 
