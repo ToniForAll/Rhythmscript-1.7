@@ -266,7 +266,7 @@
 
 .card-decoration {
     position: absolute;
-    left: -20px;
+    left: -55px;
     top: 0;
     bottom: 0;
     width: 100px;
@@ -290,7 +290,7 @@
 .level-info {
     flex: 1;
     min-width: 0;
-    padding-left: 70px;
+    padding-left: 40px;
 }
 
 .level-name {

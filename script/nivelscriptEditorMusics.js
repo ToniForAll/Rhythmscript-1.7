@@ -616,9 +616,14 @@ function main() {
         pathBtn.style.transition = 'box-shadow 0.1s ease';
         const circles = document.querySelectorAll(`.${pathClass}`);
         const buttonRect = pathBtn.getBoundingClientRect();
-        const buttonThreshold = buttonRect.top + (buttonRect.height * 0.75);
-        const buttonTopAmplified = buttonRect.top - (buttonRect.height * 1.1);
-        const buttonBottomAmplified = buttonRect.bottom + (buttonRect.height * 1.1);
+
+        const PERFECT_ZONE = 0.70;
+        const GREAT_ZONE = 0.40;
+        
+        const buttonTop = buttonRect.top;
+        const buttonBottom = buttonRect.bottom;
+        const buttonHeight = buttonRect.height;
+        
         let circleRect;
         let circleRemoved = false;
 
@@ -628,31 +633,45 @@ function main() {
             return;
         }
 
-        if (circleRect.bottom > buttonRect.top && circleRect.top < buttonRect.bottom && circleRect.right > buttonRect.left && circleRect.left < buttonRect.right) {
-            if (circleRect.bottom > buttonThreshold) {
+        const circleTop = circleRect.top;
+        const circleBottom = circleRect.bottom;
+        const circleCenter = (circleTop + circleBottom) / 2;
+        
+        const relativePosition = (circleCenter - buttonTop) / buttonHeight;
+        
+        const isIntersecting = circleBottom > buttonTop && circleTop < buttonBottom;
+
+        if (isIntersecting) {
+            console.log(`Posición relativa: ${relativePosition.toFixed(2)}`);
+
+            if (relativePosition > PERFECT_ZONE) {
+                // PERFECT!
                 score += 300;
 
-                pathBtn.style.boxShadow = '0 0 20px 5px rgb(19, 47, 255), inset 0 0 20px 5px rgb(19, 47, 255)';
+                pathBtn.style.boxShadow = '0 0 25px 8px rgb(19, 47, 255), inset 0 0 25px 8px rgb(19, 47, 255)';
                 setTimeout(() => {
                     pathBtn.style.boxShadow = '';
-                }, 150); 
+                }, 150);
 
                 combo++;
                 perfectNotes++;
                 correctNotes++;
                 comboNumber.innerText = combo;
                 displayPointIcon(img3);
+                
                 if (!circleRemoved) {
                     path.removeChild(circles[0]);
                     circleRemoved = true;
                 }
-            } else if (circleRect.top >= buttonTopAmplified && circleRect.bottom <= buttonBottomAmplified) {
+            }
+            else if (relativePosition > GREAT_ZONE) {
+                // GREAT!
                 score += 100;
-                
-                pathBtn.style.boxShadow = '0 0 20px 5px rgb(91, 255, 31), inset 0 0 20px 5px rgb(91, 255, 31)';
+
+                pathBtn.style.boxShadow = '0 0 25px 8px rgb(91, 255, 31), inset 0 0 25px 8px rgb(91, 255, 31)';
                 setTimeout(() => {
                     pathBtn.style.boxShadow = '';
-                }, 150); 
+                }, 150);
 
                 greatNotes++;
                 correctNotes++;
@@ -660,33 +679,68 @@ function main() {
                 comboNumber.classList.add('great');
                 comboNumber.innerText = combo;
                 displayPointIcon(img2);
+                
                 if (!circleRemoved) {
                     path.removeChild(circles[0]);
                     circleRemoved = true;
                 }
             }
-        } else {
-            if (!circleRemoved) {
+            else {
+                // MISS TEMPRANO!
                 life -= 5;
                 if (combo >= 20) {
                     comboBreak.play();
                 }
                 combo = 0;
 
-                pathBtn.style.boxShadow = '0 0 20px 5px rgb(255, 47, 47), inset 0 0 20px 5px rgb(255, 47, 47)';
+                pathBtn.style.boxShadow = '0 0 25px 8px rgb(255, 47, 47), inset 0 0 25px 8px rgb(255, 47, 47)';
                 setTimeout(() => {
                     pathBtn.style.boxShadow = '';
-                }, 150); 
+                }, 150);
 
                 comboNumber.classList.add('great');
                 comboNumber.innerText = '';
                 changeHeight();
                 displayPointIcon(img1);
                 missNotes++;
-                path.removeChild(circles[0]);
-                circleRemoved = true;
+                
+                if (!circleRemoved) {
+                    path.removeChild(circles[0]);
+                    circleRemoved = true;
+                }
+                
+                console.log(`❌ MISS temprano (${(relativePosition * 100).toFixed(0)}%)`);
             }
+        } else {
+            // El círculo está fuera del área del botón
+            if (circleTop > buttonBottom) {
+                if (!circleRemoved) {
+                    life -= 5;
+                    if (combo >= 20) {
+                        comboBreak.play();
+                    }
+                    combo = 0;
+
+                    pathBtn.style.boxShadow = '0 0 25px 8px rgb(255, 47, 47), inset 0 0 25px 8px rgb(255, 47, 47)';
+                    setTimeout(() => {
+                        pathBtn.style.boxShadow = '';
+                    }, 150);
+
+                    comboNumber.classList.add('great');
+                    comboNumber.innerText = '';
+                    changeHeight();
+                    displayPointIcon(img1);
+                    missNotes++;
+                    
+                    path.removeChild(circles[0]);
+                    circleRemoved = true;
+                    
+                    console.log(`❌ MISS tardío (círculo pasó el botón)`);
+                }
+            }
+            // Si está muy arriba (circleBottom < buttonTop), no hacer nada ya que aun no ha llegado
         }
+        
         if (isMultiplayer) {
             playerScore = score;
         }
@@ -929,9 +983,6 @@ function showWaitingForResults() {
                     <button onclick="forceReturnToLobby()" style="background: #5a00d8; color: white; border: none; padding: 8px 16px; border-radius: 20px; margin-top: 10px; cursor: pointer;">
                         Volver a la sala
                     </button>
-                </p>
-                <p class="debug-info" style="font-size: 12px; color: #666; margin-top: 15px;">
-                    Socket: ${socket?.connected ? '✅' : '❌'} | Sala: ${roomId}
                 </p>
             </div>
         `;
