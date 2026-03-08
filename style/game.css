@@ -61,6 +61,7 @@ body {
   border: 0.2rem solid rgba(117, 110, 161, 1);
   z-index: 1;
   color: white;
+  margin-bottom: 100px;
 }
 
 .container {

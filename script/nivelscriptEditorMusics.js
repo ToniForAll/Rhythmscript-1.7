@@ -616,9 +616,12 @@ function main() {
         pathBtn.style.transition = 'box-shadow 0.1s ease';
         const circles = document.querySelectorAll(`.${pathClass}`);
         const buttonRect = pathBtn.getBoundingClientRect();
-
-        const PERFECT_ZONE = 0.70;
-        const GREAT_ZONE = 0.40;
+        
+        // ZONAS
+        const PERFECT_ZONE = 0.70;     // Perfect: 70% - 100% (justo en el botón)
+        const GREAT_ZONE = 0.30;       // Great: 30% - 70% (un poco temprano)
+        const MISS_ZONE = 0.15;        // Miss temprano: 0% - 15% (muy temprano)
+        // Miss tardío: cuando la nota ya pasó
         
         const buttonTop = buttonRect.top;
         const buttonBottom = buttonRect.bottom;
@@ -637,55 +640,16 @@ function main() {
         const circleBottom = circleRect.bottom;
         const circleCenter = (circleTop + circleBottom) / 2;
         
+        // Calcular la posición relativa (0 = muy arriba, 1 = justo en el botón)
         const relativePosition = (circleCenter - buttonTop) / buttonHeight;
         
         const isIntersecting = circleBottom > buttonTop && circleTop < buttonBottom;
 
         if (isIntersecting) {
             console.log(`Posición relativa: ${relativePosition.toFixed(2)}`);
-
-            if (relativePosition > PERFECT_ZONE) {
-                // PERFECT!
-                score += 300;
-
-                pathBtn.style.boxShadow = '0 0 25px 8px rgb(19, 47, 255), inset 0 0 25px 8px rgb(19, 47, 255)';
-                setTimeout(() => {
-                    pathBtn.style.boxShadow = '';
-                }, 150);
-
-                combo++;
-                perfectNotes++;
-                correctNotes++;
-                comboNumber.innerText = combo;
-                displayPointIcon(img3);
-                
-                if (!circleRemoved) {
-                    path.removeChild(circles[0]);
-                    circleRemoved = true;
-                }
-            }
-            else if (relativePosition > GREAT_ZONE) {
-                // GREAT!
-                score += 100;
-
-                pathBtn.style.boxShadow = '0 0 25px 8px rgb(91, 255, 31), inset 0 0 25px 8px rgb(91, 255, 31)';
-                setTimeout(() => {
-                    pathBtn.style.boxShadow = '';
-                }, 150);
-
-                greatNotes++;
-                correctNotes++;
-                combo++;
-                comboNumber.classList.add('great');
-                comboNumber.innerText = combo;
-                displayPointIcon(img2);
-                
-                if (!circleRemoved) {
-                    path.removeChild(circles[0]);
-                    circleRemoved = true;
-                }
-            }
-            else {
+            
+            // ZONA MISS TEMPRANO (0% - 15%) - MUY TEMPRANO
+            if (relativePosition < MISS_ZONE) {
                 // MISS TEMPRANO!
                 life -= 5;
                 if (combo >= 20) {
@@ -693,10 +657,10 @@ function main() {
                 }
                 combo = 0;
 
-                pathBtn.style.boxShadow = '0 0 25px 8px rgb(255, 47, 47), inset 0 0 25px 8px rgb(255, 47, 47)';
+                pathBtn.style.boxShadow = '0 0 30px 10px rgb(255, 47, 47), inset 0 0 30px 10px rgb(255, 47, 47)';
                 setTimeout(() => {
                     pathBtn.style.boxShadow = '';
-                }, 150);
+                }, 180);
 
                 comboNumber.classList.add('great');
                 comboNumber.innerText = '';
@@ -709,11 +673,59 @@ function main() {
                     circleRemoved = true;
                 }
                 
-                console.log(`❌ MISS temprano (${(relativePosition * 100).toFixed(0)}%)`);
+                console.log(`❌ MISS TEMPRANO (${(relativePosition * 100).toFixed(0)}%) - Click muy arriba`);
+            }
+            // ZONA GREAT (15% - 70%)
+            else if (relativePosition < PERFECT_ZONE) {
+                // GREAT!
+                score += 100;
+
+                pathBtn.style.boxShadow = '0 0 30px 10px rgb(91, 255, 31), inset 0 0 30px 10px rgb(91, 255, 31)';
+                setTimeout(() => {
+                    pathBtn.style.boxShadow = '';
+                }, 180);
+
+                greatNotes++;
+                correctNotes++;
+                combo++;
+                comboNumber.classList.add('great');
+                comboNumber.innerText = combo;
+                displayPointIcon(img2);
+                
+                if (!circleRemoved) {
+                    path.removeChild(circles[0]);
+                    circleRemoved = true;
+                }
+                
+                console.log(`👍 GREAT! (${(relativePosition * 100).toFixed(0)}%)`);
+            }
+            // ZONA PERFECT (70% - 100%)
+            else {
+                // PERFECT!
+                score += 300;
+
+                pathBtn.style.boxShadow = '0 0 30px 10px rgb(19, 47, 255), inset 0 0 30px 10px rgb(19, 47, 255)';
+                setTimeout(() => {
+                    pathBtn.style.boxShadow = '';
+                }, 180);
+
+                combo++;
+                perfectNotes++;
+                correctNotes++;
+                comboNumber.innerText = combo;
+                displayPointIcon(img3);
+                
+                if (!circleRemoved) {
+                    path.removeChild(circles[0]);
+                    circleRemoved = true;
+                }
+                
+                console.log(`✨ PERFECT! (${(relativePosition * 100).toFixed(0)}%)`);
             }
         } else {
             // El círculo está fuera del área del botón
             if (circleTop > buttonBottom) {
+                // El círculo ya pasó el botón sin ser clickeado - MISS TARDÍO
                 if (!circleRemoved) {
                     life -= 5;
                     if (combo >= 20) {
@@ -721,10 +733,10 @@ function main() {
                     }
                     combo = 0;
 
-                    pathBtn.style.boxShadow = '0 0 25px 8px rgb(255, 47, 47), inset 0 0 25px 8px rgb(255, 47, 47)';
+                    pathBtn.style.boxShadow = '0 0 30px 10px rgb(255, 47, 47), inset 0 0 30px 10px rgb(255, 47, 47)';
                     setTimeout(() => {
                         pathBtn.style.boxShadow = '';
-                    }, 150);
+                    }, 180);
 
                     comboNumber.classList.add('great');
                     comboNumber.innerText = '';
@@ -735,10 +747,10 @@ function main() {
                     path.removeChild(circles[0]);
                     circleRemoved = true;
                     
-                    console.log(`❌ MISS tardío (círculo pasó el botón)`);
+                    console.log(`❌ MISS TARDÍO - La nota pasó de largo`);
                 }
             }
-            // Si está muy arriba (circleBottom < buttonTop), no hacer nada ya que aun no ha llegado
+            // Si está muy arriba, el círculo aún no ha llegado - no hacer nada
         }
         
         if (isMultiplayer) {
