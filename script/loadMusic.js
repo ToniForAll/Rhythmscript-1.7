@@ -87,9 +87,9 @@ async function loadMusicLevels() {
     } else {
         // Si no hay niveles locales, mostrar mensaje
         const emptyMessage = document.createElement('p');
-        emptyMessage.textContent = 'No tienes niveles creados. ¡Crea uno nuevo!';
+        emptyMessage.textContent = 'No tienes niveles creados localmente. ¡Crea uno nuevo!';
         emptyMessage.style.textAlign = 'center';
-        emptyMessage.style.color = '#666';
+        emptyMessage.style.color = '#191919';
         emptyMessage.style.padding = '2rem';
         emptyMessage.style.marginTop = '2rem';
         musicasContainer.appendChild(emptyMessage);
