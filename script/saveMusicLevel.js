@@ -99,7 +99,13 @@ function updateLevelInStorage(levelData) {
     }
 }
 
-// guardar nivel en la nube
+// Obtener usuario actual de la sesión
+function getCurrentUser() {
+    const userStr = sessionStorage.getItem('user');
+    return userStr ? JSON.parse(userStr) : null;
+}
+
+// Guardar nivel en la nube
 async function saveLevelToAPI(levelData) {
     try {
         console.log('Enviando nivel a la API:', levelData);
@@ -133,19 +139,28 @@ async function saveLevelToAPI(levelData) {
 
 async function saveLevel() {
     const levelName = document.getElementById('levelName').value;
-    const creatorName = document.getElementById('creatorName').value;
     const difficulty = document.getElementById('levelDifficulty').value;
     const stars = parseInt(document.getElementById('selectedStars').value);
     const songUrl = getCurrentVideoUrl();
+    
+    // Obtener usuario actual
+    const user = getCurrentUser();
+    
+    // Validar que el usuario esté autenticado
+    if (!user) {
+        alert('Debes iniciar sesión para crear un nivel');
+        window.location.href = 'form.html';
+        return;
+    }
 
     // Validaciones
-    if (!levelName || !creatorName || !difficulty || stars === 0 || !songUrl) {
+    if (!levelName || !difficulty || stars === 0 || !songUrl) {
         alert('Por favor, completa todos los campos del formulario.');
         return;
     }
 
-    if (creatorName.length > 10) {
-        alert('El nombre del creador no puede tener más de 10 letras.');
+    if (levelName.length > 16) {
+        alert('El nombre del nivel no puede tener más de 16 caracteres.');
         return;
     }
     
@@ -163,10 +178,11 @@ async function saveLevel() {
     
     const levelId = isEditMode ? editLevelId : Date.now().toString();
     
+    // Usar el nombre de usuario de la sesión como creador
     const levelData = {
         id: levelId,
         name: levelName,
-        creator: creatorName,
+        creator: user.username, // ← Automático desde la sesión
         difficulty: difficulty,
         stars: stars,
         songUrl: songUrl,
@@ -219,6 +235,13 @@ function updateButtonText() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Verificar autenticación al cargar la página
+    const user = getCurrentUser();
+    if (!user) {
+        window.location.href = 'form.html';
+        return;
+    }
+    
     // Configurar el botón de crear/editar
     updateButtonText();
     
@@ -230,7 +253,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const editLevelId = urlParams.get('edit');
     
     if (editLevelId) {
-        console.log('🔧 Modo edición detectado, ID:', editLevelId);
+        console.log('Modo edición detectado, ID:', editLevelId);
         
         // Mostrar indicador de carga
         const submitBtn = document.querySelector('#levelForm button[type="submit"]');
@@ -239,7 +262,7 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.disabled = true;
         }
         
-        // Cargar el nivel para editar (función definida en editExitingLevel.js)
+        // Cargar el nivel para editar
         if (typeof loadLevelForEditing === 'function') {
             loadLevelForEditing(editLevelId).then(success => {
                 if (submitBtn) {
@@ -286,3 +309,4 @@ window.openCreateForm = openCreateForm;
 window.closeCreateForm = closeCreateForm;
 window.resetStars = resetStars;
 window.getCurrentVideoUrl = getCurrentVideoUrl;
+window.getCurrentUser = getCurrentUser;

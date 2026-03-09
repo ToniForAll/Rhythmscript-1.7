@@ -1,9 +1,23 @@
 let currentEditLevelId = null;
 let originalLevelData = null;
 
+// Obtener usuario actual de la sesión
+function getCurrentUser() {
+    const userStr = sessionStorage.getItem('user');
+    return userStr ? JSON.parse(userStr) : null;
+}
+
 async function loadLevelForEditing(levelId) {
     try {
         console.log('🔍 Buscando nivel:', levelId);
+        
+        // Verificar que el usuario esté autenticado
+        const user = getCurrentUser();
+        if (!user) {
+            console.error('❌ Usuario no autenticado');
+            window.location.href = 'form.html';
+            return false;
+        }
         
         // Intentar cargar desde API primero
         const response = await fetch(`${API_BASE_URL}/levels/${levelId}`);
@@ -12,7 +26,13 @@ async function loadLevelForEditing(levelId) {
             const level = await response.json();
             console.log('Nivel cargado desde API para editar:', level);
             
-            // Guardar datos originales
+            if (level.creator !== user.username) {
+                console.error('❌ No tienes permiso para editar este nivel');
+                alert('No puedes editar un nivel que no fue creado por ti');
+                window.location.href = 'editorMapList.html';
+                return false;
+            }
+            
             originalLevelData = level;
             currentEditLevelId = levelId;
             
@@ -26,12 +46,19 @@ async function loadLevelForEditing(levelId) {
             
             return true;
         } else {
-            console.log('o encontrado en API, buscando en localStorage...');
+            console.log('No encontrado en API, buscando en localStorage...');
             const localLevels = JSON.parse(localStorage.getItem('rhythmLevels') || '[]');
             const level = localLevels.find(l => l.id === levelId);
             
             if (level) {
                 console.log('Nivel cargado desde localStorage:', level);
+                
+                if (level.creator !== user.username) {
+                    console.error('❌ No tienes permiso para editar este nivel');
+                    alert('No puedes editar un nivel que no fue creado por ti');
+                    window.location.href = 'editorMapList.html';
+                    return false;
+                }
                 
                 originalLevelData = level;
                 currentEditLevelId = levelId;
@@ -53,16 +80,15 @@ async function loadLevelForEditing(levelId) {
     }
 }
 
-// rellenar formulario
 function populateFormWithLevelData(levelData) {
     document.getElementById('levelName').value = levelData.name || '';
-    document.getElementById('creatorName').value = levelData.creator || '';
     document.getElementById('levelDifficulty').value = levelData.difficulty || 'Normal';
+    document.getElementById('songUrlDisplay').textContent = levelData.songUrl;
     
     const stars = levelData.stars || 1;
     document.getElementById('selectedStars').value = stars;
     
-    // Actualizar visualización de estrellas (usa selectedStars global)
+    // Actualizar visualización de estrellas
     const starElements = document.querySelectorAll('.star');
     starElements.forEach((star, index) => {
         if (index < stars) {
@@ -73,13 +99,9 @@ function populateFormWithLevelData(levelData) {
     });
     
     window.selectedStars = stars;
-
-    if (levelData.songUrl) {
-        document.getElementById('songUrlDisplay').textContent = levelData.songUrl;
-    }
 }
 
-// cargar patron del nivel
+// cargar patron del nivel 
 function loadPatternIntoEditor(pattern) {
     if (!pattern) return;
     
@@ -116,6 +138,7 @@ function loadPatternIntoEditor(pattern) {
     console.log('Patrón cargado exitosamente');
 }
 
+// Funciones auxiliares 
 function ensureEnoughLines(requiredLines) {
     const currentLines = document.querySelectorAll('.column-level .line').length / 4;
     
