@@ -62,12 +62,11 @@ function openCreateForm() {
         title.textContent = 'Crear Nuevo Nivel';
         confirmBtn.textContent = 'Crear Nivel';
         resetStars();
-    }
-    
-    const currentUrl = getCurrentVideoUrl();
-    const songUrlDisplay = document.getElementById('songUrlDisplay');
-    if (songUrlDisplay) {
-        songUrlDisplay.textContent = currentUrl || 'No hay canción cargada';
+        const currentUrl = getCurrentVideoUrl();
+        const songUrlDisplay = document.getElementById('songUrlDisplay');
+        if (songUrlDisplay) {
+            songUrlDisplay.textContent = currentUrl || 'No hay canción cargada';
+        }
     }
 }
 
@@ -141,7 +140,33 @@ async function saveLevel() {
     const levelName = document.getElementById('levelName').value;
     const difficulty = document.getElementById('levelDifficulty').value;
     const stars = parseInt(document.getElementById('selectedStars').value);
-    const songUrl = getCurrentVideoUrl();
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const isEditMode = urlParams.has('edit');
+    const editLevelId = urlParams.get('edit');
+    
+    let songUrl = '';
+    
+    if (isEditMode && window.originalLevelData?.songUrl) {
+        songUrl = window.originalLevelData.songUrl;
+    } else {
+        songUrl = getCurrentVideoUrl();
+    }
+    
+    if (!songUrl || songUrl === 'No hay canción cargada') {
+        const songUrlDisplay = document.getElementById('songUrlDisplay');
+        if (songUrlDisplay && songUrlDisplay.textContent !== 'No hay canción cargada') {
+            songUrl = songUrlDisplay.textContent;
+            console.log('📌 Usando URL del display (fallback):', songUrl);
+        }
+    }
+    
+    // Si después de todo sigue vacía, asignar string vacío
+    if (!songUrl || songUrl === 'No hay canción cargada') {
+        songUrl = '';
+    }
+    
+    console.log('📌 URL final:', songUrl);
     
     // Obtener usuario actual
     const user = getCurrentUser();
@@ -156,6 +181,7 @@ async function saveLevel() {
     // Validaciones
     if (!levelName || !difficulty || stars === 0 || !songUrl) {
         alert('Por favor, completa todos los campos del formulario.');
+        console.log('❌ Validación fallida:', { levelName, difficulty, stars, songUrl });
         return;
     }
 
@@ -172,17 +198,13 @@ async function saveLevel() {
     
     const patternData = getAllColumnsData();
     
-    const urlParams = new URLSearchParams(window.location.search);
-    const editLevelId = urlParams.get('edit');
-    const isEditMode = !!editLevelId;
-    
     const levelId = isEditMode ? editLevelId : Date.now().toString();
     
     // Usar el nombre de usuario de la sesión como creador
     const levelData = {
         id: levelId,
         name: levelName,
-        creator: user.username, // ← Automático desde la sesión
+        creator: user.username,
         difficulty: difficulty,
         stars: stars,
         songUrl: songUrl,
