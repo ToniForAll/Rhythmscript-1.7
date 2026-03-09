@@ -176,21 +176,51 @@ function playJoinSound() {
 }
 
 function createRoom() {
+    const createBtn = document.getElementById('createRoomBtn');
+    
+    if (createBtn) {
+        createBtn.disabled = true;
+        createBtn.textContent = 'Creando...';
+    }
+    
     socket.emit('create-room', (res) => {
         if (res.success) {
             currentRoom = res.roomId;
             isCreator = true;
             showWaitingRoom(res.roomId);
+            
+        } else {
+            console.error('Error al crear sala:', res.error);
+            showNotification('Error al crear sala: ' + res.error, 'warning');
+            
+            if (createBtn) {
+                createBtn.disabled = false;
+                createBtn.textContent = 'Crear Sala';
+            }
         }
     });
 }
 
 function joinRoom(roomId) {
+    const clickedCard = event?.currentTarget;
+    if (clickedCard) {
+        clickedCard.style.pointerEvents = 'none';
+        clickedCard.style.opacity = '0.7';
+    }
+    
     socket.emit('join-room', { roomId }, (res) => {
         if (res.success) {
             currentRoom = roomId;
             isCreator = false; 
             showWaitingRoom(roomId);
+        } else {
+            console.error('Error al unirse:', res.error);
+            showNotification('Error al unirse: ' + res.error, 'warning');
+            
+            if (clickedCard) {
+                clickedCard.style.pointerEvents = 'auto';
+                clickedCard.style.opacity = '1';
+            }
         }
     });
 }
@@ -668,10 +698,20 @@ document.addEventListener('DOMContentLoaded', () => {
         leaveBtn.addEventListener('click', () => {
             if (currentRoom) {
                 socket.emit('leave-room');
+                
                 currentRoom = null;
+                isCreator = false;
+                selectedLevelInfo = null;
+                
                 document.getElementById('roomListScreen').classList.remove('hidden');
                 document.getElementById('waitingRoomScreen').classList.add('hidden');
-                socket.emit('get-rooms', (rooms) => renderRooms(rooms));
+                
+                // aque rehabilito el boton
+                const createBtn = document.getElementById('createRoomBtn');
+                if (createBtn) {
+                    createBtn.disabled = false;
+                    createBtn.textContent = 'Crear Sala';
+                }
             }
         });
     }
@@ -690,6 +730,13 @@ function leaveRoom() {
             // Volver a la lista de salas
             document.getElementById('roomListScreen').classList.remove('hidden');
             document.getElementById('waitingRoomScreen').classList.add('hidden');
+            
+            // REHABILITAR EL BOTÓN DE CREAR SALA
+            const createBtn = document.getElementById('createRoomBtn');
+            if (createBtn) {
+                createBtn.disabled = false;
+                createBtn.textContent = 'Crear Sala';
+            }
             
             // Solicitar lista actualizada
             socket.emit('get-rooms', (rooms) => {
