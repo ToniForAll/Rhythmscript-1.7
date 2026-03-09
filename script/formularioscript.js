@@ -8,6 +8,8 @@ document.getElementById('cambiar-a-login').addEventListener('click', function() 
     registro.style.transform = 'translateX(100%)';
     registro.style.opacity = '0';
     
+    // Limpiar mensajes de error al cambiar de formulario
+    clearErrorMessages();
 
     setTimeout(() => {
         registro.classList.add('oculto');
@@ -28,6 +30,9 @@ document.getElementById('cambiar-a-registro').addEventListener('click', function
     inicioSesion.classList.remove('slide-in-left');
     inicioSesion.style.transform = 'translateX(-100%)';
     inicioSesion.style.opacity = '0';
+    
+    // Limpiar mensajes de error al cambiar de formulario
+    clearErrorMessages();
 
     setTimeout(() => {
         inicioSesion.classList.add('oculto');
@@ -62,6 +67,28 @@ function logout() {
     window.location.href = 'form.html';
 }
 
+function showError(form, message) {
+    clearErrorMessages();
+    
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message';
+    errorDiv.textContent = message;
+    errorDiv.style.cssText = `
+        color: #ff6b6b;
+        font-size: 14px;
+        margin-top: 10px;
+        padding: 8px;
+        border-radius: 5px;
+        text-align: center;
+    `;
+    
+    form.appendChild(errorDiv);
+}
+
+function clearErrorMessages() {
+    document.querySelectorAll('.error-message').forEach(el => el.remove());
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('DOM cargado, inicializando formularios...');
     
@@ -94,6 +121,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             registroForm.classList.remove('slide-in-right');
             registroForm.style.transform = 'translateX(100%)';
             registroForm.style.opacity = '0';
+            
+            clearErrorMessages();
 
             setTimeout(() => {
                 registroForm.classList.add('oculto');
@@ -118,6 +147,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             loginForm.classList.remove('slide-in-left');
             loginForm.style.transform = 'translateX(-100%)';
             loginForm.style.opacity = '0';
+            
+            clearErrorMessages();
 
             setTimeout(() => {
                 loginForm.classList.add('oculto');
@@ -137,6 +168,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         e.preventDefault();
         console.log('Enviando formulario de registro...');
         
+        // Limpiar errores anteriores
+        clearErrorMessages();
+        
         const inputs = registroForm.querySelectorAll('input');
         const nombre = inputs[0]?.value || '';
         const apellido = inputs[1]?.value || '';
@@ -146,17 +180,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Validaciones
         if (!nombre || !apellido || !username || !password || !confirmPassword) {
-            alert('Todos los campos son obligatorios');
+            showError(registroForm, 'Todos los campos son obligatorios');
             return;
         }
 
         if (password !== confirmPassword) {
-            alert('Las contraseñas no coinciden');
+            showError(registroForm, 'Las contraseñas no coinciden');
             return;
         }
 
         if (password.length < 6) {
-            alert('La contraseña debe tener al menos 6 caracteres');
+            showError(registroForm, 'La contraseña debe tener al menos 6 caracteres');
             return;
         }
 
@@ -189,19 +223,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.log('Datos:', data);
 
             if (response.ok && data.success) {
-                alert(`Bienvenido ${data.user.nombre}! Registro exitoso`);
-                
                 // Guardar usuario en sessionStorage
                 sessionStorage.setItem('user', JSON.stringify(data.user));
                 
-                // Redirigir al inicio
+                // Redirigir al inicio sin alerta
                 window.location.href = 'index.html';
             } else {
-                alert(`Error: ${data.error || 'Error desconocido'}`);
+                showError(registroForm, data.error || 'Error al registrar usuario');
             }
         } catch (error) {
             console.error('Error detallado:', error);
-            alert(`Error al conectar con el servidor: ${error.message}`);
+            showError(registroForm, 'Error al conectar con el servidor');
         } finally {
             if (submitBtn) {
                 submitBtn.textContent = originalText;
@@ -217,12 +249,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         e.preventDefault();
         console.log('Enviando formulario de login...');
         
+        // Limpiar errores anteriores
+        clearErrorMessages();
+        
         const inputs = loginForm.querySelectorAll('input');
         const username = inputs[0]?.value || '';
         const password = inputs[1]?.value || '';
 
         if (!username || !password) {
-            alert('❌ Usuario y contraseña son obligatorios');
+            showError(loginForm, 'Usuario y contraseña son obligatorios');
             return;
         }
 
@@ -242,7 +277,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ username, password })
-                // SIN credentials: 'include'
             });
 
             console.log('Respuesta recibida:', response.status);
@@ -250,19 +284,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             const data = await response.json();
 
             if (response.ok && data.success) {
-                alert(`¡Bienvenido de vuelta ${data.user.nombre}!`);
-                
                 // Guardar usuario en sessionStorage
                 sessionStorage.setItem('user', JSON.stringify(data.user));
                 
-                // Redirigir al inicio
+                // Redirigir al inicio sin alerta
                 window.location.href = 'index.html';
             } else {
-                alert(`Error: ${data.error || 'Error desconocido'}`);
+                showError(loginForm, data.error || 'Usuario o contraseña incorrectos');
             }
         } catch (error) {
             console.error('Error en login:', error);
-            alert(`Error al conectar con el servidor: ${error.message}`);
+            showError(loginForm, 'Error al conectar con el servidor');
         } finally {
             if (submitBtn) {
                 submitBtn.textContent = originalText;

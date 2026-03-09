@@ -464,3 +464,25 @@ button.login-btn {
     animation: slideInRight 0.5s forwards;
 }
 
+
+/* Estilos para mensajes de error */
+.error-message {
+    color: #ff6b6b;
+    font-size: 14px;
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
