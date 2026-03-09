@@ -167,8 +167,8 @@ socket.on('game-start', ({ levelId }) => {
 
 function playJoinSound() {
     try {
-        const audio = new Audio('/sfx/notification.wav'); // Ajusta la ruta según tu archivo
-        audio.volume = 0.5; // Volumen moderado
+        const audio = new Audio('/sfx/notification.wav');
+        audio.volume = 0.5;
         audio.play().catch(e => console.log('Error reproduciendo sonido:', e));
     } catch (error) {
         console.log('No se pudo reproducir el sonido');
