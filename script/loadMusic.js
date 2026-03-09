@@ -85,6 +85,18 @@ async function loadMusicLevels() {
             musicasContainer.appendChild(musicElement);
         });
     } else {
+        const localTitle = document.createElement('h3');
+        localTitle.textContent = 'Mis Niveles Locales';
+        localTitle.style.marginTop = '2rem';
+        localTitle.style.color = '#4ecdc4';
+        localTitle.style.marginBottom = '1rem';
+        localTitle.style.textShadow = '2px 2px 4px rgb(13, 138, 255), 0 0 10px rgba(255, 255, 255, 0.3)';
+        localTitle.style.webkitTextStroke = '0.3px white';
+        localTitle.style.textStroke = '0.3px white';
+        localTitle.style.fontWeight = 'bold';
+        localTitle.style.letterSpacing = '1px';
+        musicasContainer.appendChild(localTitle);
+
         // Si no hay niveles locales, mostrar mensaje
         const emptyMessage = document.createElement('p');
         emptyMessage.textContent = 'No tienes niveles creados localmente. ¡Crea uno nuevo!';
