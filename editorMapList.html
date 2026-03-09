@@ -218,7 +218,26 @@
         </div>
       </div>
 
-      
+      <!-- Modal para confirmar eliminada de nivel-->
+      <div id="deleteConfirmModal" class="delete-modal-overlay" style="display: none;">
+        <div class="delete-modal-content">
+            <div class="delete-modal-header">
+                <h3>Eliminar Nivel</h3>
+                <button class="delete-modal-close" onclick="closeDeleteModal()">×</button>
+            </div>
+            <div class="delete-modal-body">
+                <p>¿Estás seguro de que quieres eliminar este nivel?</p>
+                <p class="delete-level-name" id="deleteLevelName"></p>
+                <p class="delete-warning">Esta acción no se puede deshacer.</p>
+            </div>
+            <div class="delete-modal-footer">
+                <button class="delete-modal-cancel" onclick="closeDeleteModal()">Cancelar</button>
+                <button class="delete-modal-confirm" id="confirmDeleteBtn">Eliminar</button>
+            </div>
+        </div>
+    </div>
+
+
       <main id="menu" class="mainContainer">
         <div id="menu-cartel"></div>
         <div class="pantallaMusic" style="align-items: flex-start;">
@@ -239,7 +258,7 @@
                   </div> 
               </div>
                 <!-- Niveles creados: -->
-              <h3>Niveles Guardados</h1>
+              <h3>Niveles Locales</h1>
           </div>
         </div>
         <img class="botones" src="img/Botones(1).webp"/>
