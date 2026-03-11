@@ -1125,7 +1125,6 @@ button.login-btn {
     width: 260px;
     background: rgba(20, 20, 30, 0.85);
     backdrop-filter: blur(8px);
-    border-radius: 0 15px 15px 0;
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     overflow: hidden;
@@ -1149,19 +1148,19 @@ button.login-btn {
 }
 
 .ranking-list {
-    padding: 10px;
-    max-height: 400px;
+    padding: 0;
+    max-height: 500px;
     overflow-y: auto;
+    gap: 0px;
 }
 
 .ranking-item {
     display: flex;
     align-items: center;
     padding: 10px 12px;
-    margin: 5px 0;
-    border-radius: 10px;
     transition: all 0.2s ease;
     animation: slideIn 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .ranking-position {
@@ -1305,5 +1304,52 @@ button.login-btn {
 @media (max-width: 768px) {
     .ranking-panel {
         display: none;
+    }
+}
+
+.score-container {
+    position: fixed;
+    top: 30px;
+    right: 40px;
+    z-index: 10;
+    text-align: right;
+    color: white;
+    text-shadow: 0 0 10px rgba(90, 0, 216, 0.5);
+}
+
+#scorePoints {
+    font-size: 72px;
+    font-weight: 800;
+    margin: 0;
+    line-height: 1;
+    color: #ffd700; 
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 5px;
+}
+
+.score-label {
+    font-size: 24px;
+    font-weight: 600;
+    color: #ff69b4;
+    margin-top: 5px;
+    letter-spacing: 3px;
+    text-align: right;
+    text-shadow: 0 0 15px rgba(255, 105, 180, 0.5);
+}
+
+/* Responsive para pantallas más pequeñas */
+@media (max-width: 768px) {
+    .score-container {
+        top: 15px;
+        right: 20px;
+    }
+    
+    #scorePoints {
+        font-size: 48px;
+    }
+    
+    .score-label {
+        font-size: 18px;
     }
 }

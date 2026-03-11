@@ -33,6 +33,28 @@ function escapeHtml(text) {
 let playerScore = 0;
 let socket = null;
 
+function updateScoreDisplay() {
+    const scoreElement = document.getElementById('scorePoints');
+    if (!scoreElement) return;
+
+    if (!totalNotes || totalNotes === 0) {
+        scoreElement.textContent = '0000000';
+        return;
+    }
+    
+    const smax = totalNotes * 300;
+    const preresultado = (score / smax) * 1000000;
+
+    if (isNaN(preresultado) || !isFinite(preresultado)) {
+        scoreElement.textContent = '0000000';
+        return;
+    }
+    
+    let numeroRedondeado = Math.round(preresultado);
+    const formattedScore = numeroRedondeado.toString().padStart(7, '0');
+    scoreElement.textContent = formattedScore;
+}
+
 async function loadLevelRanking() {
     if (!levelId) return;
     
@@ -423,10 +445,16 @@ async function initializeLevel() {
     if (currentLevel) {
         musicName = `${currentLevel.name} - ${currentLevel.creator}, ${currentLevel.difficulty}`;
         console.log('🎵 Nivel cargado:', currentLevel);
-        // Cargar ranking del nivel
-        await loadLevelRanking();
         
-        // Inicializar socket si es multijugador ANTES de la cuenta regresiva
+        if (isMultiplayer) {
+            const rankingPanel = document.querySelector('.ranking-panel');
+            if (rankingPanel) {
+                rankingPanel.style.display = 'none';
+            }
+        } else {
+            await loadLevelRanking();
+        }
+        
         if (isMultiplayer) {
             console.log('🎮 Modo multijugador detectado, inicializando socket...');
             const socketInitialized = initSocket();
@@ -438,8 +466,7 @@ async function initializeLevel() {
                 return;
             }
         }
-        
-        // Iniciar la carga de música y el juego
+
         if (currentLevel.songUrl) {
             loadYouTubeMusic();
         } else {
@@ -946,6 +973,7 @@ function main() {
         if (isMultiplayer) {
             playerScore = score;
         }
+        updateScoreDisplay();
     }
 
     function displayPointIcon(icon) {
@@ -1052,6 +1080,7 @@ function main() {
     correctNotes = 0;
     life = 100;
 
+    updateScoreDisplay();
     countTotalNotes(music1);
     countTotalNotes(music2);
     countTotalNotes(music3);
