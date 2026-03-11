@@ -9,6 +9,9 @@ let musicName = '';
 let audioPlayer = null;
 let currentLevel = null;
 let nivelCompletado = false;
+let rankingData = [];
+let lastUserPosition = null;
+let lastTop10Data = null;
 
 hit.load();
 hitclam.load();
@@ -17,13 +20,195 @@ const params = new URLSearchParams(window.location.search);
 const levelId = params.get('level');
 const isMultiplayer = params.get('multiplayer') === 'true';
 const roomId = params.get('room');
-let gameFinished = false;
 let resultadosEnviados = false;
 let timeoutEspera = null;
 
-// Variable para almacenar resultado
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
 let playerScore = 0;
 let socket = null;
+
+async function loadLevelRanking() {
+    if (!levelId) return;
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/scores/${levelId}`);
+        if (response.ok) {
+            const data = await response.json();
+            
+            const sortedScores = (data.scores || [])
+                .map(score => ({
+                    username: score.username,
+                    score: parseInt(score.score),
+                    originalScore: score.score,
+                    type: 'real'
+                }))
+                .sort((a, b) => b.score - a.score);
+            
+            const user = getCurrentUser();
+            
+            rankingData = sortedScores;
+            
+            lastTop10Data = rankingData.slice(0, 10).map((p, index) => ({
+                ...p,
+                position: index + 1,
+                score: p.originalScore
+            }));
+            
+            renderRankingPanel(lastTop10Data, null);
+
+            if (user) {
+                const initialPosition = rankingData.length + 1;
+                lastUserPosition = initialPosition;
+                updatePlayerPositionAndScore(initialPosition, '000000');
+            }
+        }
+    } catch (error) {
+        console.error('Error cargando ranking:', error);
+    }
+}
+
+function updatePlayerScore(currentScore) {
+    const progressItem = document.getElementById('playerProgressItem');
+    if (!progressItem) return;
+    
+    const scoreElement = progressItem.querySelector('.score-value');
+    if (scoreElement) {
+        scoreElement.textContent = currentScore;
+    } else {
+        const position = lastUserPosition || (rankingData.length + 1);
+        updatePlayerPositionAndScore(position, currentScore);
+    }
+}
+
+function updatePlayerPositionAndScore(position, currentScore) {
+    const progressItem = document.getElementById('playerProgressItem');
+    if (!progressItem) return;
+    
+    progressItem.innerHTML = `
+        <div class="progress-card">
+            <div class="progress-header">
+                <span class="progress-label">TU PUNTUACIÓN ACTUAL</span>
+            </div>
+            <div class="progress-position">
+                <span class="position-number">#${position}</span>
+                <span class="position-total">de ${rankingData.length + 1} jugadores</span>
+            </div>
+            <div class="progress-score">
+                <span class="score-value">${currentScore}</span>
+            </div>
+        </div>
+    `;
+}
+
+function updatePlayerPosition(username, position) {
+    const currentScore = formatScore(score); 
+    updatePlayerPositionAndScore(position, currentScore);
+}
+
+function hasTop10Changed(newTop10) {
+    if (!lastTop10Data) return true;
+    if (lastTop10Data.length !== newTop10.length) return true;
+    
+    for (let i = 0; i < lastTop10Data.length; i++) {
+        const oldItem = lastTop10Data[i];
+        const newItem = newTop10[i];
+        
+        if (oldItem.username !== newItem.username || 
+            oldItem.score !== newItem.score ||
+            oldItem.position !== newItem.position) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function updateRankingWithCurrentScore() {
+    if (!currentLevel || !getCurrentUser()) return;
+    
+    const user = getCurrentUser();
+    const currentScoreFormatted = formatScore(score);
+    const currentScoreValue = parseInt(currentScoreFormatted);
+    
+    let position = 1;
+    for (let i = 0; i < rankingData.length; i++) {
+        if (currentScoreValue > rankingData[i].score) {
+            break;
+        }
+        position++;
+    }
+    
+    updatePlayerScore(currentScoreFormatted);
+
+    if (lastUserPosition !== position) {
+        console.log(`📊 Posición cambiada: ${lastUserPosition || '?'} → ${position}`);
+        lastUserPosition = position;
+        updatePlayerPosition(user.username, position);
+    }
+
+    if (position <= 10 || (lastUserPosition && lastUserPosition <= 10)) {
+        const newTop10 = rankingData.slice(0, 10).map((p, index) => ({
+            ...p,
+            position: index + 1,
+            score: p.originalScore
+        }));
+        
+        if (hasTop10Changed(newTop10)) {
+            console.log('🎨 Top 10 actualizado');
+            lastTop10Data = newTop10;
+            renderRankingPanel(newTop10, null);
+        }
+    }
+}
+
+function formatScore(scoreValue) {
+    const smax = totalNotes * 300;
+    const preresultado = (scoreValue / smax) * 1000000;
+    let numeroRedondeado = Math.round(preresultado);
+    return numeroRedondeado.toString().padStart(6, '0');
+}
+
+function renderRankingPanel(playersToShow) {
+    const rankingList = document.getElementById('rankingList');
+    if (!rankingList) return;
+    
+    if (!playersToShow || playersToShow.length === 0) {
+        rankingList.innerHTML = '<div class="ranking-empty">No hay puntuaciones</div>';
+        return;
+    }
+    
+    rankingList.innerHTML = playersToShow.map(player => {
+        const isFirstPlace = player.position === 1;
+        
+        const positionClass = isFirstPlace ? 'position-1' : '';
+        
+        return `
+            <div class="ranking-item ${positionClass}" 
+                 style="animation: slideIn 0.3s ease">
+                <div class="ranking-position">${player.position}</div>
+                <div class="ranking-info">
+                    <div class="ranking-name">
+                        ${escapeHtml(player.username)}
+                        ${isFirstPlace ? '' : ''}
+                    </div>
+                    <div class="ranking-score">${player.score}</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function updateRankingOnScoreChange() {
+    if (!isMultiplayer) {
+        updateRankingWithCurrentScore();
+    }
+}
+
 
 function initSocket() {
     if (!isMultiplayer || !roomId) {
@@ -238,6 +423,8 @@ async function initializeLevel() {
     if (currentLevel) {
         musicName = `${currentLevel.name} - ${currentLevel.creator}, ${currentLevel.difficulty}`;
         console.log('🎵 Nivel cargado:', currentLevel);
+        // Cargar ranking del nivel
+        await loadLevelRanking();
         
         // Inicializar socket si es multijugador ANTES de la cuenta regresiva
         if (isMultiplayer) {
@@ -753,6 +940,9 @@ function main() {
             // Si está muy arriba, el círculo aún no ha llegado - no hacer nada
         }
         
+        if (!isMultiplayer) {
+            updateRankingOnScoreChange();
+        }
         if (isMultiplayer) {
             playerScore = score;
         }
