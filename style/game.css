@@ -1322,10 +1322,47 @@ button.login-btn {
     font-weight: 800;
     margin: 0;
     line-height: 1;
-    color: #ffd700; 
-    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    color: #ffd700;
     font-family: 'Space Mono', monospace;
     letter-spacing: 5px;
+    position: relative;
+    transition: all 0.1s ease;
+    text-shadow: 
+        0 0 20px rgba(255, 215, 0, 0.5),
+        2px 2px 0 #aa8800,
+        4px 4px 0 #886600,
+        6px 6px 0 #664400;
+}
+
+#scorePoints.pulse {
+    animation: score3DPulse 0.2s ease-out;
+}
+
+@keyframes score3DPulse {
+    0% {
+        text-shadow: 
+            0 0 20px rgba(255, 215, 0, 0.5),
+            2px 2px 0 #aa8800,
+            4px 4px 0 #886600,
+            6px 6px 0 #664400;
+        transform: scale(1);
+    }
+    50% {
+        text-shadow: 
+            0 0 30px rgba(255, 215, 0, 0.8),
+            4px 4px 0 #aa8800,
+            8px 8px 0 #886600,
+            12px 12px 0 #664400;
+        transform: scale(1.1);
+    }
+    100% {
+        text-shadow: 
+            0 0 20px rgba(255, 215, 0, 0.5),
+            2px 2px 0 #aa8800,
+            4px 4px 0 #886600,
+            6px 6px 0 #664400;
+        transform: scale(1);
+    }
 }
 
 .score-label {

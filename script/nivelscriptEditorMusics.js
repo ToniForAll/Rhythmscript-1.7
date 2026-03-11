@@ -36,15 +36,15 @@ let socket = null;
 function updateScoreDisplay() {
     const scoreElement = document.getElementById('scorePoints');
     if (!scoreElement) return;
-
+    
     if (!totalNotes || totalNotes === 0) {
         scoreElement.textContent = '0000000';
         return;
     }
-    
+
     const smax = totalNotes * 300;
     const preresultado = (score / smax) * 1000000;
-
+    
     if (isNaN(preresultado) || !isFinite(preresultado)) {
         scoreElement.textContent = '0000000';
         return;
@@ -52,7 +52,16 @@ function updateScoreDisplay() {
     
     let numeroRedondeado = Math.round(preresultado);
     const formattedScore = numeroRedondeado.toString().padStart(7, '0');
+
     scoreElement.textContent = formattedScore;
+    
+    scoreElement.classList.remove('pulse');
+    void scoreElement.offsetWidth;
+    scoreElement.classList.add('pulse');
+    
+    setTimeout(() => {
+        scoreElement.classList.remove('pulse');
+    }, 200);
 }
 
 async function loadLevelRanking() {
